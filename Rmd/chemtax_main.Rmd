@@ -12,6 +12,32 @@ This will serve as my starting point for converting CHEMTAX V2.0 into R.
 #TODO: fix this: [CHEMTAX Document](./Re__CHEMTAX_Update_[SEC=OFFICIAL]/Re__CHEMTAX_Update_[SEC=OFFICIAL]/CHEMTAX 2 Octave version.docx)
 
 `r gsub("\\.m$","", list.files(path = "./Re__CHEMTAX_Update_[SEC=OFFICIAL]/MatrixFactorsOctave/", pattern="\\.m$"))`
+# Files that need to be converted
+double tilde ~ will show done
+
+* "adddir"
+* "amatfactsd"
+* "bmatfactsd"          
+* "bootln"              
+* "bootnp"              
+* "brokewest"          
+* "chemtaxbrokewest"    
+* "CHEMTAXBROKEWestb"   
+* "CHEMTAXBROKEWests"   
+* "CHEMTAXBROKEWestx"   
+* "dataout"             
+* "Formulas"           
+* "initstruct"          
+* "matfactuvw"          
+* "nnmatfactsd"         
+* "normprod"            
+* "permcalc"            
+* "randstart"          
+* "regplot"             
+* "saz"                 
+* "sazchemtax090210"    
+* "SAZS_CHEMTAX090210s"
+
 
 ## Section 1: Setup
 
