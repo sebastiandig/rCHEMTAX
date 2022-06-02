@@ -1,0 +1,48 @@
+---
+title: "CHEMTAX Main"
+author: "Sebastian DiGeronimo"
+date: "6/2/2022"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+### Intro: 
+This will serve as my starting point for converting CHEMTAX V2.0 into R.
+#TODO: fix this: [CHEMTAX Document](./Re__CHEMTAX_Update_[SEC=OFFICIAL]/Re__CHEMTAX_Update_[SEC=OFFICIAL]/CHEMTAX 2 Octave version.docx)
+
+`r gsub("\\.m$","", list.files(path = "./Re__CHEMTAX_Update_[SEC=OFFICIAL]/MatrixFactorsOctave/", pattern="\\.m$"))`
+
+## Section 1: Setup
+
+```{r setup, include=FALSE, message=FALSE}
+library("knitr")
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "D:/rchemtax/")
+library("tidyverse")
+library("dplyr")
+library("lubridate")
+library("vroom")
+# library("raster", exclude = select)
+# d
+
+
+# library for ggplot uncertainty, may need to look at this 
+# library(ungeviz)
+```
+
+```{r create-dir}
+# will create a set directory if does not exists
+# useful for new projects
+mainDir <- getwd()
+subDir <-
+    c("data/raw",
+      "data/processed",
+      "data/plots",
+      "data/metadata",
+      "Rmd",
+      "scripts")
+
+fs::dir_create(path = paste0(mainDir,"/",subDir))
+rm(mainDir, subDir)
+```
