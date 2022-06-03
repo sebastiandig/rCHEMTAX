@@ -16,8 +16,8 @@ This will serve as my starting point for converting CHEMTAX V2.0 into R.
 double tilde ~ will show done
 
 * "adddir"
-* "amatfactsd"
-* "bmatfactsd"          
+* "amatfactsd"                    ---- started
+* "bmatfactsd"                    ---- started         
 * "bootln"              
 * "bootnp"              
 * "brokewest"          
@@ -72,3 +72,4 @@ subDir <-
 fs::dir_create(path = paste0(mainDir,"/",subDir))
 rm(mainDir, subDir)
 ```
+
