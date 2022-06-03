@@ -39,6 +39,10 @@ double tilde ~ will show done
 * "SAZS_CHEMTAX090210s"
 
 
+#TODO: something to include is:
+This would load internal ratios file so that you have a basic pigment ratio var
+pigment_ratio <- system.file("", package = "rCHEMTAX")
+
 ## Section 1: Setup
 
 ```{r setup, include=FALSE, message=FALSE}
@@ -71,5 +75,10 @@ subDir <-
 
 fs::dir_create(path = paste0(mainDir,"/",subDir))
 rm(mainDir, subDir)
+```
+
+
+```{r}
+
 ```
 
