@@ -48,7 +48,7 @@ pigment_ratio <- system.file("", package = "rCHEMTAX")
 ```{r setup, include=FALSE, message=FALSE}
 library("knitr")
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = "D:/rchemtax/")
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 library("tidyverse")
 library("dplyr")
 library("lubridate")
