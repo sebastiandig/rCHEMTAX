@@ -6,25 +6,30 @@ bmatfactsd <- function(x, sdx, a, b0, sdb) {
 #                                                                              #    
 ################################################################################
 # INPUTS:
-#--------
-# input = 
-#        x    Matrix to be factored as a*b
-#        sdx  Standard deviations of x
-#        a    result of a=amatfactsd(x,sdx,b,sdb)
-#        b0   Initial estimate for b
-#        sdb  Standard deviations of b0?
+# --------
+# x       = Matrix to be factored as a*b
+# sdx     = Standard deviations of x
+# a       = result of a=amatfactsd(x,sdx,b,sdb)
+# b0      = Initial estimate for b
+# sdb     = Standard deviations of b0?
 #        
-##########
+# --------
 # OUTPUTS:
-#---------
-# output =  
-#         b    Result left factor of x
-##########
-# -----Notes:-----
+# --------
+# b       = Result left factor of x
+# 
+# --------
+# NOTES:
+# --------
 # Original: 2010-03-14  Matalb7  W.Whiten
-# -----References:-----
 #
-# -----Author:-----
+# --------
+# References:
+# --------
+#
+# --------
+# Author:
+# --------
 # Sebastian Di Geonimo (Thu Jun 02 19:54:42 2022)
   
 

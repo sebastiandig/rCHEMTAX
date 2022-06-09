@@ -5,22 +5,28 @@ amatfactsd <- function(x, sdx, b){
 #                                                                              #    
 ################################################################################
 # INPUTS:
-#--------
-# input = 
-#         x    Matrix to be factored as a*b
-#         sdx  Standard deviations of x
-#         b    Value of b
-##########
-# OUTPUTS:
-#---------
-# output =  
-#         a    Result left factor of x
-##########
-# -----Notes:-----
-# Orginal: 2010-03-14  Matalb7  W.Whiten
-# -----References:-----
+# --------
+# x       = Matrix to be factored as a*b
+# sdx     = Standard deviations of x
+# b       = Value of b
 #
-# -----Author:-----
+# --------
+# OUTPUTS:
+# --------
+# a       = Result left factor of x
+#
+# --------
+# NOTES:
+# --------
+# Original: 2010-03-14  Matalb7  W.Whiten
+#
+# --------
+# References:
+# --------
+#
+# --------
+# Author:
+# --------
 # Sebastian Di Geronimo (Thu Jun 02 18:30:06 2022)
   
 
