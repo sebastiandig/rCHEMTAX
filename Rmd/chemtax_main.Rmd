@@ -46,19 +46,16 @@ pigment_ratio <- system.file("", package = "rCHEMTAX")
 ## Section 1: Setup
 
 ```{r setup, include=FALSE, message=FALSE}
+root <- rprojroot::find_rstudio_root_file()
 library("knitr")
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+knitr::opts_knit$set(root.dir = root)
 library("tidyverse")
 library("dplyr")
 library("lubridate")
 library("vroom")
-# library("raster", exclude = select)
-# d
 
 
-# library for ggplot uncertainty, may need to look at this 
-# library(ungeviz)
 ```
 
 ```{r create-dir}
