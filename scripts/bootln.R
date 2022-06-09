@@ -113,8 +113,8 @@ root <- rprojroot::find_rstudio_root_file()
 # tc1=tc-repmat(mean(tc),nrep,1);
 # disp([min(min(tc1)),max(max(tc1))])
 
-  tf1 <- tf- pracma::repmat(mean(tf),nrep,1)
-  tc1 <- tc- pracma::repmat(mean(tc),nrep,1)
+  tf1 <- tf - pracma::repmat(mean(tf),nrep,1)
+  tc1 <- tc - pracma::repmat(mean(tc),nrep,1)
   
   print('Range of variation in tf and tc')
   print(c(min(tf1),max(tf1)))
@@ -126,9 +126,46 @@ root <- rprojroot::find_rstudio_root_file()
 # title('Parametric Bootstrap, log normal:  Variation in f coefficients')
 # xlabel('Mean coefficient value')
 # ylabel('standard deviation/mean')
-# 
-
-
+#
+  
+  # allow loglog style plotting from Matlab
+  fancy_scientific <- function(l) {
+    # turn in to character string in scientific notation
+    l <- format(l, scientific = TRUE)
+    # quote the part before the exponent to keep all the digits
+    l <- gsub("^(.*)e", "'\\1'e", l)
+    # turn the 'e+' into plotmath format
+    l <- gsub("e", "%*%10^", l)
+    # return this as an expression
+    parse(text=l)
+  }
+  
+  yticks = outer((1:10),(10^(-5:-1)))
+  xticks = outer((1:10),(10^(0:1)))
+  
+  # tf
+  df <- data.frame(x = apply(tf, 2, mean),
+                   y = apply(tf, 2, function(x) sd(x)/mean(x)))
+  
+  ggplot() +
+    # original had bubble dots - shape?
+    geom_point(data = df,
+               aes(x = x,
+                   y = y),
+               colour = "red") +
+    scale_x_log10(limits = c(1, 100),
+                  labels = fancy_scientific,
+                  minor_breaks = xticks) +
+    scale_y_log10(limits = c(1e-5, 1),
+                  labels = fancy_scientific,
+                  minor_breaks = yticks) +
+    labs(
+      title = "Parametric Bootstrap, log normal:  Variation in f coefficients",
+      x = "Mean coefficient value",
+      y = "standard deviation/mean"
+      ) +
+    theme_bw()
+  
 # figure%
 # %loglog(mean(tc)',(std(tc))','.')
 # loglog(mean(tc)',(std(tc)./mean(tc))','.')
@@ -138,3 +175,26 @@ root <- rprojroot::find_rstudio_root_file()
 # 
 # return
 # end
+
+  # tc
+  df2 <- data.frame(x = apply(tc, 2, mean),
+                   y = apply(tc, 2, function(x) sd(x)/mean(x)))
+  
+  ggplot() +
+    # original had bubble dots - shape?
+    geom_point(data = df2,
+               aes(x = x,
+                   y = y),
+               colour = "red") +
+    scale_x_log10(limits = c(1, 100),
+                  labels = fancy_scientific,
+                  minor_breaks = xticks) +
+    scale_y_log10(limits = c(1e-5, 1),
+                  labels = fancy_scientific,
+                  minor_breaks = yticks) +
+    labs(
+      title = "Parametric Bootstrap, log normal:  Variation in c coefficients",
+      x = "Mean coefficient value",
+      y = "standard deviation/mean"
+    ) +
+    theme_bw()
