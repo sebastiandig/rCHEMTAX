@@ -18,7 +18,7 @@ double tilde ~ will show done
 * "adddir"
 * "amatfactsd"                    ---- started
 * "bmatfactsd"                    ---- started         
-* "bootln"              
+* "bootln"                        ---- started * connected to `nnmatfactsd`           
 * "bootnp"              
 * "brokewest"          
 * "chemtaxbrokewest"    
