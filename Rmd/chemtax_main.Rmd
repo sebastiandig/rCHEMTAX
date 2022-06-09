@@ -16,9 +16,9 @@ This will serve as my starting point for converting CHEMTAX V2.0 into R.
 double tilde ~ will show done
 
 * "adddir"
-* "amatfactsd"                    ---- started
-* "bmatfactsd"                    ---- started         
-* "bootln"                        ---- started * connected to `nnmatfactsd`           
+* "amatfactsd"                    ---- mostly done
+* "bmatfactsd"                    ---- mostly done        
+* "bootln"                        ---- mostly done * connected to `nnmatfactsd`           
 * "bootnp"              
 * "brokewest"          
 * "chemtaxbrokewest"    
