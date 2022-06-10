@@ -176,7 +176,8 @@ bootnp <- function(s,ssd,f,fsd) {
       y     = "standard deviation/mean"
     ) +
     theme_bw()
-  
+
+  # I don't think I need this chunk, but maybe
 # mtc=zeros(ns*nt,1);
 # stc=zeros(ns*nt,1);
 # for i=1:ns*nt
@@ -184,19 +185,6 @@ bootnp <- function(s,ssd,f,fsd) {
 #   mtc(i)=mean(t);
 #   stc(i)=std(t);
 # end
-  
-  # mtc
-  mtc <- matrix(0,ns*nt,1)
-  stc<- matrix(0,ns*nt,1)
-  
-  ns = 10
-  nt = 4
-  for (i in 1:(ns*nt)) {
-    t <- tc
-    #   t=tc(~isnan(tc(:,i)),i);
-    #   mtc(i)=mean(t);
-    #   stc(i)=std(t);
-  }
   
   df2 <- data.frame(x = apply(tc, 2, mean, na.rm=TRUE),
                     y = apply(tc, 2, function(x) sd(x, na.rm = TRUE)/mean(x, na.rm = TRUE,)))
