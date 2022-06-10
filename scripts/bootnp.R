@@ -155,7 +155,7 @@ bootnp <- function(s,ssd,f,fsd) {
   xticks = outer((1:10),(10^(0:1)))
 
   # tf
-  df <- data.frame(x = apply(tf, 2, mean),
+  df <- data.frame(x = apply(tf, 2, mean, na.rm=TRUE),
                    y = apply(tf, 2, function(x) sd(x)/mean(x)))
   
   ggplot() +
@@ -171,7 +171,7 @@ bootnp <- function(s,ssd,f,fsd) {
                   labels = fancy_scientific,
                   minor_breaks = yticks) +
     labs(
-      title = "Parametric Bootstrap, log normal:  Variation in f coefficients",
+      title = "Non parametric bootstrap: Variation in f coefficients",
       x     = "Mean coefficient value",
       y     = "standard deviation/mean"
     ) +
@@ -184,7 +184,22 @@ bootnp <- function(s,ssd,f,fsd) {
 #   mtc(i)=mean(t);
 #   stc(i)=std(t);
 # end
-
+  
+  # mtc
+  mtc <- matrix(0,ns*nt,1)
+  stc<- matrix(0,ns*nt,1)
+  
+  ns = 10
+  nt = 4
+  for (i in 1:(ns*nt)) {
+    t <- tc
+    #   t=tc(~isnan(tc(:,i)),i);
+    #   mtc(i)=mean(t);
+    #   stc(i)=std(t);
+  }
+  
+  df2 <- data.frame(x = apply(tc, 2, mean, na.rm=TRUE),
+                    y = apply(tc, 2, function(x) sd(x, na.rm = TRUE)/mean(x, na.rm = TRUE,)))
 
 # figure
 # %loglog(mtc',stc,'.')
@@ -195,6 +210,25 @@ bootnp <- function(s,ssd,f,fsd) {
 # 
 # return
 # end
+
+  ggplot() +
+    # original had bubble dots - shape?
+    geom_point(data = df2,
+               aes(x = x,
+                   y = y),
+               colour = "red") +
+    scale_x_log10(limits = c(1, 100),
+                  labels = fancy_scientific,
+                  minor_breaks = xticks) +
+    scale_y_log10(limits = c(1e-5, 1),
+                  labels = fancy_scientific,
+                  minor_breaks = yticks) +
+    labs(
+      title = "Non parametric bootstrap: Variation in c coefficients",
+      x     = "Mean coefficient value",
+      y     = "standard deviation/mean"
+    ) +
+    theme_bw()
 }
 
 
