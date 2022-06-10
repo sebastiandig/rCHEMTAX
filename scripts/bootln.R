@@ -43,6 +43,7 @@ bootln <- function(s, ssd, f, fsd)
 # 
 
   require("ggplot2")
+  require("tictoc")
   root <- rprojroot::find_rstudio_root_file()
   nrep <-  10
 # nrep=10;
@@ -89,8 +90,11 @@ bootln <- function(s, ssd, f, fsd)
 # disp([toc,info.rmsx,info.rmsxwt,info.itr/1000,info.conv*1e6])
 # end
 # 
+  tictoc::tic.clearlog()
+  start <- tictoc::tic()
   
   for (i in 1:nrep) {
+    tictoc::tic()
     ss <- exp(
       matrix(rnorm(length(s1)),nrow(s1)) * sd1 + s1 # could be ncol, dont know the expected dimensions
     )
@@ -103,8 +107,13 @@ bootln <- function(s, ssd, f, fsd)
 
     tf[i,] <- Conj(ff[indx])
     tc[i,] <- Conj(cc)
-    # not sure what toc is, but this is for printing only
-    print(c(toc,info$rmsx,info$rmsxwt,info$itr/1000,info$conv*1e6))
+
+    end <- (tictoc::toc(quiet = T))$toc - start
+    print(c(Time   = end,
+            rmsx   = info$rmsx,
+            rmsxwt = info$rmsxwt,
+            itr    = info$itr/1000,
+            conv   = info$conv*1e6))
   }
 
 # disp(' ')
