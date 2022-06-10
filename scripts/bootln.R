@@ -44,6 +44,8 @@ bootln <- function(s, ssd, f, fsd)
 
   require("ggplot2")
   require("tictoc")
+  require("pracma")
+
   root <- rprojroot::find_rstudio_root_file()
   nrep <-  10
 # nrep=10;
@@ -172,11 +174,9 @@ bootln <- function(s, ssd, f, fsd)
     scale_y_log10(limits = c(1e-5, 1),
                   labels = fancy_scientific,
                   minor_breaks = yticks) +
-    labs(
-      title = "Parametric Bootstrap, log normal:  Variation in f coefficients",
-      x = "Mean coefficient value",
-      y = "standard deviation/mean"
-      ) +
+    labs(title = "Parametric Bootstrap, log normal:  Variation in f coefficients",
+         x     = "Mean coefficient value",
+         y     = "standard deviation/mean") +
     theme_bw()
   
 # figure%
@@ -190,8 +190,10 @@ bootln <- function(s, ssd, f, fsd)
 # end
 
   # tc
+  # might have issue with transpose?
   df2 <- data.frame(x = apply(tc, 2, mean),
-                   y = apply(tc, 2, function(x) sd(x)/mean(x)))
+                   y = apply(tc, 2, function(x) sd(x)/mean(x))
+                   )
   
   ggplot() +
     # original had bubble dots - shape?
