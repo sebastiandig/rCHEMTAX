@@ -19,7 +19,7 @@ bootln <- function(s, ssd, f, fsd)
 # --------
 # NOTES:
 # --------
-# Original: 2010-03-14  Matalb7  W.Whiten
+# Original: 2010-02-27  Matlab7  W.Whiten
 #
 # --------
 # References:

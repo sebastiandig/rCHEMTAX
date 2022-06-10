@@ -30,7 +30,7 @@ bmatfactsd <- function(x, sdx, a, b0, sdb) {
 # --------
 # Author:
 # --------
-# Sebastian Di Geonimo (Thu Jun 02 19:54:42 2022)
+# Sebastian Di Geronimo (Thu Jun 02 19:54:42 2022)
   
 
 # function b=bmatfactsd(x,sdx,a,b0,sdb)
