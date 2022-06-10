@@ -93,13 +93,15 @@ bootln <- function(s, ssd, f, fsd)
   tictoc::tic.clearlog()
   start <- tictoc::tic()
   
+  # references another function nnmatfactsd
+  # TODO: source(paste0(root,"/scripts/nnmatfactsd.R"))
+  
   for (i in 1:nrep) {
     tictoc::tic()
     ss <- exp(
       matrix(rnorm(length(s1)),nrow(s1)) * sd1 + s1 # could be ncol, dont know the expected dimensions
     )
-    # references another function
-    # TODO: source(paste0(root,"/scripts/nnmatfactsd.R"))
+
     temp   <- nnmatfactsd(ss,ssd,f,fsd,info = data.frame(printitr = 1e6))
     cc     <- temp$cc
     ff     <- temp$ff
