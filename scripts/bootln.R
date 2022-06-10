@@ -42,9 +42,9 @@ bootln <- function(s, ssd, f, fsd)
 # %  fsd  Matrix of standard deviations for b
 # 
 
-require("ggplot2")
-root <- rprojroot::find_rstudio_root_file()
-nrep <-  10
+  require("ggplot2")
+  root <- rprojroot::find_rstudio_root_file()
+  nrep <-  10
 # nrep=10;
 # 
 # [ns,np]=size(s); %#ok<NASGU>
@@ -61,8 +61,8 @@ nrep <-  10
   np   <-  dim(f)[2] # col of f
   indx <- which(f > 0)
   ni   <- prod(dim(indx))
-  tf   <- matrix(0,nrep,ni)
-  tc   <- matrix(0,ns*nt)
+  tf   <- matrix(0, nrep, ni)
+  tc   <- matrix(0, nrep, ns*nt)
 
 
 # % parameters for log normal distribution
