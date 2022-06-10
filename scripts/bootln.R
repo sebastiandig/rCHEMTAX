@@ -44,6 +44,7 @@ bootln <- function(s, ssd, f, fsd)
 
 require("ggplot2")
 root <- rprojroot::find_rstudio_root_file()
+nrep <-  10
 # nrep=10;
 # 
 # [ns,np]=size(s); %#ok<NASGU>
