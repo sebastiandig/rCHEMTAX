@@ -99,10 +99,11 @@ bootln <- function(s, ssd, f, fsd)
   for (i in 1:nrep) {
     tictoc::tic()
     ss <- exp(
-      matrix(rnorm(length(s1)),nrow(s1)) * sd1 + s1 # could be ncol, dont know the expected dimensions
+      # runif over rnorm because rnorm makes negative numbers
+      matrix(runif(length(s1)),nrow(s1)) * sd1 + s1 # could be ncol, dont know the expected dimensions
     )
 
-    temp   <- nnmatfactsd(ss,ssd,f,fsd,info = data.frame(printitr = 1e6))
+    temp   <- nnmatfactsd(ss, ssd, f, fsd, info = data.frame(printitr = 1e6))
     cc     <- temp$cc
     ff     <- temp$ff
     info   <- temp$info
