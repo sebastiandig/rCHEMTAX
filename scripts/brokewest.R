@@ -37,10 +37,17 @@
 # % % bootstrap non parametric on s
 # % bootnp(s,ssd,f0,fsd)
 
+# set directory for saving 
 root <- rprojroot::find_rstudio_root_file()
 dir <- "/data/processed/"
+
+# TODO: source data
+# source(paste0(root, "scripts/chemtaxbrokewest.R"))
+# source(paste0(root, "scripts/nnmatfactsd.R"))
+# source(paste0(root, "scripts/normprod.R"))
+
 # get data values
-temp  <- chemtaxbrokewest
+temp  <- chemtaxbrokewest() # should this be a function?
 s     <- temp$s
 ssd   <- temp$ssd
 f0    <- temp$f0
@@ -95,6 +102,11 @@ sink()
 
 do <- "n"
 if (do == "y") {
+  # source(paste0(root, "scripts/regplot.R"))
+  # source(paste0(root, "scripts/randstart.R"))
+  # source(paste0(root, "scripts/bootln.R"))
+  # source(paste0(root, "scripts/bootnp.R"))
+  
   # plot showing the effect of regularisation
   regplot(s,ssd,f,fsd)
   
