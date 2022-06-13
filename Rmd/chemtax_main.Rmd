@@ -20,7 +20,9 @@ double tilde ~ will show done
 * "bmatfactsd"                    ---- mostly done        
 * "bootln"                        ---- mostly done * connected to `nnmatfactsd`
 * "bootnp"                        ---- mostly done * connected to `nnmatfactsd`             
-* "brokewest"          
+* "brokewest"                     ---- mostly done * connected to `chemtaxbrokewest`, 
+                                  `nnmatfactsd`,  `normprod`, `regplot`, 
+                                  `randstart`, `bootln`, `bootnp`
 * "chemtaxbrokewest"    
 * "CHEMTAXBROKEWestb"   
 * "CHEMTAXBROKEWests"   
