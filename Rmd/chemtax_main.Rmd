@@ -61,7 +61,7 @@ library("vroom")
 ```{r create-dir}
 # will create a set directory if does not exists
 # useful for new projects
-mainDir <- getwd()
+mainDir <- rprojroot::find_rstudio_root_file()
 subDir <-
     c("data/raw",
       "data/processed",
