@@ -4,6 +4,10 @@ bootnp <- function(s,ssd,f,fsd) {
 #           Plot the effect of non parametric bootstrap of s                   #
 #                                                                              #    
 ################################################################################
+# DESCRIPTION:
+# --------
+#
+# --------
 # INPUTS:
 # --------
 # s       =  Matrix to be factored as a*b (best if a larger than b)

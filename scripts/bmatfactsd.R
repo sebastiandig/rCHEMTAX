@@ -5,6 +5,10 @@ bmatfactsd <- function(x, sdx, a, b0, sdb) {
 #       Calculate factor b in min(x-ab, b-b0) using Least Linear Squares       #
 #                                                                              #    
 ################################################################################
+# DESCRIPTION:
+# --------
+#
+# --------
 # INPUTS:
 # --------
 # x       = Matrix to be factored as a*b

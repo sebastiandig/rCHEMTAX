@@ -4,6 +4,10 @@ amatfactsd <- function(x, sdx, b){
 #               Calculate Factor a in min(x-ab) using least square             #
 #                                                                              #    
 ################################################################################
+# DESCRIPTION:
+# --------
+#
+# --------
 # INPUTS:
 # --------
 # x       = Matrix to be factored as a*b

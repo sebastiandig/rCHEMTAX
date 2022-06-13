@@ -4,6 +4,10 @@ bootln <- function(s, ssd, f, fsd)
 #               Plot the effect of log normal perturbation of s                #
 #                                                                              #    
 ################################################################################
+# DESCRIPTION:
+# --------
+#
+# --------
 # INPUTS:
 # --------
 # s       = Matrix to be factored as a*b (best if a larger than b)
