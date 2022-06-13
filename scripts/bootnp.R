@@ -105,7 +105,7 @@ bootnp <- function(s,ssd,f,fsd) {
     tf[i,] <- Conj(ff[indx])
     cc1[,] <- NA
     cc1[ind,] <- cc
-    tc[i,]=Conj(cc1)
+    tc[i,] <- Conj(cc1)
     
     end <- (tictoc::toc(quiet = T))$toc - start
     print(c(Time   = end,
@@ -116,9 +116,6 @@ bootnp <- function(s,ssd,f,fsd) {
   }
 
  
- 
- 
-   
 # disp(' ')
 # disp('Range of variation in tf and tc')
 # tf1=tf-repmat(mean(tf),nrep,1);
@@ -187,7 +184,7 @@ bootnp <- function(s,ssd,f,fsd) {
 # end
   
   df2 <- data.frame(x = apply(tc, 2, mean, na.rm=TRUE),
-                    y = apply(tc, 2, function(x) sd(x, na.rm = TRUE)/mean(x, na.rm = TRUE,)))
+                    y = apply(tc, 2, function(x) sd(x, na.rm = TRUE)/mean(x, na.rm = TRUE)))
 
 # figure
 # %loglog(mtc',stc,'.')
