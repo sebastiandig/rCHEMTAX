@@ -25,9 +25,9 @@ double tilde ~ will show done
                                   `randstart`, `bootln`, `bootnp`
 * "chemtaxbrokewest"              ---- mostly done * connected to `permcalc`, 
                                   `CHEMTAXBROKEWests`
-* "CHEMTAXBROKEWestb" 
+* "CHEMTAXBROKEWestb"             ---- mostly done * connected to `matfactuvw`, `permcalc`
 * "CHEMTAXBROKEWests"   
-* "CHEMTAXBROKEWestx"   
+* "CHEMTAXBROKEWestx"             ---- could be a .csv file  
 * "dataout"             
 * "Formulas"           
 * "initstruct"          
