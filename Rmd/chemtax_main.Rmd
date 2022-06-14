@@ -23,8 +23,9 @@ double tilde ~ will show done
 * "brokewest"                     ---- mostly done * connected to `chemtaxbrokewest`, 
                                   `nnmatfactsd`,  `normprod`, `regplot`, 
                                   `randstart`, `bootln`, `bootnp`
-* "chemtaxbrokewest"    
-* "CHEMTAXBROKEWestb"   
+* "chemtaxbrokewest"              ---- mostly done * connected to `permcalc`, 
+                                  `CHEMTAXBROKEWests`
+* "CHEMTAXBROKEWestb" 
 * "CHEMTAXBROKEWests"   
 * "CHEMTAXBROKEWestx"   
 * "dataout"             
