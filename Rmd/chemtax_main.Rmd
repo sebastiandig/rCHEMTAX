@@ -26,9 +26,9 @@ double tilde ~ will show done
 * "chemtaxbrokewest"              ---- mostly done * connected to `permcalc`, 
                                   `CHEMTAXBROKEWests`
 * "CHEMTAXBROKEWestb"             ---- mostly done * connected to `matfactuvw`, `permcalc`
-* "CHEMTAXBROKEWests"   
+* "CHEMTAXBROKEWests"             ---- could be a .csv file     
 * "CHEMTAXBROKEWestx"             ---- could be a .csv file  
-* "dataout"             
+* "dataout"                       --- I don't know if it's needed? since sink function does what is needed?            
 * "Formulas"           
 * "initstruct"          
 * "matfactuvw"          
