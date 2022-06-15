@@ -67,7 +67,8 @@ bootln <- function(s, ssd, f, fsd)
   nt   <-  dim(f)[1] # row of f
   np   <-  dim(f)[2] # col of f
   indx <- which(f > 0)
-  ni   <- prod(dim(indx))
+  ni   <- length(indx)
+  # ni   <- prod(dim(indx))
   tf   <- matrix(0, nrep, ni)
   tc   <- matrix(0, nrep, ns*nt)
 
