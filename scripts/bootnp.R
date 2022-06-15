@@ -11,9 +11,9 @@ bootnp <- function(s,ssd,f,fsd) {
 # INPUTS:
 # --------
 # s       =  Matrix to be factored as a*b (best if a larger than b)
-# ssd = Matrix of standard deviations for x
-# f = Stabilising value for b, non zero locations, & initial value
-# fsd = Matrix of standard deviations for b
+# ssd     = Matrix of standard deviations for x
+# f       = Stabilising value for b, non zero locations, & initial value
+# fsd     = Matrix of standard deviations for b
 # --------
 # OUTPUTS:
 # --------
@@ -64,12 +64,13 @@ bootnp <- function(s,ssd,f,fsd) {
 
 # cc1=zeros(ns,nt);
 
-  ns   <-  dim(s)[1] # row of s
-  np   <-  dim(s)[2] # col of s
-  nt   <-  dim(f)[1] # row of f
-  np   <-  dim(f)[2] # col of f
-  indx <- which(f > 0)
-  ni   <- prod(dim(indx))
+  ns   <- dim(s)[1] # row of s
+  np   <- dim(s)[2] # col of s
+  nt   <- dim(f)[1] # row of f
+  np   <- dim(f)[2] # col of f
+  indx <- which(f > 0) 
+  ni   <- length(indx)
+  # ni   <- prod(dim(indx)[1])  # probably wont work
   tf   <- matrix(0, nrep, ni)
   tc   <- matrix(0, nrep, ns*nt)  
 
