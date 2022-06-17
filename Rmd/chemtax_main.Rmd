@@ -36,13 +36,16 @@ double tilde ~ will show done
 * "matfactuvw"          
 * "nnmatfactsd"         
 * "normprod"            
-* "permcalc"            
+* "permcalc"                      ---- finished           
 * "randstart"          
 * "regplot"             
 * "saz"                 
 * "sazchemtax090210"    
 * "SAZS_CHEMTAX090210s"
 
+
+# Matlab notes:
+* length(x) = largest of the dimensions, so if 100 x 4 = 100, or 4 x 100 = 100
 
 #TODO: something to include is:
 This would load internal ratios file so that you have a basic pigment ratio var
