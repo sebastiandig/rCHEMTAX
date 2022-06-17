@@ -107,10 +107,12 @@ bootnp <- function(s,ssd,f,fsd) {
     ff     <- temp$ff
     info   <- temp$info
     
-    tf[i,] <- Conj(ff[indx])
+    # tf[i,] <- Conj(ff[indx])
+    tf[i,] <- t(ff[indx])
     cc1[,] <- NA
     cc1[ind,] <- cc
-    tc[i,] <- Conj(cc1)
+    # tc[i,] <- Conj(cc1)
+    tc[i,] <- t(cc1)
     
     end <- (tictoc::toc(quiet = T))$toc - start
     print(c(Time   = end,

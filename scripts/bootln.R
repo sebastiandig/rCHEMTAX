@@ -115,9 +115,12 @@ bootln <- function(s, ssd, f, fsd)
     ff     <- temp$ff
     info   <- temp$info
 
-    tf[i,] <- Conj(ff[indx])
-    tc[i,] <- Conj(cc)
-
+    # tf[i,] <- Conj(ff[indx])
+    # tc[i,] <- Conj(cc)
+  
+    tf[i,] <- t(ff[indx])
+    tc[i,] <- t(cc)
+    
     end <- (tictoc::toc(quiet = T))$toc - start
     print(c(Time   = end,
             rmsx   = info$rmsx,

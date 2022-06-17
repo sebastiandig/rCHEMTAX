@@ -77,8 +77,10 @@ library("pracma")
     # sdx(j,:) is row j all columns, repeate
     # aa <- FUN( Conj(b)/ pracma::repmat(Conj(sdx[j,]),1,nt) , Conj(x[j,] / sdx[j,])  )
     
-  aa <- pracma::lsqnonneg(Conj(b)/ pracma::repmat(Conj(sdx[j,]),1,nt), 
-                          Conj(x[j,] / sdx[j,]))  
+  # aa <- pracma::lsqnonneg(Conj(b)/ pracma::repmat(Conj(sdx[j,]),1,nt), 
+  #                         Conj(x[j,] / sdx[j,]))  
+  aa <- pracma::lsqnonneg(t(b)/ pracma::repmat(t(sdx[j,]),1,nt), 
+                          t(x[j,] / sdx[j,]))
   a[j,] <- aa$x
   }
   
