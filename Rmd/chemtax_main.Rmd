@@ -28,10 +28,11 @@ double tilde ~ will show done
 * "chemtaxbrokewest"              ---- mostly done * connected to `permcalc`, 
                                   `CHEMTAXBROKEWests`
 * "CHEMTAXBROKEWestb"             ---- mostly done * connected to `matfactuvw`, `permcalc`
-* "CHEMTAXBROKEWests"             ---- could be a .csv file     
-* "CHEMTAXBROKEWestx"             ---- could be a .csv file  
-* "dataout"                       ---- I don't know if it's needed? since sink function does what is needed?            
-* "Formulas"           
+* "CHEMTAXBROKEWests"             ---- finished, as .csv in `data/raw/`     
+* "CHEMTAXBROKEWestx"             ---- finished, as .csv in `data/raw/`
+* "dataout"                       ---- probably don't need         
+* "Formulas"                      ---- started, doesn't connect to anything and 
+                                       is not a function?
 * "initstruct"          
 * "matfactuvw"          
 * "nnmatfactsd"         
@@ -46,6 +47,8 @@ double tilde ~ will show done
 
 # Matlab notes:
 * length(x) = largest of the dimensions, so if 100 x 4 = 100, or 4 x 100 = 100
+* `*` is matrix multiply, 
+* `.*` & `./` are matrix element by element multiply & divide operations
 
 #TODO: something to include is:
 This would load internal ratios file so that you have a basic pigment ratio var
