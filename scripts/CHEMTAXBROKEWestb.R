@@ -2,6 +2,7 @@ library("tictoc")
 library("ggplot2")
 
 root <- rprojroot::find_rstudio_root_file()
+source(paste0(root,"/scripts/permcalc.R"))
 
 # bs=[1	0	0	1	1	0	1	1	1	1	1	0	1	1	0	0	1	0	1];
 # bb={'chlc3'	'MgDVP'	'chlc2'	'chlc1'	'per'	'but'	'fuc'	'neox'	'prx'	'violax'	'hex'	'Mmal'	'alx'	'lut'	'dhlut'	'GyroxTotal'	'chl_b'	'np_chl_c2'	'chl_a'};
