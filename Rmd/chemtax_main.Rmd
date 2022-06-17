@@ -15,6 +15,8 @@ This will serve as my starting point for converting CHEMTAX V2.0 into R.
 # Files that need to be converted
 double tilde ~ will show done
 
+22 - not all are .m files with functions
+7 mostly done
 * "adddir"
 * "amatfactsd"                    ---- mostly done
 * "bmatfactsd"                    ---- mostly done        
@@ -28,7 +30,7 @@ double tilde ~ will show done
 * "CHEMTAXBROKEWestb"             ---- mostly done * connected to `matfactuvw`, `permcalc`
 * "CHEMTAXBROKEWests"             ---- could be a .csv file     
 * "CHEMTAXBROKEWestx"             ---- could be a .csv file  
-* "dataout"                       --- I don't know if it's needed? since sink function does what is needed?            
+* "dataout"                       ---- I don't know if it's needed? since sink function does what is needed?            
 * "Formulas"           
 * "initstruct"          
 * "matfactuvw"          
