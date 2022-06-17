@@ -1,5 +1,6 @@
 library("tictoc")
 library("ggplot2")
+library("pracma")
 
 root <- rprojroot::find_rstudio_root_file()
 source(paste0(root,"/scripts/permcalc.R"))
@@ -59,8 +60,8 @@ b2 <- b1/pracma::repmat(apply(b1, 1, sum),1,ncol(b1))
 
 tictoc::tic()
 temp <- matfactuvw(x2, b2, 1, info = data.frame(maxitr = 2000))
-aaa <- temp$a
-bbb <- temp$b
+aaa  <- temp$a
+bbb  <- temp$b
 info <- temp$info
 tictoc::toc()
 
@@ -68,7 +69,7 @@ tictoc::toc()
 # t=x1(:,end)<0.3;
 # x3=x2(t,:);
 
-t <- x1[,ncol(x1)] < 0.3
+t  <- x1[,ncol(x1)] < 0.3
 x3 <- x2[t,]
 
 # semilogy(x1(:,end))
