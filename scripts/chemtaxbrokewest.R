@@ -57,16 +57,16 @@ chemtaxbrokewest <- function() {
 # % get s matrix and scol column names
   
   root <- rprojroot::find_rstudio_root_file()
-  raw <- "/data/processed/"
+  raw  <- "/data/raw/"
   
 # CHEMTAXBROKEWests # Pigment concentration in samples
   # should make this a function?
-  s <- read.csv(paste0(root, raw, "CHEMTAXBROKEWests.csv"))
+  s    <- read.csv(paste0(root, raw, "CHEMTAXBROKEWests.csv"))
   scol <- colnames(s)
-  
+ 
 # % ind tell which columns can be used
 # ind=[1	0	0	1	1	0	1	1	1	1	1	0	1	1	0	0	1	0	1];
- ind <- c(1L, 0L, 0L, 1L, 1L, 0L, 1L, 1L, 1L, 1L, 1L, 0L, 1L, 1L, 0L, 0L, 1L, 0L, 1L)
+ ind <- c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1)
 
 
 # % column names of pigments for f matrix
@@ -124,12 +124,18 @@ chemtaxbrokewest <- function() {
     'Haptophytes-HiFe',
     'Haptophytes-LoFe')
 
-  # source(paste0(root,"scripts/permcalc.R"))
-# % find columns that match
-# si=permcalc(fcol(ind==1),scol);
-# fi=find(ind);
+  source(paste0(root,"/scripts/permcalc.R"))
+  # % find columns that match
+  # si=permcalc(fcol(ind==1),scol);
+  # fi=find(ind);
   si <- permcalc(fcol[ind == 1], scol)
   fi <- which(ind == 1)
+  
+  # a is filtered vector for pigment names
+  # b is a data set of column names
+  # si which is the column names that are the same as the selected ones in fcol 
+  # filtered by the index
+  
   
 # if(~isequal(fcol(fi),scol(si)))
 #   disp('Names do not match')
@@ -144,6 +150,8 @@ chemtaxbrokewest <- function() {
   # TODO: add exit?
   # return
   }
+  
+  pigm <- fcol[fi]
   
 # % get columns that match
 # s=s(:,si); %#ok<NODEF>
