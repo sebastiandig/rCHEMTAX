@@ -10,7 +10,7 @@ chemtaxbrokewest <- function() {
 # --------
 # INPUTS:
 # --------
-# Nothing, all is set
+# NA
 # --------
 # OUTPUTS:
 # --------
@@ -55,6 +55,8 @@ chemtaxbrokewest <- function() {
 # 
 # % put sample data file name here
 # % get s matrix and scol column names
+  
+  library("readr")
   
   root <- rprojroot::find_rstudio_root_file()
   raw  <- "/data/raw/"
