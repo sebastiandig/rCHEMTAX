@@ -18,10 +18,13 @@ source(paste0(root,"/scripts/permcalc.R"))
 #    0.13	0.001284182	0.023	0	0	0.01	0.08	0	0	0	0.4	0	0	0	0	0	0	0.03	1
 #    0.27	0.001120303	0.16	0	0	0.12	0.01	0	0	0	1.1	0	0	0	0	0	0	0.06	1];
 
+# turns columns on/off (1/0) to be used in analysis
 bs <- c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1)
 # bb <- c("chlc3", "MgDVP", "chlc2", "chlc1", "per", "but", "fuc", "neox", "prx", 
         # "violax", "hex", "Mmal", "alx", "lut", "dhlut", "GyroxTotal", "chl_b",
         # "np_chl_c2", "chl_a")
+
+# reads pigment ratio start file and extracts col names
 b <- readr::read_csv(paste0(root,"/scripts/b_pigment_ratios.csv"))
 bb <- names(b)
 
