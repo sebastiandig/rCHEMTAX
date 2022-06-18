@@ -64,7 +64,7 @@ chemtaxbrokewest <- function() {
 # CHEMTAXBROKEWests # Pigment concentration in samples
   # should make this a function?
   s    <- read.csv(paste0(root, raw, "CHEMTAXBROKEWests.csv"))
-  scol <- colnames(s)
+  scol <- names(s)
  
 # % ind tell which columns can be used
 # ind=[1	0	0	1	1	0	1	1	1	1	1	0	1	1	0	0	1	0	1];
@@ -73,26 +73,12 @@ chemtaxbrokewest <- function() {
 
 # % column names of pigments for f matrix
 # fcol={'chlc3'	'MgDVP'	'chlc2'	'chlc1'	'per'	'but'	'fuc'	'neox'	'prx'	'violax'	'hex'	'Mmal'	'alx'	'lut'	'dhlut'	'GyroxTotal'	'chl_b'	'np_chl_c2'	'chl_a'};
-  fcol <- c("chlc3",
-            "MgDVP",
-            "chlc2",
-            "chlc1",
-            "per",
-            "but",
-            "fuc",
-            "neox",
-            "prx",
-            "violax",
-            "hex",
-            "Mmal",
-            "alx",
-            "lut",
-            "dhlut",
-            "GyroxTotal",
-            "chl_b",
-            "np_chl_c2",
-            "chl_a"
-            )
+ 
+ # don't need as is in f0 file as colname 
+ # fcol <- c("chlc3","MgDVP","chlc2","chlc1","per","but","fuc","neox","prx",
+ #           "violax","hex","Mmal","alx","lut","dhlut","GyroxTotal","chl_b",
+ #           "np_chl_c2","chl_a"
+ #           )
 
 # % f matrix taxa by pigment
 # f0=[0	0.082815484	0	0	0	0	0	0.076017708	0.093775606	0.048498574	0	0.034069268	0	0.006383245	0.023810763	0	0.663053868	0	1
@@ -103,10 +89,7 @@ chemtaxbrokewest <- function() {
 #     0	0.000974879	0.367132108	0	0.876791629	0	0	0	0	0	0	0	0	0	0	0	0	0	1
 #     0.13	0.001284182	0.023	0	0	0.01	0.08	0	0	0	0.4	0	0	0	0	0	0	0.03	1
 #     0.27	0.001120303	0.16	0	0	0.12	0.01	0	0	0	1.1	0	0	0	0	0	0	0.06	1];
-  # I created a csv for this instead
-  f0 <- readr::read_csv(paste0(root,"/scripts/pigment_ratios.csv"), col_names = F)
-
-
+ 
 # % row names for f matrix
 # taxa={'Prasinophytes'
 #   'Chlorophytes'
@@ -116,15 +99,19 @@ chemtaxbrokewest <- function() {
 #   'Dinoflagellates-A'
 #   'Haptophytes-HiFe'
 #   'Haptophytes-LoFe'};
-  # TODO: this could be a csv as well
-  taxa <- c('Prasinophytes',
-    'Chlorophytes',
-    'Cryptophytes',
-    'Diatoms-A',
-    'Diatoms-B',
-    'Dinoflagellates-A',
-    'Haptophytes-HiFe',
-    'Haptophytes-LoFe')
+# included in pigment_ratio csv as well
+# taxa <- c('Prasinophytes', 'Chlorophytes', 'Cryptophytes', 'Diatoms-A',
+# 'Diatoms-B','Dinoflagellates-A','Haptophytes-HiFe',
+# 'Haptophytes-LoFe')
+ 
+  # read pigment ratios, extract phyto names, pigment names, and ratios as
+  # seperate variables
+  temp <- readr::read_csv(paste0(root,"/scripts/pigment_ratios.csv"))
+  f0 <- as.matrix(temp[,-1])
+  fcol <- colnames(f0)
+  taxa <- temp[,1][[1]]
+  colnames(f0) <- NULL
+  rm(temp)
 
   source(paste0(root,"/scripts/permcalc.R"))
   # % find columns that match
@@ -173,7 +160,7 @@ chemtaxbrokewest <- function() {
 # end
 # 
    
- result <-  list(s,ssd,f0,fsd,taxa,pigm)
+ result <-  list(s=s,ssd=ssd,f0=f0,fsd=fsd,taxa=taxa,pigm=pigm)
 
 }
 
