@@ -18,30 +18,51 @@ double tilde ~ will show done
 22 - not all are .m files with functions
 7 mostly done
 * "adddir"
+
 * "amatfactsd"                    ---- mostly done
-* "bmatfactsd"                    ---- mostly done        
+
+* "bmatfactsd"                    ---- mostly done 
+
 * "bootln"                        ---- mostly done * connected to `nnmatfactsd`
-* "bootnp"                        ---- mostly done * connected to `nnmatfactsd`             
+
+* "bootnp"                        ---- mostly done * connected to `nnmatfactsd`
+
 * "brokewest"                     ---- mostly done * connected to `chemtaxbrokewest`, 
                                   `nnmatfactsd`,  `normprod`, `regplot`, 
                                   `randstart`, `bootln`, `bootnp`
+                                  
 * "chemtaxbrokewest"              ---- mostly done * connected to `permcalc`, 
                                   `CHEMTAXBROKEWests`
+                                  
 * "CHEMTAXBROKEWestb"             ---- mostly done * connected to `matfactuvw`, `permcalc`
-* "CHEMTAXBROKEWests"             ---- finished, as .csv in `data/raw/`     
-* "CHEMTAXBROKEWestx"             ---- finished, as .csv in `data/raw/`
-* "dataout"                       ---- probably don't need         
-* "Formulas"                      ---- started, doesn't connect to anything and 
-                                       is not a function?
-* "initstruct"          
-* "matfactuvw"          
+
+* "CHEMTAXBROKEWests"             ---- * finished, as .csv in `data/raw/`  
+
+* "CHEMTAXBROKEWestx"             ---- * finished, as .csv in `data/raw/`
+
+* "dataout"                       ---- probably don't need     
+
+* "Formulas"                      ---- * finished, doesn't connect to anything and 
+                                       is not a function, not sure what do do with it
+                                       
+* "initstruct"                    ---- * finished    
+
+* "matfactuvw"                    ---- * connected to  `initstruct`
+
 * "nnmatfactsd"         
-* "normprod"            
-* "permcalc"                      ---- finished           
-* "randstart"          
-* "regplot"             
-* "saz"                 
-* "sazchemtax090210"    
+
+* "normprod"  
+
+* "permcalc"                      ---- * finished       
+
+* "randstart" 
+
+* "regplot" 
+
+* "saz"  
+
+* "sazchemtax090210"   
+
 * "SAZS_CHEMTAX090210s"
 
 
