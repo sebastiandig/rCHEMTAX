@@ -31,18 +31,32 @@ w2b <- 1 / (sdb^2)
 a   <- a * ((x * w2x) %*% t(b)) / (((a %*% b) * w2x) %*% t(b))
 b   <- b *((t(a) %*% (x * w2x)) + b0 * w2b) / (t(a) %*% (w2x* (a %*% b)) + b * w2b);
 
-% precalc constant walues
-xw=x.*w2x;
-b0w=b0.*w2b;
-a=a.*(xw*b')./(((a*b).*w2x)*b');
-b=b.*((a'*xw)+b0w)./(a'*((a*b).*w2x)+b.*w2b);
- 
-% iteration for sd case as loops
-for i=1:ns
-a(i,:)=a(i,:).*(xw(i,:)*b')./(((a(i,:)*b).*w2x(i,:))*b');
-end
+# % precalc constant walues
+# xw=x.*w2x;
+# b0w=b0.*w2b;
+# a=a.*(xw*b')./(((a*b).*w2x)*b');
+# b=b.*((a'*xw)+b0w)./(a'*((a*b).*w2x)+b.*w2b);
 
-for j=1:np
-b(:,j)=b(:,j).*((a'*xw(:,j))+b0w(:,j))./  ...
-(a'*((a*b(:,j)).*w2x(:,j))+b(:,j).*w2b(:,j));
-end
+xw <- x * w2x
+b0w <- b0 * w2b
+a <- a * (xw %*% t(b)) / (((a %*% b) * w2x) %*% t(b))
+b <- b * ((t(a) %*% xw) + b0w) / (t(a) %*% ((a %*% b) * w2x) + b * w2b)
+
+# % iteration for sd case as loops
+# for i=1:ns
+# a(i,:)=a(i,:).*(xw(i,:)*b')./(((a(i,:)*b).*w2x(i,:))*b');
+# end
+
+for (i in 1:ns) {
+  a[i,] <- a[i,] * (xw[i,] %*% t(b)) / (((a[i,] %*% b) * w2x[i,]) %*% t(b));
+}
+
+# for j=1:np
+# b(:,j)=b(:,j).*((a'*xw(:,j))+b0w(:,j))./  ...
+# (a'*((a*b(:,j)).*w2x(:,j))+b(:,j).*w2b(:,j));
+# end
+
+for (j in 1:np) {
+  b[,j] <- b[,j] * ((t(a) %*% xw[,j]) + b0w[,j]) / 
+           (t(a) %*% ((a %*% b[,j]) * w2x[,j]) + b[,j] * w2b[,j]);
+}
