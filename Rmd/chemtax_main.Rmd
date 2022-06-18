@@ -34,7 +34,10 @@ double tilde ~ will show done
 * "chemtaxbrokewest"              ---- mostly done * connected to `permcalc`, 
                                   `CHEMTAXBROKEWests`
                                   
-* "CHEMTAXBROKEWestb"             ---- mostly done * connected to `matfactuvw`, `permcalc`
+* "CHEMTAXBROKEWestb"             ---- mostly done * connected to `matfactuvw`, 
+                                       `permcalc`, file for `b` as 
+                                       `b_pigment_ratios.csv`, file for `x` as 
+                                       `CHEMTAXBROKEWestx.csv``
 
 * "CHEMTAXBROKEWests"             ---- * finished, as .csv in `data/raw/`  
 
@@ -63,7 +66,7 @@ double tilde ~ will show done
 
 * "sazchemtax090210"   
 
-* "SAZS_CHEMTAX090210s"
+* "SAZS_CHEMTAX090210s"           ---- * finished, as .csv in `data/raw/`
 
 
 # Matlab notes:
@@ -108,6 +111,6 @@ rm(mainDir, subDir)
 
 this is a test help me
 ```{r}
-
+readr::read_csv("./data/raw/SAZS_CHEMTAX090210s.csv")
 ```
 
