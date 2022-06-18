@@ -1,10 +1,3 @@
-
-A = rbind(c(1, 0, 3), c(5, 3, 8), c(2, 4, 6))
-B = rbind(c(2, 3, 7), c(9, 1, 5), c(8, 8, 3))
-C = A*B
-D = A %*% Conj(B)
-C
-D
 # %  x    Matrix to be factored as a*b (best if a larger than b)
 # %  sdx  Matrix of standard deviations for x
 # %  b0   Stabilising value for b, non zero locations, & initial value
