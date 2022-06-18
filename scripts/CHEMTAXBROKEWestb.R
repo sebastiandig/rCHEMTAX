@@ -19,12 +19,11 @@ source(paste0(root,"/scripts/permcalc.R"))
 #    0.27	0.001120303	0.16	0	0	0.12	0.01	0	0	0	1.1	0	0	0	0	0	0	0.06	1];
 
 bs <- c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1)
-bb <- c("chlc3", "MgDVP", "chlc2", "chlc1", "per", "but", "fuc", "neox", "prx", 
-        "violax", "hex", "Mmal", "alx", "lut", "dhlut", "GyroxTotal", "chl_b", 
-        "np_chl_c2", "chl_a")
-b <- readr::read_csv(paste0(root,"/scripts/b_pigment_ratios.csv"),
-                     col_names = FALSE)
-
+# bb <- c("chlc3", "MgDVP", "chlc2", "chlc1", "per", "but", "fuc", "neox", "prx", 
+        # "violax", "hex", "Mmal", "alx", "lut", "dhlut", "GyroxTotal", "chl_b",
+        # "np_chl_c2", "chl_a")
+b <- readr::read_csv(paste0(root,"/scripts/b_pigment_ratios.csv"))
+bb <- names(b)
 
 
 # CHEMTAXBROKEWestx
