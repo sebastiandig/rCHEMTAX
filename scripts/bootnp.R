@@ -74,7 +74,7 @@ bootnp <- function(s,ssd,f,fsd) {
   tf   <- matrix(0, nrep, ni)
   tc   <- matrix(0, nrep, ns*nt)  
 
-  cc1 <- matrix(0,ns,nt) 
+  cc1  <- matrix(0,ns,nt) 
 
 
   

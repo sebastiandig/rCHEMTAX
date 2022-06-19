@@ -62,10 +62,10 @@ bootln <- function(s, ssd, f, fsd)
 # tc=zeros(nrep,ns*nt);
 # 
 
-  ns   <-  dim(s)[1] # row of s
-  np   <-  dim(s)[2] # col of s
-  nt   <-  dim(f)[1] # row of f
-  np   <-  dim(f)[2] # col of f
+  ns   <- dim(s)[1] # row of s
+  np   <- dim(s)[2] # col of s
+  nt   <- dim(f)[1] # row of f
+  np   <- dim(f)[2] # col of f
   indx <- which(f > 0)
   ni   <- length(indx)
   # ni   <- prod(dim(indx))
