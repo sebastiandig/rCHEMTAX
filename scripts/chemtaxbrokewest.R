@@ -57,15 +57,15 @@ chemtaxbrokewest <- function() {
 # % put sample data file name here
 # % get s matrix and scol column names
   
-  library("readr")
+  # library("readr")
   
   root <- rprojroot::find_rstudio_root_file()
   raw  <- "/data/raw/"
   
   # CHEMTAXBROKEWests # Pigment concentration in samples
   # should make this a function?
-  s    <- read.csv(paste0(root, raw, "CHEMTAXBROKEWests.csv"))
-  scol <- names(s)
+  s    <- as.matrix(read.csv(paste0(root, raw, "CHEMTAXBROKEWests.csv")))
+  scol <- colnames(s)
   colnames(s) <- NULL
  
   # % ind tell which columns can be used
