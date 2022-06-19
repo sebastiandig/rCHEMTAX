@@ -74,7 +74,7 @@ regplot <- function(s,ssd,f,fsd) {
   #     rmsxwt(i)=info.rmsxwt;
   # end
   
-  for (1 in 1:n) {
+  for (i in 1:n) {
     
     print(paste("Factor = ", fsdx[i]))
     
