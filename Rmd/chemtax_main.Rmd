@@ -70,7 +70,7 @@ double tilde ~ will show done
 
 * "randstart"                     ---- 
 
-* "regplot"                       ---- 
+* "regplot"                       ---- almost done
                                        * connected to `nnmatfactsd`
 
 * "saz"                           ---- mostly done 
