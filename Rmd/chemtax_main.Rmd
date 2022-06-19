@@ -15,75 +15,80 @@ This will serve as my starting point for converting CHEMTAX V2.0 into R.
 # Files that need to be converted
 double tilde ~ will show done
 
-22 - not all are .m files with functions
-7 mostly done
-* "adddir"                        ----
+21 - not all are .m files with functions
+o 8 mostly done
+* 10 finished
+! 4 not started
 
-* "amatfactsd"                    ---- mostly done
-                                       * TODO: lsqnonneg
-
-* "bmatfactsd"                    ---- mostly done 
-                                       * TODO: lsqnonneg
-
-* "bootln"                        ---- mostly done 
-                                       * connected to `nnmatfactsd`
-
-* "bootnp"                        ---- mostly done 
-                                       * connected to `nnmatfactsd`
-
-* "brokewest"                     ---- mostly done 
-                                      * connected to `chemtaxbrokewest`, 
-                                      `nnmatfactsd`,  `normprod`, `regplot`, 
-                                      `randstart`, `bootln`, `bootnp`
-
-* "chemtaxbrokewest"              ---- finished 
-                                       * connected to `permcalc`, file for `s`  
-                                        and `scol` as `CHEMTAXBROKEWests`, file    
-                                        for `f0`, `taxa` and `fcol` as 
-                                        `pigment_ratios.csv`
-
-* "CHEMTAXBROKEWestb"             ---- mostly done 
-                                       * connected to `matfactuvw`, `permcalc`,
-                                        file for `b` as `b_pigment_ratios.csv`, 
-                                        file for `x` as `CHEMTAXBROKEWestx.csv``
-
+1
+* "adddir"                        ---- !
+2
+* "amatfactsd"                    ---- o mostly done
+                                       - TODO: lsqnonneg
+3
+* "bmatfactsd"                    ---- o mostly done 
+                                       - TODO: lsqnonneg
+4
+* "bootln"                        ---- o mostly done 
+                                       - connected to `nnmatfactsd`
+5
+* "bootnp"                        ---- o mostly done 
+                                       - connected to `nnmatfactsd`
+6
+* "brokewest"                     ---- o mostly done 
+                                       - connected to `chemtaxbrokewest`, 
+                                       `nnmatfactsd`,  `normprod`, `regplot`, 
+                                       `randstart`, `bootln`, `bootnp`
+7
+* "chemtaxbrokewest"              ---- * finished 
+                                       - connected to `permcalc`, file for `s`  
+                                       and `scol` as `CHEMTAXBROKEWests`, file    
+                                       for `f0`, `taxa` and `fcol` as 
+                                       `pigment_ratios.csv`
+8
+* "CHEMTAXBROKEWestb"             ---- o mostly done 
+                                       - connected to `matfactuvw`, `permcalc`,
+                                       file for `b` as `b_pigment_ratios.csv`, 
+                                       file for `x` as `CHEMTAXBROKEWestx.csv``
+9
 * "CHEMTAXBROKEWests"             ---- * finished, as .csv in `data/raw/`  
-
+10
 * "CHEMTAXBROKEWestx"             ---- * finished, as .csv in `data/raw/`
-
-* "dataout"                       ---- 
+11
+* "dataout"                       ---- !
                                        probably don't need     
-
+12
 * "Formulas"                      ---- * finished, doesn't connect to anything and 
                                        is not a function, not sure what do do with it
-                                       
+13                                       
 * "initstruct"                    ---- * finished    
-
-* "matfactuvw"                    ---- 
-                                       * connected to  `initstruct`
-
-* "nnmatfactsd"                   ----        
-
-* "normprod"                      ---- 
-
+14
+* "matfactuvw"                    ---- !
+                                       - connected to  `initstruct`
+15
+* "nnmatfactsd"                   ---- !        
+16
+* "normprod"                      ---- * finished 
+17
 * "permcalc"                      ---- * finished       
-
-* "randstart"                     ---- 
-
-* "regplot"                       ---- almost done
-                                       * connected to `nnmatfactsd`
-
-* "saz"                           ---- mostly done 
-                                      * connected to `sazchemtax090210`, 
-                                      `nnmatfactsd`,  `normprod`, `regplot`, 
-                                      `randstart`, `bootln`, `bootnp`
-
+18
+* "randstart"                     ---- o mostly done
+                                       - connect to `nnmatfactsd`
+19
+* "regplot"                       ---- o mostly done
+                                       - connected to `nnmatfactsd`
+20
+* "saz"                           ---- o mostly done 
+                                       - connected to `sazchemtax090210`, 
+                                       `nnmatfactsd`,  `normprod`, `regplot`, 
+                                       `randstart`, `bootln`, `bootnp`
+21
 * "sazchemtax090210"              ----  * finished 
-                                        * connected to `permcalc`, file for `s`  
+                                        - connected to `permcalc`, file for `s`  
                                         and `scol` as `SAZS_CHEMTAX090210s.csv`, 
                                         file for `f0`, `taxa` and `fcol` as 
                                         `saz_pigment_ratios.csv`
-
+22
 * "SAZS_CHEMTAX090210s"           ---- * finished, as .csv in `data/raw/`
 
 
@@ -91,7 +96,8 @@ double tilde ~ will show done
 * length(x) = largest of the dimensions, so if 100 x 4 = 100, or 4 x 100 = 100
 * `*` is matrix multiply, 
 * `.*` & `./` are matrix element by element multiply & divide operations
-
+* can use `pracma::rand()` for rand
+* 
 
 #TODO: something to include is:
 This would load internal ratios file so that you have a basic pigment ratio var
