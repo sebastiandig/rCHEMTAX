@@ -25,15 +25,16 @@ bs <- c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1)
         # "np_chl_c2", "chl_a")
 
 # reads pigment ratio start file and extracts col names
-b <- readr::read_csv(paste0(root,"/scripts/b_pigment_ratios.csv"))
-bb <- names(b)
-
+b <- as.matrix(read.csv(paste0(root,"/scripts/brokewest_b_pigment_ratios.csv")))
+bb <- colnames(b)
+colnames(b) <- NULL
 
 # CHEMTAXBROKEWestx
 # should just be a file to load
 # i.e 
-x <- readr::read_csv(paste0(root,"/scripts/CHEMTAXBROKEWestx.csv"))
+x <- as.matrix(read.csv(paste0(root,"/data/raw/CHEMTAXBROKEWestx.csv")))
 xx <- colnames(x)
+colnames(x) <- NULL
 
 # xi=permcalc(bb(bs==1),xx);
 # bi=find(bs);
@@ -52,8 +53,11 @@ xx[xi]
 
 x1 <- x[,xi]
 b1 <- b[,bi]
-x2 <- x1/pracma::repmat(apply(x1, 1, sum),1,ncol(x1))
-b2 <- b1/pracma::repmat(apply(b1, 1, sum),1,ncol(b1))
+x2 <- x1/pracma::repmat(as.matrix(apply(x1, 1, sum)),1,ncol(x1))
+b2 <- b1/pracma::repmat(as.matrix(apply(b1, 1, sum)),1,ncol(b1))
+
+
+# ---- Everything up to here works as expected ----
 
 
 

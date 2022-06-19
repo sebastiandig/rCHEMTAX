@@ -135,7 +135,8 @@ bootln <- function(s, ssd, f, fsd)
 # disp([min(min(tf1)),max(max(tf1))])
 # tc1=tc-repmat(mean(tc),nrep,1);
 # disp([min(min(tc1)),max(max(tc1))])
-
+  
+  # may need to wrap mean(tf/tc) -> as.matrix(apply(tf, 1/2, mean))
   tf1 <- tf - pracma::repmat(mean(tf),nrep,1)
   tc1 <- tc - pracma::repmat(mean(tc),nrep,1)
   

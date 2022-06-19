@@ -130,6 +130,7 @@ bootnp <- function(s,ssd,f,fsd) {
 # tc1=tc-repmat(mean(tc),nrep,1);
 # disp([min(min(tc1(~isnan(tc1)))),max(max(tc1(~isnan(tc1))))])
   
+  # may need to wrap mean(tf/tc) -> as.matrix(apply(tf, 1/2, mean))
   tf1 <- tf - pracma::repmat(mean(tf), nrep, 1)
   tc1 <- tc - pracma::repmat(mean(tc), nrep, 1)
   print('Range of variation in tf and tc')
