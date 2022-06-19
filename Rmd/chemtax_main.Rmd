@@ -23,21 +23,27 @@ double tilde ~ will show done
 
 * "bmatfactsd"                    ---- mostly done 
 
-* "bootln"                        ---- mostly done * connected to `nnmatfactsd`
+* "bootln"                        ---- mostly done 
+                                       * connected to `nnmatfactsd`
 
-* "bootnp"                        ---- mostly done * connected to `nnmatfactsd`
+* "bootnp"                        ---- mostly done 
+                                       * connected to `nnmatfactsd`
 
-* "brokewest"                     ---- mostly done * connected to `chemtaxbrokewest`, 
-                                  `nnmatfactsd`,  `normprod`, `regplot`, 
-                                  `randstart`, `bootln`, `bootnp`
-                                  
-* "chemtaxbrokewest"              ---- mostly done * connected to `permcalc`, 
-                                  `CHEMTAXBROKEWests`
-                                  
-* "CHEMTAXBROKEWestb"             ---- mostly done * connected to `matfactuvw`, 
-                                       `permcalc`, file for `b` as 
-                                       `b_pigment_ratios.csv`, file for `x` as 
-                                       `CHEMTAXBROKEWestx.csv``
+* "brokewest"                     ---- mostly done 
+                                      * connected to `chemtaxbrokewest`, 
+                                      `nnmatfactsd`,  `normprod`, `regplot`, 
+                                      `randstart`, `bootln`, `bootnp`
+
+* "chemtaxbrokewest"              ---- finished 
+                                       * connected to `permcalc`, file for `s`  
+                                        and `scol` as `CHEMTAXBROKEWests`, file    
+                                        for `f0`, `taxa` and `fcol` as 
+                                        `pigment_ratios.csv`
+
+* "CHEMTAXBROKEWestb"             ---- mostly done 
+                                       * connected to `matfactuvw`, `permcalc`,
+                                        file for `b` as `b_pigment_ratios.csv`, 
+                                        file for `x` as `CHEMTAXBROKEWestx.csv``
 
 * "CHEMTAXBROKEWests"             ---- * finished, as .csv in `data/raw/`  
 
@@ -50,7 +56,8 @@ double tilde ~ will show done
                                        
 * "initstruct"                    ---- * finished    
 
-* "matfactuvw"                    ---- * connected to  `initstruct`
+* "matfactuvw"                    ---- Not started
+                                       * connected to  `initstruct`
 
 * "nnmatfactsd"         
 
@@ -64,7 +71,11 @@ double tilde ~ will show done
 
 * "saz"  
 
-* "sazchemtax090210"   
+* "sazchemtax090210"              ----  * finished 
+                                        * connected to `permcalc`, file for `s`  
+                                        and `scol` as `SAZS_CHEMTAX090210s.csv`, 
+                                        file for `f0`, `taxa` and `fcol` as 
+                                        `saz_pigment_ratios.csv`
 
 * "SAZS_CHEMTAX090210s"           ---- * finished, as .csv in `data/raw/`
 
