@@ -100,9 +100,9 @@ bootnp <- function(s,ssd,f,fsd) {
   # TODO: source(paste0(root,"/scripts/nnmatfactsd.R"))
   
   for (i in 1:nrep) {
-    ind <- pracma::ceil(matrix(runif(ns), ns, 1) * ns)
+    ind <- pracma::ceil(pracma::rand(ns,1) * ns)
     temp   <- nnmatfactsd(s[ind,], ssd[ind,], f, fsd, 
-                          info = data.frame(printitr = 1e6))
+                          info = list(printitr = 1e6))
     cc     <- temp$cc
     ff     <- temp$ff
     info   <- temp$info
@@ -131,10 +131,10 @@ bootnp <- function(s,ssd,f,fsd) {
 # disp([min(min(tc1(~isnan(tc1)))),max(max(tc1(~isnan(tc1))))])
   
   # may need to wrap mean(tf/tc) -> as.matrix(apply(tf, 1/2, mean))
-  tf1 <- tf - pracma::repmat(mean(tf), nrep, 1)
-  tc1 <- tc - pracma::repmat(mean(tc), nrep, 1)
+  tf1 <- tf - pracma::repmat(mean(tf, na.rm = T), nrep, 1)
+  tc1 <- tc - pracma::repmat(mean(tc, na.rm = T), nrep, 1)
   print('Range of variation in tf and tc')
-  print(c(min(tf1),max(tf1)))
+  print(c(min(tf1, na.rm = T),max(tf1, na.rm = T)))
   print(c(min(tc1, na.rm = T),max(tc1, na.rm = T)))
   
 # figure
@@ -161,7 +161,9 @@ bootnp <- function(s,ssd,f,fsd) {
 
   # tf
   df <- data.frame(x = apply(tf, 2, mean, na.rm=TRUE),
-                   y = apply(tf, 2, function(x) sd(x)/mean(x)))
+                   y = apply(tf, 2, function(x) 
+                     sd(x, na.rm = TRUE)/mean(x, na.rm = TRUE))
+                   )
   
   ggplot() +
     # original had bubble dots - shape?
@@ -191,8 +193,10 @@ bootnp <- function(s,ssd,f,fsd) {
 #   stc(i)=std(t);
 # end
   
-  df2 <- data.frame(x = apply(tc, 2, mean, na.rm=TRUE),
-                    y = apply(tc, 2, function(x) sd(x, na.rm = TRUE)/mean(x, na.rm = TRUE)))
+  df2 <- data.frame(x = apply(tc, 2, mean, na.rm = TRUE),
+                    y = apply(df, 2, function(x)
+                      sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE))
+                    )
 
 # figure
 # %loglog(mtc',stc,'.')
