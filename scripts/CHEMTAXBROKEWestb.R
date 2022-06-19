@@ -53,8 +53,8 @@ xx[xi]
 
 x1 <- x[,xi]
 b1 <- b[,bi]
-x2 <- x1/pracma::repmat(as.matrix(apply(x1, 1, sum)),1,ncol(x1))
-b2 <- b1/pracma::repmat(as.matrix(apply(b1, 1, sum)),1,ncol(b1))
+x2 <- x1/pracma::repmat(as.matrix(apply(x1, 1, sum, na.rm = TRUE)),1,ncol(x1))
+b2 <- b1/pracma::repmat(as.matrix(apply(b1, 1, sum, na.rm = TRUE)),1,ncol(b1))
 
 
 # ---- Everything up to here works as expected ----
