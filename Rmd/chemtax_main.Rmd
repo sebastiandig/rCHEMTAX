@@ -17,11 +17,13 @@ double tilde ~ will show done
 
 22 - not all are .m files with functions
 7 mostly done
-* "adddir"
+* "adddir"                        ----
 
 * "amatfactsd"                    ---- mostly done
+                                       * TODO: lsqnonneg
 
 * "bmatfactsd"                    ---- mostly done 
+                                       * TODO: lsqnonneg
 
 * "bootln"                        ---- mostly done 
                                        * connected to `nnmatfactsd`
@@ -49,27 +51,32 @@ double tilde ~ will show done
 
 * "CHEMTAXBROKEWestx"             ---- * finished, as .csv in `data/raw/`
 
-* "dataout"                       ---- probably don't need     
+* "dataout"                       ---- 
+                                       probably don't need     
 
 * "Formulas"                      ---- * finished, doesn't connect to anything and 
                                        is not a function, not sure what do do with it
                                        
 * "initstruct"                    ---- * finished    
 
-* "matfactuvw"                    ---- Not started
+* "matfactuvw"                    ---- 
                                        * connected to  `initstruct`
 
-* "nnmatfactsd"         
+* "nnmatfactsd"                   ----        
 
-* "normprod"  
+* "normprod"                      ---- 
 
 * "permcalc"                      ---- * finished       
 
-* "randstart" 
+* "randstart"                     ---- 
 
-* "regplot" 
+* "regplot"                       ---- 
+                                       * connected to `nnmatfactsd`
 
-* "saz"  
+* "saz"                           ---- mostly done 
+                                      * connected to `sazchemtax090210`, 
+                                      `nnmatfactsd`,  `normprod`, `regplot`, 
+                                      `randstart`, `bootln`, `bootnp`
 
 * "sazchemtax090210"              ----  * finished 
                                         * connected to `permcalc`, file for `s`  
@@ -85,10 +92,37 @@ double tilde ~ will show done
 * `*` is matrix multiply, 
 * `.*` & `./` are matrix element by element multiply & divide operations
 
+
 #TODO: something to include is:
 This would load internal ratios file so that you have a basic pigment ratio var
 pigment_ratio <- system.file("", package = "rCHEMTAX")
 
+Plotting Log function:
+# allow y log style plotting from Matlab in semilogy
+  fancy_scientific <- function(l) {
+    # turn in to character string in scientific notation
+    l <- format(l, scientific = TRUE)
+    # quote the part before the exponent to keep all the digits
+    l <- gsub("^(.*)e", "'\\1'e", l)
+    # turn the 'e+' into plotmath format
+    l <- gsub("e", "%*%10^", l)
+    # return this as an expression
+    parse(text=l)
+  }
+  
+  yticks = outer((1:10),(10^(-5:-1)))
+  xticks = outer((1:10),(10^(0:1)))
+  
+  include either:
+  * semiolgx
+  scale_x_log10(limits = c(1, 100),
+                labels = fancy_scientific,
+                minor_breaks = xticks) +
+  * semilogy
+  scale_y_log10(limits = c(1e-5, 1),
+                labels = fancy_scientific,
+                minor_breaks = yticks) +
+    
 ## Section 1: Setup
 
 ```{r setup, include=FALSE, message=FALSE}
