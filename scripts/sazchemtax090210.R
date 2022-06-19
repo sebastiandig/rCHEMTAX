@@ -17,7 +17,7 @@ sazchemtax090210 <- function() {
 # --------
 # s       = Matrix of samples by pigment readings
 # ssd     = Standard deviations for s
-# f0      = Initial matrix of taxa by pigment estiments
+# f0      = Initial matrix of taxa by pigment estimate 
 # fsd     = Standard deviations for f
 # taxa    = Cell array of taxa names
 # pigm    = Cell array of pigment names
