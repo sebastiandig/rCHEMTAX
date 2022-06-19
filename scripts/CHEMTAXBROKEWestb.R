@@ -84,11 +84,34 @@ x3 <- x2[t,]
 # ylabel('Chl-a')
 
 x1.name <- colnames(x1)[ncol(x1)]
- 
+
+# allow y log style plotting from Matlab in semilogy
+fancy_scientific <- function(l) {
+  # turn in to character string in scientific notation
+  l <- format(l, scientific = TRUE)
+  # quote the part before the exponent to keep all the digits
+  l <- gsub("^(.*)e", "'\\1'e", l)
+  # turn the 'e+' into plotmath format
+  l <- gsub("e", "%*%10^", l)
+  # return this as an expression
+  parse(text=l)
+}
+
+  yticks = outer((1:10),(10^(-5:-1)))
+  xticks = outer((1:10),(10^(0:1)))
+  
+  
 ggplot(x1, aes(y = !!sym(x1.name), x = seq(1, nrow(x1)))) +
   geom_point() +
   labs(title = 'CHEMTAXBROKEWest  Ch_a',
        x = 'Sample number',
        y ='Chl-a') +
+  scale_y_log10(limits = c(1e-5, 1),
+                labels = fancy_scientific,
+                minor_breaks = yticks) +
   theme_bw()
+
+
+
+
 
