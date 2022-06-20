@@ -51,20 +51,16 @@ amatfactsd <- function(x, sdx, b){
 # end
 
   library("pracma")
-  x <- matrix(c(0.0372,    0.2869,
-                0.6861,   0.7071,
-                0.6233,    0.6245,
-                0.6344,    0.6170),
-              nrow = 4,
-              ncol = 2)
   
-  b <- c(0.8587,
-              0.1781,
-              0.0747,
-              0.8405)
+  # brokewest -> chemtaxbrokewest() -> line 57 -> nnmatfactsd -> amatfactsd
+  # amatfactsd(x,sdx,b) from nnmatfactsd
+  # TODO: delete later 
+  # x <- x
+  # sdx <- sdx
+  # b <- b
   
   ns <- dim(x)[1]
-  nt <- length(b)
+  nt <- dim(b)[1]
   
   a <- matrix(0, ns, nt)
   
@@ -78,12 +74,16 @@ amatfactsd <- function(x, sdx, b){
     # aa <- FUN( Conj(b)/ pracma::repmat(Conj(sdx[j,]),1,nt) , Conj(x[j,] / sdx[j,])  )
     
   # aa <- pracma::lsqnonneg(Conj(b)/ pracma::repmat(Conj(sdx[j,]),1,nt), 
-  #                         Conj(x[j,] / sdx[j,]))  
-  aa <- pracma::lsqnonneg(t(b)/ pracma::repmat(t(sdx[j,]),1,nt), 
-                          t(x[j,] / sdx[j,]))
+  #                         Conj(x[j,] / sdx[j,])) 
+    
+  aa <- pracma::lsqnonneg(t(b)/ pracma::repmat(as.matrix((sdx[j,])),1,nt), 
+                          as.vector(t((x[j,] / sdx[j,])))
+                          )
   
   # a(j,:)=aa';
-  a[j,] <- t(aa)
+  a[j,] <- t(aa$x)
   }
+  
+  a
   
 }
