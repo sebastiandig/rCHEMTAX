@@ -50,7 +50,7 @@ amatfactsd <- function(x, sdx, b){
 # return
 # end
 
-library("pracma")
+  library("pracma")
   x <- matrix(c(0.0372,    0.2869,
                 0.6861,   0.7071,
                 0.6233,    0.6245,
@@ -81,7 +81,9 @@ library("pracma")
   #                         Conj(x[j,] / sdx[j,]))  
   aa <- pracma::lsqnonneg(t(b)/ pracma::repmat(t(sdx[j,]),1,nt), 
                           t(x[j,] / sdx[j,]))
-  a[j,] <- aa$x
+  
+  # a(j,:)=aa';
+  a[j,] <- t(aa)
   }
   
-  }
+}

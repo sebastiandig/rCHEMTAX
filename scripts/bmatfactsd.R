@@ -89,16 +89,48 @@ bmatfactsd <- function(x, sdx, a, b0, sdb) {
     #              [x(:,j)./sdx(:,j);
     #               b0(indx,j)./sdb(indx,j)])
     
+    # t <- pracma::lsqnonneg(
+    #   
+    #   cbind( # might be c or rbind, not sure of input dimensions
+    #     a[,indx] / pracma::repmat(sdx[,j],1, sum(indx)),
+    #     diag(1 / sdb[indx,j])
+    #   ),
+    #   cbind( # might be c or rbind, not sure of input dimensions
+    #     (x[,j] / sdx[,j]), 
+    #     (b0[indx,j] / sdb[indx,j])
+    #   )
+    # )  
+    
     t <- pracma::lsqnonneg(
       
-      cbind( # might be c or rbind, not sure of input dimensions
+      as.matrix(rbind( 
         a[,indx] / pracma::repmat(sdx[,j],1, sum(indx)),
         diag(1 / sdb[indx,j])
-      ),
-      cbind( # might be c or rbind, not sure of input dimensions
+      )),
+      as.matrix(c( 
         (x[,j] / sdx[,j]), 
         (b0[indx,j] / sdb[indx,j])
-      )
-    )            
+      ))
+    )  
+    
+    b[indx,j] <- t 
   }
+  
+  b
 }
+
+t=lsqnonneg([a(:,indx)./ repmat(sdx(:,j),1,sum(indx));
+             diag(1./sdb(indx,j))],
+
+             [x(:,j)./sdx(:,j);
+              b0(indx,j)./sdb(indx,j)])
+
+
+[a(:,indx)./ repmat(sdx(:,j),1,sum(indx));
+  diag(1./sdb(indx,j))]
+
+a[,indx] / pracma::repmat(sdx[,j],1,sum(indx))
+diag(1 / sdb[indx,j])
+  
+[x(:,j)./sdx(:,j);
+  b0(indx,j)./sdb(indx,j)]
