@@ -43,8 +43,8 @@ dir <- "/data/processed/"
 
 # TODO: source data
 source(paste0(root, "/scripts/chemtaxbrokewest.R"))
-# source(paste0(root, "scripts/nnmatfactsd.R"))
-# source(paste0(root, "scripts/normprod.R"))
+source(paste0(root, "/scripts/nnmatfactsd.R"))
+source(paste0(root, "/scripts/normprod.R"))
 
 # get data values
 temp  <- chemtaxbrokewest() # should this be a function?
@@ -57,16 +57,16 @@ pigm  <- temp$pigm
 
 # fit the matrix factors
 temp2 <- nnmatfactsd(s,ssd,f0,fsd)
-c     <- temp2$c
-f     <- temp2$f
+c     <- temp2$a
+f     <- temp2$b
 info  <- temp2$info
 
 # scale the factors and original data
 temp3 <- normprod(s,c,f)
-ss    <- temp$ss
-cc    <- temp$cc
-ff    <- temp$ff
-rms   <- temp$rms
+ss    <- temp3$ss
+cc    <- temp3$cc
+ff    <- temp3$ff
+rms   <- temp3$rms
 
 # # write results to file brokewest.csv
 # fid=fopen('brokewest.csv','w+');
@@ -80,13 +80,13 @@ rms   <- temp$rms
 # TODO: check results of functions to be input to df1 and df2 
 df1 <-  ff
 colnames(df1) <- pigm
-rownames(df1) <- tax
+rownames(df1) <- taxa
 
 df2 <- cc
-colnames(df2) <- tax
+colnames(df2) <- taxa
 
 # Start a sink file with a CSV extension
-sink(paste0(root, dir, 'brokewest.csv'))
+sink(paste0(root, dir, 'brokewest_test.csv'))
 
 # Write the first dataframe, with a title and final line separator
 cat('chemtaxbrokewest\n\n')
@@ -103,10 +103,10 @@ sink()
 do <- "n"
 if (do == "y") {
   # TODO: sources
-  # source(paste0(root, "scripts/regplot.R"))
-  # source(paste0(root, "scripts/randstart.R"))
-  source(paste0(root, "scripts/bootln.R"))
-  source(paste0(root, "scripts/bootnp.R"))
+  source(paste0(root, "/scripts/regplot.R"))
+  source(paste0(root, "/scripts/randstart.R"))
+  source(paste0(root, "/scripts/bootln.R"))
+  source(paste0(root, "/scripts/bootnp.R"))
   
   # plot showing the effect of regularisation
   regplot(s,ssd,f,fsd)
