@@ -16,82 +16,83 @@ This will serve as my starting point for converting CHEMTAX V2.0 into R.
 double tilde ~ will show done
 
 21 - not all are .m files with functions
-o 9 mostly done
-* 10 finished
+o 2 mostly done
+* 17 finished
 ! 3 not started
 
 1
 * "adddir"                        ---- !
 2
-* "amatfactsd"                    ---- o mostly done
+* "amatfactsd"                    ---- *finished*
                                        - TODO: lsqnonneg
                                        needs works with creating the two matrices
 3
 * "bmatfactsd"                    ---- o mostly done 
                                        - TODO: lsqnonneg
 4
-* "bootln"                        ---- o mostly done 
+* "bootln"                        ---- *finished* 
                                        - connected to `nnmatfactsd`
 5
-* "bootnp"                        ---- o mostly done 
+* "bootnp"                        ---- *finished*
                                        - connected to `nnmatfactsd`
 6
-* "brokewest"                     ---- o mostly done 
+* "brokewest"                     ---- *finished*
                                        - connected to `chemtaxbrokewest`, 
                                        `nnmatfactsd`,  `normprod`, `regplot`, 
                                        `randstart`, `bootln`, `bootnp`
 7
-* "chemtaxbrokewest"              ---- * finished 
+* "chemtaxbrokewest"              ---- *finished* 
                                        - connected to `permcalc`, file for `s`  
                                        and `scol` as `CHEMTAXBROKEWests`, file    
                                        for `f0`, `taxa` and `fcol` as 
                                        `pigment_ratios.csv`
 8
 * "CHEMTAXBROKEWestb"             ---- o mostly done 
+                                       - TODO: create `matfactuvw` and test
                                        - connected to `matfactuvw`, `permcalc`,
                                        file for `b` as `b_pigment_ratios.csv`, 
                                        file for `x` as `CHEMTAXBROKEWestx.csv``
 9
-* "CHEMTAXBROKEWests"             ---- * finished, as .csv in `data/raw/`  
+* "CHEMTAXBROKEWests"             ---- *finished*, as .csv in `data/raw/`  
 10
-* "CHEMTAXBROKEWestx"             ---- * finished, as .csv in `data/raw/`
+* "CHEMTAXBROKEWestx"             ---- *finished*, as .csv in `data/raw/`
 11
 * "dataout"                       ---- !
                                        probably don't need     
 12
-* "Formulas"                      ---- * finished, doesn't connect to anything and 
+* "Formulas"                      ---- *finished*, doesn't connect to anything and 
                                        is not a function, not sure what do do with it
 13                                       
-* "initstruct"                    ---- * finished    
+* "initstruct"                    ---- *finished*    
 14
 * "matfactuvw"                    ---- !
                                        - connected to  `initstruct`
 15
-* "nnmatfactsd"                   ---- o mostly done   
+* "nnmatfactsd"                   ---- *finished*  
                                        - connected to `amatfactsd`
 16
-* "normprod"                      ---- * finished 
+* "normprod"                      ---- *finished* 
 17
-* "permcalc"                      ---- * finished       
+* "permcalc"                      ---- *finished*       
 18
-* "randstart"                     ---- o mostly done
+* "randstart"                     ---- *finished*
                                        - connect to `nnmatfactsd`
 19
-* "regplot"                       ---- o mostly done
+* "regplot"                       ---- *finished*
                                        - connected to `nnmatfactsd`
 20
-* "saz"                           ---- o mostly done 
+* "saz"                           ---- *finished*
                                        - connected to `sazchemtax090210`, 
                                        `nnmatfactsd`,  `normprod`, `regplot`, 
                                        `randstart`, `bootln`, `bootnp`
 21
-* "sazchemtax090210"              ----  * finished 
+* "sazchemtax090210"              ----  *finished* 
                                         - connected to `permcalc`, file for `s`  
                                         and `scol` as `SAZS_CHEMTAX090210s.csv`, 
                                         file for `f0`, `taxa` and `fcol` as 
                                         `saz_pigment_ratios.csv`
 22
-* "SAZS_CHEMTAX090210s"           ---- * finished, as .csv in `data/raw/`
+* "SAZS_CHEMTAX090210s"           ---- *finished*, as .csv in `data/raw/`
 
 ## To test `nnmatfactsd` and `amatfactsd` - start with 
     - brokewest.R to line 57, that'll be the inputs to `nnmatfactsd`
