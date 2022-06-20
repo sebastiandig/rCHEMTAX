@@ -1,4 +1,4 @@
-normprod <- function(s,c.f) {
+normprod <- function(s,c,f) {
 ################################################################################
 #                                                                              # 
 #               Normalise matrix product on last row of s & f                  #
