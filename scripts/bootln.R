@@ -55,6 +55,10 @@ bootln <- function(s, ssd, f, fsd)
   # nrep=10;
   
   
+  
+  # references another function nnmatfactsd
+  source(paste0(root,"/scripts/nnmatfactsd.R"))
+  
   # [ns,np]=size(s); %#ok<NASGU>
   # [nt,np]=size(f); %#ok<NASGU>
   # indx=find(f>0);
@@ -99,9 +103,6 @@ bootln <- function(s, ssd, f, fsd)
   
   tictoc::tic.clearlog()
   start <- tictoc::tic()
-  
-  # references another function nnmatfactsd
-  # TODO: source(paste0(root,"/scripts/nnmatfactsd.R"))
   
   for (i in 1:nrep) {
     tictoc::tic()

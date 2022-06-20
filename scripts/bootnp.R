@@ -52,17 +52,20 @@ bootnp <- function(s,ssd,f,fsd) {
   
   root <- rprojroot::find_rstudio_root_file()
   nrep <-  10  
-# nrep=10;
+  # nrep=10;
 
-# 
-# [ns,np]=size(s); %#ok<NASGU>
-# [nt,np]=size(f);  %#ok<NASGU>
-# indx=find(f>0);
-# ni=length(indx);
-# tf=zeros(nrep,ni);
-# tc=zeros(nrep,ns*nt);
+  # references another function
+  source(paste0(root,"/scripts/nnmatfactsd.R"))
+  
 
-# cc1=zeros(ns,nt);
+  # [ns,np]=size(s); %#ok<NASGU>
+  # [nt,np]=size(f);  %#ok<NASGU>
+  # indx=find(f>0);
+  # ni=length(indx);
+  # tf=zeros(nrep,ni);
+  # tc=zeros(nrep,ns*nt);
+
+  # cc1=zeros(ns,nt);
 
   ns   <- dim(s)[1] # row of s
   np   <- dim(s)[2] # col of s
@@ -95,9 +98,6 @@ bootnp <- function(s,ssd,f,fsd) {
   
   tictoc::tic.clearlog()
   start <- tictoc::tic()
-  
-  # references another function
-  # TODO: source(paste0(root,"/scripts/nnmatfactsd.R"))
   
   for (i in 1:nrep) {
     ind <- pracma::ceil(pracma::rand(ns,1) * ns)

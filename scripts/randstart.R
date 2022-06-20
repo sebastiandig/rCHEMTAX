@@ -52,6 +52,9 @@ randstart <- function(s,ssd,f,fsd) {
   # set directory for saving 
   root <- rprojroot::find_rstudio_root_file()
   
+  # references another function
+  source(paste0(root,"/scripts/nnmatfactsd.R"))
+  
   # nrep=10;
   nrep <- 10 
   
@@ -83,9 +86,6 @@ randstart <- function(s,ssd,f,fsd) {
   # tc(i,:)=cc(:)';
   # disp([toc,info.rmsx,info.rmsxwt,info.itr/1000,info.conv*1e6])
   # end
-  
-  # references another function
-  # TODO: source(paste0(root,"/scripts/nnmatfactsd.R"))
   
   tictoc::tic.clearlog()
   start <- tictoc::tic()

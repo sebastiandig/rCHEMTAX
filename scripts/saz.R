@@ -41,9 +41,9 @@ root <- rprojroot::find_rstudio_root_file()
 dir <- "/data/processed/"
 
 # TODO: source data
-source(paste0(root, "scripts/sazchemtax090210.R"))
-# source(paste0(root, "scripts/nnmatfactsd.R"))
-# source(paste0(root, "scripts/normprod.R"))
+source(paste0(root, "/scripts/sazchemtax090210.R"))
+source(paste0(root, "/scripts/nnmatfactsd.R"))
+source(paste0(root, "/scripts/normprod.R"))
 
 # get data values
 temp  <- sazchemtax090210() # should this be a function?
@@ -94,10 +94,10 @@ sink()
 do <- "n"
 if (do == "y") {
   # TODO: sources
-  # source(paste0(root, "scripts/regplot.R"))
-  # source(paste0(root, "scripts/randstart.R"))
-  source(paste0(root, "scripts/bootln.R"))
-  source(paste0(root, "scripts/bootnp.R"))
+  source(paste0(root, "/scripts/regplot.R"))
+  source(paste0(root, "/scripts/randstart.R"))
+  source(paste0(root, "/scripts/bootln.R"))
+  source(paste0(root, "/scripts/bootnp.R"))
   
   # plot showing the effect of regularisation
   regplot(s,ssd,f,fsd)

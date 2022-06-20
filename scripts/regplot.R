@@ -58,7 +58,7 @@ regplot <- function(s,ssd,f,fsd) {
   # set directory for saving 
   root <- rprojroot::find_rstudio_root_file()
   
-  # source(paste0(root, "scripts/nnmatfactsd.R"))
+  source(paste0(root, "/scripts/nnmatfactsd.R"))
   
   t      <- c(10, sqrt(10))
   fsdx   <- c(t, 0.1*t, 0.01*t, 0.02, 0.001*t, 0.0001*t)
