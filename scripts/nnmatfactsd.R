@@ -219,11 +219,9 @@ nnmatfactsd <- function(x,sdx,b0,sdb,info=NULL){
   # info.maxitr=maxitr;
   
   if (printitr > maxitr) {
-    print("1")
     maxitr      <- pracma::ceil(maxitr/convitr)*convitr
     printitr    <- maxitr + 1
   } else {
-    print("2")
     printitr    <- pracma::ceil(printitr/convitr)*convitr
     maxitr      <- pracma::ceil(maxitr/printitr)*printitr
   }
@@ -320,12 +318,12 @@ nnmatfactsd <- function(x,sdx,b0,sdb,info=NULL){
       #   rmsbwt=sqrt(sum(sum((erb./sdb).^2))/nb0);
       
       
-      if(printitr<=maxitr)
-        fprintf(['%6i%#10.3g%#10.3g%#10.3g%#10.3g%',  ...
-                 '#11.3e%11.3e%#11.3e\n'],  ...
-                itr,rmsx,rmsxwt,rmsb,rmsbwt,drms,daa,dbb)
-      end
-      end
+      # if(printitr<=maxitr)
+      #   fprintf(['%6i%#10.3g%#10.3g%#10.3g%#10.3g%',  ...
+      #            '#11.3e%11.3e%#11.3e\n'],  ...
+      #           itr,rmsx,rmsxwt,rmsb,rmsbwt,drms,daa,dbb)
+      # end
+      # end
       
       if ((itr %% printitr) == 0 || convind || (itr %% maxitr) == 0  ) {
         er     <- x - a %*% b
@@ -337,7 +335,7 @@ nnmatfactsd <- function(x,sdx,b0,sdb,info=NULL){
         
         if (printitr<=maxitr) {
           pracma::fprintf('   itr    rmsx      rmsxwt     rmsb     rmsbwt   drms       da         db\n')
-          pracma::fprintf("%6i%#10.3g%#10.3g%#10.3g%#10.3g%, #11.3e%11.3e%#11.3e\n", 
+          pracma::fprintf('%6i%#10.3g%#10.3g%#10.3g%#10.3g%#11.3e%11.3e%#11.3e\n', 
                           0,rmsx,rmsxwt,rmsb,rmsbwt,drms,daa,dbb)
         }
       }
@@ -346,7 +344,7 @@ nnmatfactsd <- function(x,sdx,b0,sdb,info=NULL){
       # if(convind)
       #   break
       
-      % check convergence
+      # % check convergence
       if(convind) {
         break
       }
@@ -374,7 +372,7 @@ nnmatfactsd <- function(x,sdx,b0,sdb,info=NULL){
   info$rmsbwt <- rmsbwt
   
   
-  result <- list(a,b,info)
+  result <- list(a=a,b=b,info=info)
   
   return(result)
   
