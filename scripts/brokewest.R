@@ -42,7 +42,7 @@ root <- rprojroot::find_rstudio_root_file()
 dir <- "/data/processed/"
 
 # TODO: source data
-source(paste0(root, "scripts/chemtaxbrokewest.R"))
+source(paste0(root, "/scripts/chemtaxbrokewest.R"))
 # source(paste0(root, "scripts/nnmatfactsd.R"))
 # source(paste0(root, "scripts/normprod.R"))
 
