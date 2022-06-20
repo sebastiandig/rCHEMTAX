@@ -16,15 +16,16 @@ This will serve as my starting point for converting CHEMTAX V2.0 into R.
 double tilde ~ will show done
 
 21 - not all are .m files with functions
-o 8 mostly done
+o 9 mostly done
 * 10 finished
-! 4 not started
+! 3 not started
 
 1
 * "adddir"                        ---- !
 2
 * "amatfactsd"                    ---- o mostly done
                                        - TODO: lsqnonneg
+                                       needs works with creating the two matrices
 3
 * "bmatfactsd"                    ---- o mostly done 
                                        - TODO: lsqnonneg
@@ -66,7 +67,8 @@ o 8 mostly done
 * "matfactuvw"                    ---- !
                                        - connected to  `initstruct`
 15
-* "nnmatfactsd"                   ---- !        
+* "nnmatfactsd"                   ---- o mostly done   
+                                       - connected to `amatfactsd`
 16
 * "normprod"                      ---- * finished 
 17
@@ -91,13 +93,19 @@ o 8 mostly done
 22
 * "SAZS_CHEMTAX090210s"           ---- * finished, as .csv in `data/raw/`
 
+## To test `nnmatfactsd` and `amatfactsd` - start with 
+    - brokewest.R to line 57, that'll be the inputs to `nnmatfactsd`
 
 # Matlab notes:
 * length(x) = largest of the dimensions, so if 100 x 4 = 100, or 4 x 100 = 100
 * `*` is matrix multiply, 
 * `.*` & `./` are matrix element by element multiply & divide operations
 * can use `pracma::rand()` for rand
-* 
+* `repmat` is used to replicate a matrix by x * y, ie repmat({matrix 5 x 4}, 2, 4)
+  result would be matrix 2 x 16, so 8 replicates of the original matrix where 
+  stacked twice and multiplied by 4
+* mod(a,m) is same as a %% m in R
+
 
 #TODO: something to include is:
 This would load internal ratios file so that you have a basic pigment ratio var
