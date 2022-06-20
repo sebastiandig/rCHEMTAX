@@ -54,8 +54,7 @@ initstruct <- function(values,default) {
   if (is.list(values)) {
     name <- names(values)
   } else {
-    # if values is a tibble
-    name <- values[,1]
+    stop("values needs to be a list")
   }
   
   # this adds the non-default info
@@ -63,11 +62,18 @@ initstruct <- function(values,default) {
   # str.(names{i})=values.(names{i});
   # end
   
+  # DOESNT WORK 
+  # this adds the non-default info
+  # for (i in 1:length(name)) {
+  #   # str${{name}}
+  #   str <- append(str, values[name[i]])
+  # }
+  # str
+  
   # this adds the non-default info
   for (i in 1:length(name)) {
-    print(i)
     # str${{name}}
-    str <- append(str, values[name[i]])
+    str[{{name[i]}}] <- values[name[i]]
   }
   str
   # return
