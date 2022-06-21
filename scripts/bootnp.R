@@ -103,8 +103,8 @@ bootnp <- function(s,ssd,f,fsd) {
     ind <- pracma::ceil(pracma::rand(ns,1) * ns)
     temp   <- nnmatfactsd(s[ind,], ssd[ind,], f, fsd, 
                           info = list(printitr = 1e6))
-    cc     <- temp$cc
-    ff     <- temp$ff
+    cc     <- temp$a
+    ff     <- temp$b
     info   <- temp$info
     
     # tf[i,] <- Conj(ff[indx])
@@ -123,27 +123,26 @@ bootnp <- function(s,ssd,f,fsd) {
   }
 
  
-# disp(' ')
-# disp('Range of variation in tf and tc')
-# tf1=tf-repmat(mean(tf),nrep,1);
-# disp([min(min(tf1)),max(max(tf1))])
-# tc1=tc-repmat(mean(tc),nrep,1);
-# disp([min(min(tc1(~isnan(tc1)))),max(max(tc1(~isnan(tc1))))])
+  # disp(' ')
+  # disp('Range of variation in tf and tc')
+  # tf1=tf-repmat(mean(tf),nrep,1);
+  # disp([min(min(tf1)),max(max(tf1))])
+  # tc1=tc-repmat(mean(tc),nrep,1);
+  # disp([min(min(tc1(~isnan(tc1)))),max(max(tc1(~isnan(tc1))))])
   
-  # may need to wrap mean(tf/tc) -> as.matrix(apply(tf, 1/2, mean))
-  tf1 <- tf - pracma::repmat(as.matrix(mean(tf, na.rm = T)),nrep,1)
-  tc1 <- tc - pracma::repmat(as.matrix(mean(tc, na.rm = T)),nrep,1)
+  tf1 <- tf - pracma::repmat(apply(tf, 2, mean, na.rm = T),nrep,1)
+  tc1 <- tc - pracma::repmat(apply(tc, 2, mean, na.rm = T),nrep,1)
   
   print('Range of variation in tf and tc')
   print(c(min(tf1, na.rm = T),max(tf1, na.rm = T)))
   print(c(min(tc1, na.rm = T),max(tc1, na.rm = T)))
   
-# figure
-# %loglog(mean(tf),std(tf),'o')
-# loglog(mean(tf),std(tf)./mean(tf),'o')
-# title('Non parametric bootstrap: Variation in f coefficients')
-# xlabel('Mean coefficient value')
-# ylabel('standard deviation/mean')
+  # figure
+  # %loglog(mean(tf),std(tf),'o')
+  # loglog(mean(tf),std(tf)./mean(tf),'o')
+  # title('Non parametric bootstrap: Variation in f coefficients')
+  # xlabel('Mean coefficient value')
+  # ylabel('standard deviation/mean')
   
   # allow loglog style plotting from Matlab
   fancy_scientific <- function(l) {
@@ -166,24 +165,24 @@ bootnp <- function(s,ssd,f,fsd) {
                      sd(x, na.rm = TRUE)/mean(x, na.rm = TRUE))
                    )
   
-  ggplot() +
+  print(ggplot() +
     # original had bubble dots - shape?
     geom_point(data = df,
                aes(x = x,
                    y = y),
                colour = "red") +
-    scale_x_log10(limits = c(1, 100),
-                  labels = fancy_scientific,
-                  minor_breaks = xticks) +
-    scale_y_log10(limits = c(1e-5, 1),
-                  labels = fancy_scientific,
-                  minor_breaks = yticks) +
+    # scale_x_log10(limits = c(1, 100),
+    #               labels = fancy_scientific,
+    #               minor_breaks = xticks) +
+    # scale_y_log10(limits = c(1e-5, 1),
+    #               labels = fancy_scientific,
+    #               minor_breaks = yticks) +
     labs(
       title = "Non parametric bootstrap: Variation in f coefficients",
       x     = "Mean coefficient value",
       y     = "standard deviation/mean"
     ) +
-    theme_bw()
+    theme_bw())
 
   # I don't think I need this chunk, but maybe
 # mtc=zeros(ns*nt,1);
@@ -209,24 +208,24 @@ bootnp <- function(s,ssd,f,fsd) {
 # return
 # end
 
-  ggplot() +
+  print(ggplot() +
     # original had bubble dots - shape?
     geom_point(data = df2,
                aes(x = x,
                    y = y),
                colour = "red") +
-    scale_x_log10(limits = c(1, 100),
-                  labels = fancy_scientific,
-                  minor_breaks = xticks) +
-    scale_y_log10(limits = c(1e-5, 1),
-                  labels = fancy_scientific,
-                  minor_breaks = yticks) +
+    # scale_x_log10(limits = c(1, 100),
+    #               labels = fancy_scientific,
+    #               minor_breaks = xticks) +
+    # scale_y_log10(limits = c(1e-5, 1),
+    #               labels = fancy_scientific,
+    #               minor_breaks = yticks) +
     labs(
       title = "Non parametric bootstrap: Variation in c coefficients",
       x     = "Mean coefficient value",
       y     = "standard deviation/mean"
     ) +
-    theme_bw()
+    theme_bw())
 }
 
 

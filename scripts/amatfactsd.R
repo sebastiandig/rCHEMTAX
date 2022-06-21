@@ -65,9 +65,6 @@ amatfactsd <- function(x, sdx, b){
   a <- matrix(0, ns, nt)
   
   for (j in seq(ns)) {
-    
-  # TODO: figure out the dimensions of sdx ----------------------------------------
-    
   #  aa=lsqnonneg(b'./    repmat(sdx(j,:)',1,nt),
   #               (x(j,:)./sdx(j,:))');
     # sdx(j,:) is row j all columns, repeate

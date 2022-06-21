@@ -1,5 +1,4 @@
 bmatfactsd <- function(x, sdx, a, b0, sdb) {
-  
 ################################################################################
 #                                                                              # 
 #       Calculate factor b in min(x-ab, b-b0) using Least Linear Squares       #
@@ -69,10 +68,9 @@ bmatfactsd <- function(x, sdx, a, b0, sdb) {
   
   library("pracma")
   
-  # dimentions of b0
-  b0_dim <- dim(b0)
-  nt <- b0_dim[1] # row
-  np <- bo_dim[2] # col
+  # dimensions of b0
+  nt <- dim(b0)[1] # row
+  np <- dim(b0)[2] # col
   
   # index where b0 does not equal 0
   indx1 <- b0 != 0
@@ -104,33 +102,38 @@ bmatfactsd <- function(x, sdx, a, b0, sdb) {
     t <- pracma::lsqnonneg(
       
       as.matrix(rbind( 
-        a[,indx] / pracma::repmat(sdx[,j],1, sum(indx)),
-        diag(1 / sdb[indx,j])
+        a[,indx] / pracma::repmat(as.matrix(sdx[,j]),1, sum(indx)),
+        pracma::Diag(1 / sdb[indx,j])
       )),
-      as.matrix(c( 
+      as.vector(c( 
         (x[,j] / sdx[,j]), 
         (b0[indx,j] / sdb[indx,j])
       ))
     )  
     
-    b[indx,j] <- t 
+    b[indx,j] <- t(t$x) 
   }
   
   b
 }
 
-t=lsqnonneg([a(:,indx)./ repmat(sdx(:,j),1,sum(indx));
-             diag(1./sdb(indx,j))],
-
-             [x(:,j)./sdx(:,j);
-              b0(indx,j)./sdb(indx,j)])
-
-
-[a(:,indx)./ repmat(sdx(:,j),1,sum(indx));
-  diag(1./sdb(indx,j))]
-
-a[,indx] / pracma::repmat(sdx[,j],1,sum(indx))
-diag(1 / sdb[indx,j])
-  
-[x(:,j)./sdx(:,j);
-  b0(indx,j)./sdb(indx,j)]
+# indx=indx1(:,j);
+# 
+# t=lsqnonneg(, ...
+#            );
+# 
+# [a(:,indx)./ repmat(sdx(:,j),1,sum(indx));diag(1./sdb(indx,j))]
+# 
+# a[,indx] / pracma::repmat(as.matrix(sdx[,j]), 1, sum(indx) )
+# 
+# diag(1 / sdb[indx,j])
+# 
+# 
+# [x(:,j)./sdx(:,j);b0(indx,j)./sdb(indx,j)]
+# 
+# 
+# a[1:3,indx]
+# pracma::repmat(as.matrix(sdx[,j]), 1, sum(indx) )
+# 
+# 
+# dim(a[,indx] / pracma::repmat(as.matrix(sdx[,j]),1, sum(indx)))

@@ -94,11 +94,11 @@ nnmatfactsd <- function(x,sdx,b0,sdb,info=NULL){
   # remove later to info <- NULL
   # Inputs here x,sdx,b0,sdb,info=NULL
   # Input from brokewest.R -> nnmatfactsd(s,ssd,f0,fsd)
-  x <- s
-  sdx <- ssd
-  b0 <- f0
-  sdb <- fsd
-  info <- NULL
+  # x <- s
+  # sdx <- ssd
+  # b0 <- f0
+  # sdb <- fsd
+  # info <- NULL
   
   # % default for info
   # if(nargin<5)
@@ -122,9 +122,8 @@ nnmatfactsd <- function(x,sdx,b0,sdb,info=NULL){
   np   <- dim(x)[2]
   nt   <- dim(b0)[1]
   nx   <- dim(b0)[2]
-  if (np != nx) {
-    stop('matfactsd: matrix size error\nnot the same size')
-  }
+  if (np != nx) stop('matfactsd: matrix size error\nnot the same size')
+  
   nx   <- ns * np
   na   <- ns * nt
   nb0  <- sum(b0!=0)

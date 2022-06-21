@@ -5,7 +5,7 @@ library("pracma")
 root <- rprojroot::find_rstudio_root_file()
 source(paste0(root,"/scripts/permcalc.R"))
 # TODO: matfactuvw
-# source(paste0(root,"/scripts/matfactuvw.R"))
+source(paste0(root,"/scripts/matfactuvw.R"))
 
 # bs=[1	0	0	1	1	0	1	1	1	1	1	0	1	1	0	0	1	0	1];
 # bb={'chlc3'	'MgDVP'	'chlc2'	'chlc1'	'per'	'but'	'fuc'	'neox'	'prx'	'violax'	'hex'	'Mmal'	'alx'	'lut'	'dhlut'	'GyroxTotal'	'chl_b'	'np_chl_c2'	'chl_a'};
@@ -64,8 +64,9 @@ b2 <- b1/pracma::repmat(as.matrix(apply(b1, 1, sum, na.rm = TRUE)),1,ncol(b1))
 # tic;[aaa,bbb,info]=matfactuvw(x2,b2,1,struct('maxitr',2000));toc
 # %[aaa,bbb,info]=matfact5(x2,b2,struct('maxitr',200));
 
+
 tictoc::tic()
-temp <- matfactuvw(x2, b2, 1, info = data.frame(maxitr = 2000))
+temp <- matfactuvw(x = x2, b = b2, 1, info =list(maxitr = 2000))
 aaa  <- temp$a
 bbb  <- temp$b
 info <- temp$info

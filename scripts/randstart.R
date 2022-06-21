@@ -101,8 +101,8 @@ randstart <- function(s,ssd,f,fsd) {
                             printitr = 1e12,
                             conv = 1e-10
                           ))
-    cc     <- temp$cc
-    ff     <- temp$ff
+    cc     <- temp$a
+    ff     <- temp$b
     info   <- temp$info
     
     tf[i,] <- t(ff[indx])
@@ -124,8 +124,9 @@ randstart <- function(s,ssd,f,fsd) {
   # disp([min(min(tc1)),max(max(tc1))])
   
   # may need to wrap mean(tf/tc) -> as.matrix(apply(tf, 1/2, mean))
-  tf1 <- tf - pracma::repmat(as.matrix(mean(tf, na.rm = T)),nrep,1)
-  tc1 <- tc - pracma::repmat(as.matrix(mean(tc, na.rm = T)),nrep,1)
+  tf1 <- tf - pracma::repmat(apply(tf, 2, mean, na.rm = T),nrep,1)
+  tc1 <- tc - pracma::repmat(apply(tc, 2, mean, na.rm = T),nrep,1)
+  
   
   print('Range of variation in tf and tc')
   print(c(min(tf1, na.rm = T),max(tf1, na.rm = T)))
@@ -160,22 +161,22 @@ randstart <- function(s,ssd,f,fsd) {
                      sd(x, na.rm = TRUE)/mean(x, na.rm = TRUE))
   )
   
-  ggplot() + 
+  print(ggplot() + 
   # original had bubble dots - shape?
   geom_point(data = df,
              aes(x = x,
                  y = y),
              colour = "red") +
-    scale_x_log10(limits = c(1, 100),
-                  labels = fancy_scientific,
-                  minor_breaks = xticks) +
-    scale_y_log10(limits = c(1e-5, 1),
-                  labels = fancy_scientific,
-                  minor_breaks = yticks) +
+    # scale_x_log10(limits = c(1, 100),
+    #               labels = fancy_scientific,
+    #               minor_breaks = xticks) +
+    # scale_y_log10(limits = c(1e-5, 1),
+    #               labels = fancy_scientific,
+    #               minor_breaks = yticks) +
     labs(title = "Variation in f coefficients",
          x     = "Mean coefficient value",
          y     = "standard deviation/mean") +
-    theme_bw()
+    theme_bw())
   
   
   # figure
@@ -191,21 +192,21 @@ randstart <- function(s,ssd,f,fsd) {
                       sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE))
                     )
   
-  ggplot() +
+  print(ggplot() +
     # original had bubble dots - shape?
     geom_point(data = df2,
                aes(x = x,
                    y = y),
                colour = "red") +
-    scale_x_log10(limits = c(1, 100),
-                  labels = fancy_scientific,
-                  minor_breaks = xticks) +
-    scale_y_log10(limits = c(1e-5, 1),
-                  labels = fancy_scientific,
-                  minor_breaks = yticks) +
+    # scale_x_log10(limits = c(1, 100),
+    #               labels = fancy_scientific,
+    #               minor_breaks = xticks) +
+    # scale_y_log10(limits = c(1e-5, 1),
+    #               labels = fancy_scientific,
+    #               minor_breaks = yticks) +
     labs(title = "Variation in c coefficients",
          x     = "Mean coefficient value",
          y     = "standard deviation/mean") +
-    theme_bw()
+    theme_bw())
   
 }

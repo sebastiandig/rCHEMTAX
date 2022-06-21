@@ -1,4 +1,4 @@
-bootln <- function(s, ssd, f, fsd)
+bootln <- function(s, ssd, f, fsd){
 ################################################################################
 #                                                                              # 
 #               Plot the effect of log normal perturbation of s                #
@@ -12,7 +12,7 @@ bootln <- function(s, ssd, f, fsd)
 # --------
 # s       = Matrix to be factored as a*b (best if a larger than b)
 # ssd     = Matrix of standard deviations for x
-# f       = Stabilising value for b, non zero locations, & initial value
+# f       = Stabilizing value for b, non zero locations, & initial value
 # fsd     = Matrix of standard deviations for b   
 #         
 # --------
@@ -54,7 +54,7 @@ bootln <- function(s, ssd, f, fsd)
   nrep <-  10
   # nrep=10;
   
-  
+  # f = f0
   
   # references another function nnmatfactsd
   source(paste0(root,"/scripts/nnmatfactsd.R"))
@@ -103,20 +103,20 @@ bootln <- function(s, ssd, f, fsd)
   
   tictoc::tic.clearlog()
   start <- tictoc::tic()
-  
+
   for (i in 1:nrep) {
     tictoc::tic()
     ss <- exp(
       # runif over rnorm because rnorm makes negative numbers
       # matrix(runif(length(s1)),nrow(s1)) * sd1 + s1 # could be ncol, dont know the expected dimensions
-      pracma::rand(ns, nt) * sd1 + s1 # better implementation
+      as.matrix(pracma::rand(ns, np)) * sd1 + s1 # better implementation
     )
 
     temp   <- nnmatfactsd(ss, ssd, f, fsd, info = list(printitr = 1e6))
-    cc     <- temp$cc
-    ff     <- temp$ff
+    cc     <- temp$a
+    ff     <- temp$b
     info   <- temp$info
-
+    
     # tf[i,] <- Conj(ff[indx])
     # tc[i,] <- Conj(cc)
   
@@ -124,6 +124,7 @@ bootln <- function(s, ssd, f, fsd)
     tc[i,] <- t(cc)
     
     end <- (tictoc::toc(quiet = T))$toc - start
+
     print(c(Time   = end,
             rmsx   = info$rmsx,
             rmsxwt = info$rmsxwt,
@@ -138,9 +139,8 @@ bootln <- function(s, ssd, f, fsd)
   # tc1=tc-repmat(mean(tc),nrep,1);
   # disp([min(min(tc1)),max(max(tc1))])
   
-  # may need to wrap mean(tf/tc) -> as.matrix(apply(tf, 1/2, mean))
-  tf1 <- tf - pracma::repmat(as.matrix(mean(tf, na.rm = T)),nrep,1)
-  tc1 <- tc - pracma::repmat(as.matrix(mean(tc, na.rm = T)),nrep,1)
+  tf1 <- tf - pracma::repmat(apply(tf, 2, mean, na.rm = T),nrep,1)
+  tc1 <- tc - pracma::repmat(apply(tc, 2, mean, na.rm = T),nrep,1)
   
   print('Range of variation in tf and tc')
   print(c(min(tf1, na.rm = T),max(tf1, na.rm = T)))
@@ -174,22 +174,22 @@ bootln <- function(s, ssd, f, fsd)
                      sd(x , na.rm = TRUE)/mean(x, na.rm = TRUE))
                    )
   
-  ggplot() +
+  print(ggplot() +
     # original had bubble dots - shape?
     geom_point(data = df,
                aes(x = x,
                    y = y),
                colour = "red") +
-    scale_x_log10(limits = c(1, 100),
-                  labels = fancy_scientific,
-                  minor_breaks = xticks) +
-    scale_y_log10(limits = c(1e-5, 1),
-                  labels = fancy_scientific,
-                  minor_breaks = yticks) +
+    # scale_x_log10(limits = c(1, 100),
+    #               labels = fancy_scientific,
+    #               minor_breaks = xticks) +
+    # scale_y_log10(limits = c(1e-5, 1),
+    #               labels = fancy_scientific,
+    #               minor_breaks = yticks) +
     labs(title = "Parametric Bootstrap, log normal:  Variation in f coefficients",
          x     = "Mean coefficient value",
          y     = "standard deviation/mean") +
-    theme_bw()
+    theme_bw())
   
   # figure%
   # %loglog(mean(tc)',(std(tc))','.')
@@ -200,7 +200,7 @@ bootln <- function(s, ssd, f, fsd)
  
   # return
   # end
-
+dim(tc)
   # tc
   # might have issue with transpose?
   df2 <- data.frame(x = apply(tc, 2, mean, na.rm = TRUE),
@@ -208,21 +208,24 @@ bootln <- function(s, ssd, f, fsd)
                       sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE))
                     )
   
-  ggplot() +
+  print(ggplot() +
     # original had bubble dots - shape?
     geom_point(data = df2,
                aes(x = x,
                    y = y),
                colour = "red") +
-    scale_x_log10(limits = c(1, 100),
-                  labels = fancy_scientific,
-                  minor_breaks = xticks) +
-    scale_y_log10(limits = c(1e-5, 1),
-                  labels = fancy_scientific,
-                  minor_breaks = yticks) +
+    # scale_x_log10(limits = c(1, 100),
+    #               labels = fancy_scientific,
+    #               minor_breaks = xticks) +
+    # scale_y_log10(limits = c(1e-5, 1),
+    #               labels = fancy_scientific,
+    #               minor_breaks = yticks) +
     labs(
       title = "Parametric Bootstrap, log normal:  Variation in c coefficients",
       x = "Mean coefficient value",
       y = "standard deviation/mean"
     ) +
-    theme_bw()
+    theme_bw())
+  
+  # plots <- list(p1, p2)
+}

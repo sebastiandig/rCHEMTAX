@@ -56,10 +56,24 @@ taxa  <- temp$taxa
 pigm  <- temp$pigm
 
 # fit the matrix factors
+# (x=s,sdx=ssd,b0=f0,sdb=fsd,info=NULL)
+# amatfactsd(x=x,sdx=sdx,b=b) 
+
+# matfactuvw(x=x,u=,v=,b=b0,w=,info)
+# bmatfactsd(x=x, sdx=sdx, a=a (from amatfactsd), b0=f0, sdb=fsd)
+
 temp2 <- nnmatfactsd(s,ssd,f0,fsd)
 c     <- temp2$a
 f     <- temp2$b
 info  <- temp2$info
+
+# idk what this is used for
+source(paste0(root, "/scripts/bmatfactsd.R"))
+bmatfactsd(x = s,
+sdx = ssd, 
+a = c,
+b0 = f,
+sdb = fsd)
 
 # scale the factors and original data
 temp3 <- normprod(s,c,f)
@@ -76,28 +90,34 @@ rms   <- temp3$rms
 # dataout(taxa,cc,fid);
 # fclose(fid)
 
-# write results to file brokewest.csv
-# TODO: check results of functions to be input to df1 and df2 
-df1 <-  ff
-colnames(df1) <- pigm
-rownames(df1) <- taxa
-
-df2 <- cc
-colnames(df2) <- taxa
-
-# Start a sink file with a CSV extension
-sink(paste0(root, dir, 'brokewest_test.csv'))
-
-# Write the first dataframe, with a title and final line separator
-cat('chemtaxbrokewest\n\n')
-write.csv(df1)
-cat('\n')
-
-# Write the 2nd dataframe to the same sink
-write.csv(df2)
-
-# Close the sink
-sink()
+df.sav = "n"
+if (save == "y") {
+  # write results to file brokewest.csv
+  # TODO: check results of functions to be input to df1 and df2 
+  df1 <-  ff
+  colnames(df1) <- pigm
+  rownames(df1) <- taxa
+  
+  df2 <- cc
+  colnames(df2) <- taxa
+  
+  # Start a sink file with a CSV extension
+  sink(paste0(root, dir, 'brokewest_test.csv'))
+  
+  # Write the first dataframe, with a title and final line separator
+  cat('chemtaxbrokewest\n\n')
+  write.csv(df1)
+  cat('\n')
+  
+  # Write the 2nd dataframe to the same sink
+  write.csv(df2)
+  
+  # Close the sink
+  sink()
+  rm(df.sav)
+} else {
+  rm(df.sav)
+}
 
 
 do <- "n"
@@ -109,13 +129,15 @@ if (do == "y") {
   source(paste0(root, "/scripts/bootnp.R"))
   
   # plot showing the effect of regularisation
+  # has warning, but seems work
   regplot(s,ssd,f,fsd)
   
   # show converges from random starts for c
-  randstart(s,ssd,f0,fsd);
+  # doesn't work
+  randstart(s,ssd,f0,fsd)
    
-  # bootstrap using parimetric log normal
-  bootln(s,ssd,f0,fsd);
+  # bootstrap using parametric log normal
+  bootln(s,ssd,f0,fsd)
    
   # bootstrap non parametric on s
   bootnp(s,ssd,f0,fsd)
