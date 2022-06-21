@@ -16,19 +16,20 @@ This will serve as my starting point for converting CHEMTAX V2.0 into R.
 double tilde ~ will show done
 
 21 - not all are .m files with functions
-o 2 mostly done
-* 17 finished
-! 3 not started
+o 0 mostly done
+* 20 finished
+! 0 not started
+x 2 not needed
 
 1
-* "adddir"                        ---- !
+* "adddir"                        ---- x
+                                       - I don't think I need this
 2
 * "amatfactsd"                    ---- *finished*
-                                       - TODO: lsqnonneg
                                        needs works with creating the two matrices
 3
-* "bmatfactsd"                    ---- o mostly done 
-                                       - TODO: lsqnonneg
+* "bmatfactsd"                    ---- *finished* 
+                                       - it works, but I don't know what for
 4
 * "bootln"                        ---- *finished* 
                                        - connected to `nnmatfactsd`
@@ -47,7 +48,7 @@ o 2 mostly done
                                        for `f0`, `taxa` and `fcol` as 
                                        `pigment_ratios.csv`
 8
-* "CHEMTAXBROKEWestb"             ---- o mostly done 
+* "CHEMTAXBROKEWestb"             ---- *finished*
                                        - TODO: create `matfactuvw` and test
                                        - connected to `matfactuvw`, `permcalc`,
                                        file for `b` as `b_pigment_ratios.csv`, 
@@ -57,7 +58,7 @@ o 2 mostly done
 10
 * "CHEMTAXBROKEWestx"             ---- *finished*, as .csv in `data/raw/`
 11
-* "dataout"                       ---- !
+* "dataout"                       ---- x
                                        probably don't need     
 12
 * "Formulas"                      ---- *finished*, doesn't connect to anything and 
@@ -65,7 +66,7 @@ o 2 mostly done
 13                                       
 * "initstruct"                    ---- *finished*    
 14
-* "matfactuvw"                    ---- !
+* "matfactuvw"                    ---- *finished*
                                        - connected to  `initstruct`
 15
 * "nnmatfactsd"                   ---- *finished*  
@@ -106,6 +107,8 @@ o 2 mostly done
   result would be matrix 2 x 16, so 8 replicates of the original matrix where 
   stacked twice and multiplied by 4
 * mod(a,m) is same as a %% m in R
+* df(:) puts matrix into 1 column
+* df(end) gets the last digit, bottom right of matrix
 
 
 #TODO: something to include is:
