@@ -98,6 +98,7 @@ matfactuvw <- function(x,u=NULL,v=NULL,b,w=NULL,wb=1,info=NULL) {
   # info=struct();
   # end
   
+  root <- rprojroot::find_rstudio_root_file()
   source(paste0(root,"/scripts/initstruct.R"))
   
   if (is.null(u)){
