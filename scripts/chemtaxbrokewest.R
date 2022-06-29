@@ -59,8 +59,8 @@ chemtaxbrokewest <- function() {
   
   # library("readr")
   
-  # root <- rprojroot::find_rstudio_root_file()
-  root <- "D:/rchemtax"
+  root <- rprojroot::find_rstudio_root_file()
+  # root <- "D:/rchemtax"
   raw  <- "/data/raw/"
   
   # CHEMTAXBROKEWests # Pigment concentration in samples
