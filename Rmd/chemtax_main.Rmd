@@ -141,7 +141,7 @@ Plotting Log function:
                 labels = fancy_scientific,
                 minor_breaks = yticks) +
     
-## Section 1: Setup
+
 
 ```{r setup, include=FALSE, message=FALSE}
 root <- rprojroot::find_rstudio_root_file()
@@ -175,5 +175,17 @@ rm(mainDir, subDir)
 this is a test help me
 ```{r}
 readr::read_csv("./data/raw/SAZS_CHEMTAX090210s.csv")
+
+```
+
+```{r}
+testa <- info$inita  
+testb <- info$initb
+
+dim(testa)
+dim(testb)
+
+s - (testa %*%  testb)
+
 ```
 
