@@ -48,12 +48,12 @@ source(paste0(root, "/scripts/normprod.R"))
 
 # get data values
 temp  <- chemtaxbrokewest() # should this be a function?
-s     <- temp$s
-ssd   <- temp$ssd
-f0    <- temp$f0
-fsd   <- temp$fsd
-taxa  <- temp$taxa
-pigm  <- temp$pigm
+s     <- temp$s     # pigment data
+ssd   <- temp$ssd   # s*0.01+0.0003
+f0    <- temp$f0    # f0 = ratio matrix
+fsd   <- temp$fsd   # f0*0.1 w/ last col = 0.05
+taxa  <- temp$taxa  # name of taxa groups, comes from pigment ratio col 1
+pigm  <- temp$pigm  # pigment names, comes from pigment ratio colnames, keeps names where index is 1
 
 # fit the matrix factors
 # (x=s,sdx=ssd,b0=f0,sdb=fsd,info=NULL)
@@ -61,6 +61,7 @@ pigm  <- temp$pigm
 
 # matfactuvw(x=x,u=,v=,b=b0,w=,info)
 # bmatfactsd(x=x, sdx=sdx, a=a (from amatfactsd), b0=f0, sdb=fsd)
+
 
 temp2 <- nnmatfactsd(s,ssd,f0,fsd)
 c     <- temp2$a
@@ -133,7 +134,7 @@ if (do == "y") {
   regplot(s,ssd,f,fsd)
   
   # show converges from random starts for c
-  # doesn't work
+  # sort of works, graphs are not on log scale
   randstart(s,ssd,f0,fsd)
    
   # bootstrap using parametric log normal
