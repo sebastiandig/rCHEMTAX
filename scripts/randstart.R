@@ -56,7 +56,7 @@ randstart <- function(s,ssd,f,fsd) {
   source(paste0(root,"/scripts/nnmatfactsd.R"))
   
   # nrep=10;
-  nrep <- 10 
+  nrep <- 10 # should add as default arg
   
   # [ns,np]=size(s); %#ok<NASGU>
   # [nt,np]=size(f); %#ok<NASGU>
@@ -65,14 +65,16 @@ randstart <- function(s,ssd,f,fsd) {
   # tf=zeros(nrep,ni);
   # tc=zeros(nrep,ns*nt);
   
-  ns   <- dim(s)[1] # row of s
-  np   <- dim(s)[2] # col of s
-  nt   <- dim(f)[1] # row of f
-  np   <- dim(f)[2] # col of f
-  indx <- which(f > 0)
-  ni   <- length(indx)
-  tf   <- matrix(0, nrep, ni)
-  tc   <- matrix(0, nrep, ns*nt)
+  ns   <- dim(s)[1]              # row of s (sample)
+  np   <- dim(s)[2]              # col of s (sample)
+  nt   <- dim(f)[1]              # row of f (ratio matrix)
+  np   <- dim(f)[2]              # col of f (ratio matrix)
+  indx <- which(f > 0)           # basically asking what pigments are used and where
+  ni   <- length(indx)           # how many values being used
+  tf   <- matrix(0, nrep, ni)    # matrix of zeros, where row # of repeats, col of 
+                                 # pigments ratios to change
+  tc   <- matrix(0, nrep, ns*nt) # matrix of zeros, where row is # of repeats, 
+                                 # col is # of samples * # of taxa
   
   
   # disp('   Time      rmsx      rmsxwt   itr/1000  conv*1e6')
@@ -87,10 +89,13 @@ randstart <- function(s,ssd,f,fsd) {
   # disp([toc,info.rmsx,info.rmsxwt,info.itr/1000,info.conv*1e6])
   # end
   
+  # starts clock to see time passed
   tictoc::tic.clearlog()
   start <- tictoc::tic()
   
-  for (i in 1:nrep) {
+  # repeats by # in nrep
+  # randomizes #s between 0 and 1 by size (ns,nt) for inita
+  for (i in seq(nrep)) {
     temp   <- nnmatfactsd(s,
                           ssd,
                           f,
