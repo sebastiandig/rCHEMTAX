@@ -13,7 +13,7 @@ nnmatfactsd <- function(x,sdx,b0,sdb,info=NULL){
 # --------
 # x       = Matrix to be factored as a*b (best if a larger than b)
 # sdx     = Matrix of standard deviations for x
-# b0      = Stabilising value for b, non zero locations, & initial value
+# b0      = Stabilizing value for b, non zero locations, & initial value
 # sdb     = Matrix of standard deviations for b
 # info    = Information for calculation (to override default values)
 #           .maxitr   Maximum number of iterations
@@ -118,13 +118,13 @@ nnmatfactsd <- function(x,sdx,b0,sdb,info=NULL){
   # nb0=sum(sum(b0~=0));
   # nerr=nx+nb0;
   
-  ns   <- dim(x)[1]
-  np   <- dim(x)[2]
-  nt   <- dim(b0)[1]
-  nx   <- dim(b0)[2]
+  ns   <- dim(x)[1]  # row of s (sample)
+  np   <- dim(x)[2]  # col of s (sample)
+  nt   <- dim(b0)[1] # row of f (ratio matrix)
+  nx   <- dim(b0)[2] # col of f (ratio matrix)
   if (np != nx) stop('matfactsd: matrix size error\nnot the same size')
   
-  nx   <- ns * np
+  nx   <- ns * np 
   na   <- ns * nt
   nb0  <- sum(b0!=0)
   nerr <- nx + nb0
@@ -171,6 +171,7 @@ nnmatfactsd <- function(x,sdx,b0,sdb,info=NULL){
   # end
   # end
   
+  # a is 
   if (exists("inita", info)) {
     a              <- info$inita
   } else {
@@ -190,9 +191,9 @@ nnmatfactsd <- function(x,sdx,b0,sdb,info=NULL){
   # end
 
   if (maxaitr > 0) {
-    t <- xw %*%  t(b)
+    t1 <- xw %*%  t(b)
     for (itr in 1:maxaitr) {
-      a <- a * t / (((a %*% b) * w2x) %*% t(b) + 1e-100)
+      a <- a * t1 / (((a %*% b) * w2x) %*% t(b) + 1e-100)
     }
     
     info$inita <- a
