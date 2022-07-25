@@ -6,6 +6,18 @@ chemtaxbrokewest <- function() {
 ################################################################################
 # DESCRIPTION:
 # --------
+# The chemtaxbrokewest.csv is read that contains the pigment data for all
+# measured pigments (rows = sample, col = pigment). The 
+# brokewest_pigment_ratios.csv is read that contains the initial pigments ratio
+# matrix (row = taxa ratio, col 1 = species name, others = pigment ratio). The
+# pigments are selected by an index of 1/0 representing the cols in the pigment 
+# ratio matrix that is used. This is pre-selected for testing. A comparison 
+# between pigments names from pigment ratio matrix and sample matrix is done to
+# select the same pigments (spelling counts) and check that none is missing from
+# the sample matrix. Two matrices are created for initial standard deviation 
+# using the formula ssd= s*0.01+0.0003 and fsd = f0*0.1 & last col = 0.05 for 
+# sample matrix and pigment ratio matrix, respectively. The pigment names and 
+# taxa name are exported as their own variable as well.
 #
 # --------
 # INPUTS:
@@ -16,9 +28,9 @@ chemtaxbrokewest <- function() {
 # OUTPUTS:
 # --------
 # s       = Matrix of samples by pigment readings
-# ssd     = Standard deviations for s
-# f0      = Initial matrix of taxa by pigment estiments
-# fsd     = Standard deviations for f
+# ssd     = Standard deviations for s (i.e. s*0.01+0.0003)
+# f0      = Initial pigment ratio matrix by taxa
+# fsd     = Standard deviations for f (i.e f0*0.1 & last col = 0.05)
 # taxa    = Cell array of taxa names
 # pigm    = Cell array of pigment names
 #
@@ -107,11 +119,11 @@ chemtaxbrokewest <- function() {
  
   # read pigment ratios, extract phyto names, pigment names, and ratios as
   # separate variables
-  ind <- c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1)
-  temp <- read.csv(paste0(root,"/scripts/brokewest_pigment_ratios.csv"))
-  f0 <- as.matrix(temp[,-1])
-  fcol <- colnames(f0)
-  taxa <- temp[,1]
+  ind          <- c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1)
+  temp         <- read.csv(paste0(root,"/scripts/brokewest_pigment_ratios.csv"))
+  f0           <- as.matrix(temp[,-1])
+  fcol         <- colnames(f0)
+  taxa         <- temp[,1]
   colnames(f0) <- NULL
   rm(temp)
 
@@ -137,27 +149,26 @@ chemtaxbrokewest <- function() {
 
   if (!all.equal(fcol[fi],scol[si])) {
     message('Names do not match')
-    print(cbind(fcol[fi],scol[si]))
-  # TODO: add exit?
-  # return
+    stop(cbind(fcol[fi],scol[si]))
+    stop()
   }
   
-  pigm <- fcol[fi]
+  pigm            <- fcol[fi]
   
   # % get columns that match
   # s=s(:,si); %#ok<NODEF>
   # f0=f0(:,fi);
   
-  s  <- s[, si]
-  f0 <- f0[, fi]
+  s               <- s[, si]
+  f0              <- f0[, fi]
   
   # % set sd values
   # ssd=s*0.01+0.0003;
   # fsd=f0*0.1;
   # fsd(:,end)=0.005;
   
-  ssd <- s*0.01+0.0003
-  fsd <- f0*0.1
+  ssd             <- s*0.01+0.0003
+  fsd             <- f0*0.1
   fsd[,ncol(fsd)] <- 0.005
     
   # return
