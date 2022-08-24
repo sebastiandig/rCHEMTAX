@@ -22,7 +22,7 @@ o 0 mostly done
 x 2 not needed
 
 1
-* "adddir"                        ---- x
+* "adddir"                        ---- *x*
                                        - I don't think I need this
 2
 * "amatfactsd"                    ---- *finished*
@@ -58,7 +58,7 @@ x 2 not needed
 10
 * "CHEMTAXBROKEWestx"             ---- *finished*, as .csv in `data/raw/`
 11
-* "dataout"                       ---- x
+* "dataout"                       ---- *x*
                                        probably don't need     
 12
 * "Formulas"                      ---- *finished*, doesn't connect to anything and 
@@ -98,7 +98,7 @@ x 2 not needed
 ## To test `nnmatfactsd` and `amatfactsd` - start with 
     - brokewest.R to line 57, that'll be the inputs to `nnmatfactsd`
 
-# Matlab notes:
+# Matlab to R notes:
 * length(x) = largest of the dimensions, so if 100 x 4 = 100, or 4 x 100 = 100
 * `*` is matrix multiply, 
 * `.*` & `./` are matrix element by element multiply & divide operations
@@ -179,13 +179,14 @@ readr::read_csv("./data/raw/SAZS_CHEMTAX090210s.csv")
 ```
 
 ```{r}
-testa <- info$inita  
-testb <- info$initb
+# testa <- info$inita  
+# testb <- info$initb
+# 
+# dim(testa)
+# dim(testb)
+# 
+# s - (testa %*%  testb)
 
-dim(testa)
-dim(testb)
-
-s - (testa %*%  testb)
 
 ```
 
