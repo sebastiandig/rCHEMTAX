@@ -2,6 +2,9 @@
 .Rhistory
 .RData
 .Ruserdata
+.Renviron
+.Rprofile
+
 Re__CHEMTAX_Update_**/
 data/
 */limsolve_implement.R
