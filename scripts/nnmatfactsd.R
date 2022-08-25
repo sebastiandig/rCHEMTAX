@@ -15,7 +15,7 @@ nnmatfactsd <- function(x,sdx,b0,sdb,info=NULL){
 # sdx     = Matrix of standard deviations for x
 # b0      = Stabilizing value for b, non zero locations, & initial value
 # sdb     = Matrix of standard deviations for b
-# info    = Information for calculation (to override default values)
+# info    = Information/options for calculation (to override default values)
 #           .maxitr   Maximum number of iterations
 #           .convitr  Iterations between convergence tests
 #           .printitr Count of iterations between printing
@@ -124,10 +124,10 @@ nnmatfactsd <- function(x,sdx,b0,sdb,info=NULL){
   nx   <- dim(b0)[2] # col of f (ratio matrix)
   if (np != nx) stop('matfactsd: matrix size error\nnot the same size')
   
-  nx   <- ns * np 
-  na   <- ns * nt
-  nb0  <- sum(b0!=0)
-  nerr <- nx + nb0
+  nx   <- ns * np    # row (sample) times col (sample)
+  na   <- ns * nt    # row (sample) times row (ratio matrix)
+  nb0  <- sum(b0!=0) # sums of # of times a value in (ratio matrix) is not 0
+  nerr <- nx + nb0   # # of values in ratio matrix that != 0 and row times col
   
   # % transformed values as used in calculation
   # sdx=sdx+1e-100;
@@ -137,12 +137,12 @@ nnmatfactsd <- function(x,sdx,b0,sdb,info=NULL){
   # xw=x.*w2x;
   # b0w=b0.*w2b;
   
-  sdx <- sdx + 1e-100
-  sdb <- sdb + 1e-100
-  w2x <- 1 / (sdx^2)
-  w2b <- 1 / (sdb^2)
-  xw  <- x * w2x
-  b0w <- b0 * w2b
+  sdx <- sdx + 1e-100 # add low number to std dev of sample matrix
+  sdb <- sdb + 1e-100 # add low number to std dev of ratio matrix
+  w2x <- 1 / (sdx^2)  # create weight by inverse squared st dev sample matrix
+  w2b <- 1 / (sdb^2)  # create weight by inverse squared st dev ratio matrix
+  xw  <- x * w2x      #
+  b0w <- b0 * w2b     #
   
   # % replace default values by given values
   # deflt=struct('maxitr',20000,'convitr',500,'printitr',1000,  ...
