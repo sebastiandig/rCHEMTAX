@@ -1,11 +1,10 @@
 permcalc <- function(ratio_pig_filt, df_pig) {
 ################################################################################
 #                                                                              # 
-#               Calculate permutation to turn a into b                         #
+#                    Calculate permutation to turn a into b                    #
 #                                                                              #    
 ################################################################################
-# DESCRIPTION:
-# --------
+# ---- DESCRIPTION: ------
 # This uses a vector of pigment names, `ratio_pig_filt`, that has been 
 # pre-filtered using an index of 0/1 to select only the pigments wanted and uses 
 # these names to  identify the pigment names from the data set, `df_pig`, that 
@@ -19,31 +18,23 @@ permcalc <- function(ratio_pig_filt, df_pig) {
 # Once the search is completed, the matching names are put into an output vector 
 # `new_idx` to be used on the data set for indexing.
 #
-# --------
-# INPUTS:
-# --------
+# ---- INPUTS: -----------
 # ratio_pig_filt  = vector of pigment names used that are filtered by an index  
 #                   variable of 0/1 (0 = not used, 1 = used) in the analysis
 # df_pig          = vector of column names from the data set used
 # 
-# --------
-# OUTPUTS:
-# --------
+# ---- OUTPUTS: ----------
 # new_idx         = the selected names in `df_pig` that matches `ratio_pig_filt`
 # 
-# --------
-# NOTES:
-# --------
+# ---- NOTES: ------------
 # Original: 2010-02-09  Matlab7  W.Whiten
-# --------
-# References:
-# --------
 #
-# --------
-# Author:
-# --------
+# ---- REFERENCES(s): ----
+#
+# ---- AUTHOR(s): --------
 # Sebastian Di Geronimo (Fri Jun 17 15:10:26 2022)
 
+  # ---- search for selected pigments in sample ----
   n       <- length(ratio_pig_filt) # number of pigments used in analysis
   new_idx <- matrix(0, 1, n) 
   
@@ -66,6 +57,7 @@ permcalc <- function(ratio_pig_filt, df_pig) {
     }
   }
 
+  # ---- stop if any of the selected pigments were not found in the sample  ----
   if (!identical(ratio_pig_filt, df_pig[new_idx])) {
     message('Names do not match')
     print(cbind("Selected Pigments"= ratio_pig_filt,
