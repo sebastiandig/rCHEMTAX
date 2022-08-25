@@ -46,35 +46,44 @@ source(paste0(root, "/scripts/chemtaxbrokewest.R"))
 source(paste0(root, "/scripts/nnmatfactsd.R"))
 source(paste0(root, "/scripts/normprod.R"))
 
-# get data values
-temp  <- chemtaxbrokewest() # should this be a function?
-s     <- temp$s     # pigment data
-ssd   <- temp$ssd   # s*0.01+0.0003
-f0    <- temp$f0    # f0 = ratio matrix
-fsd   <- temp$fsd   # f0*0.1 w/ last col = 0.05
-taxa  <- temp$taxa  # name of taxa groups, comes from pigment ratio col 1
-pigm  <- temp$pigm  # pigment names, comes from pigment ratio colnames, keeps names where index is 1
+# get data from chemtaxbrokewest dataset
+temp           <- chemtaxbrokewest()  # should this be a function?
+df_matrix      <- temp$df_matrix      # pigment data
+df_matrix_sd   <- temp$df_matrix_sd   # df_matrix * 0.01 + 0.0003
+init_pig_ratio <- temp$init_pig_ratio # init_pig_ratio = ratio matrix
+pig_ratio_sd   <- temp$pig_ratio_sd   # init_pig_ratio * 0.1 w/ last col = 0.005
+taxa           <- temp$taxa           # name of taxa groups, comes from pigment ratio col 1
+pigm_sel       <- temp$pigm_sel       # pigment names, comes from pigment ratio colnames, keeps names where index is 1
+
+s     <- temp$df_matrix      # pigment data
+ssd   <- temp$df_matrix_sd   # df_matrix * 0.01 + 0.0003
+f0    <- temp$init_pig_ratio # init_pig_ratio = ratio matrix
+fsd   <- temp$pig_ratio_sd   # init_pig_ratio * 0.1 w/ last col = 0.005
+taxa  <- temp$taxa           # name of taxa groups, comes from pigment ratio col 1
+pigm  <- temp$pigm_sel 
 
 # fit the matrix factors
-# (x=s,sdx=ssd,b0=f0,sdb=fsd,info=NULL)
-# amatfactsd(x=x,sdx=sdx,b=b) 
-
-# matfactuvw(x=x,u=,v=,b=b0,w=,info)
-# bmatfactsd(x=x, sdx=sdx, a=a (from amatfactsd), b0=f0, sdb=fsd)
-
-
 temp2 <- nnmatfactsd(s,ssd,f0,fsd)
 c     <- temp2$a
 f     <- temp2$b
 info  <- temp2$info
 
+# Notes (to help follow what goes into functions): 
+# inputs for nnmatfactsd(x=s,sdx=ssd,b0=f0,sdb=fsd,info=NULL)
+# inputs for amatfactsd(x=x,sdx=sdx,b=b) in nnmatfactsd
+
+# matfactuvw(x=x,u=,v=,b=b0,w=,info)
+# bmatfactsd(x=x, sdx=sdx, a=a (from amatfactsd), b0=f0, sdb=fsd)
+
 # idk what this is used for
 source(paste0(root, "/scripts/bmatfactsd.R"))
-bmatfactsd(x = s,
-sdx = ssd, 
-a = c,
-b0 = f,
-sdb = fsd)
+bmatfactsd(
+  x   = s,
+  sdx = ssd,
+  a   = c,
+  b0  = f,
+  sdb = fsd
+)
 
 # scale the factors and original data
 temp3 <- normprod(s,c,f)
@@ -83,14 +92,7 @@ cc    <- temp3$cc
 ff    <- temp3$ff
 rms   <- temp3$rms
 
-# # write results to file brokewest.csv
-# fid=fopen('brokewest.csv','w+');
-# fprintf(fid,'chemtaxbrokewest\r\n\r\n');
-# dataout(taxa,pigm,ff,fid);
-# fprintf(fid,'\r\n');
-# dataout(taxa,cc,fid);
-# fclose(fid)
-
+# write results to file brokewest.csv
 df.sav = "n"
 if (save == "y") {
   # write results to file brokewest.csv
