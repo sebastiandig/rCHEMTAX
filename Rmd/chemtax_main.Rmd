@@ -132,11 +132,11 @@ Plotting Log function:
   xticks = outer((1:10),(10^(0:1)))
   
   include either:
-  * semiolgx
+  * semi-logx
   scale_x_log10(limits = c(1, 100),
                 labels = fancy_scientific,
                 minor_breaks = xticks) +
-  * semilogy
+  * semi-logy
   scale_y_log10(limits = c(1e-5, 1),
                 labels = fancy_scientific,
                 minor_breaks = yticks) +
