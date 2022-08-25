@@ -1,11 +1,10 @@
 chemtaxbrokewest <- function() {
 ################################################################################
 #                                                                              # 
-#               Read phytoplankton data for chemtaxbrokewest                    #
+#            ---- Read phytoplankton data for chemtaxbrokewest ----            #
 #                                                                              #    
 ################################################################################
-# DESCRIPTION:
-# --------
+# ---- DESCRIPTION: ------
 # The chemtaxbrokewest.csv is read that contains the pigment data for all
 # measured pigments (rows = sample, col = pigment). The 
 # brokewest_pigment_ratios.csv is read that contains the initial pigments ratio
@@ -15,168 +14,89 @@ chemtaxbrokewest <- function() {
 # between pigments names from pigment ratio matrix and sample matrix is done to
 # select the same pigments (spelling counts) and check that none is missing from
 # the sample matrix. Two matrices are created for initial standard deviation 
-# using the formula ssd= s*0.01+0.0003 and fsd = f0*0.1 & last col = 0.05 for 
-# sample matrix and pigment ratio matrix, respectively. The pigment names and 
-# taxa name are exported as their own variable as well.
+# using the formula(s):
 #
-# --------
-# INPUTS:
-# --------
+# df_matrix_sd = df_matrix_sd * 0.01 + 0.0003;
+# pig_ratio_sd = init_pig_ratio*0.1; and
+# last col     = 0.05 
+# 
+# for sample matrix and pigment ratio matrix, respectively. The pigment names  
+# and taxa name are exported as their own variable as well.
+#
+# ---- INPUTS: -----------
 # NA
 #
-# --------
-# OUTPUTS:
-# --------
-# s       = Matrix of samples by pigment readings
-# ssd     = Standard deviations for s (i.e. s*0.01+0.0003)
-# f0      = Initial pigment ratio matrix by taxa
-# fsd     = Standard deviations for f (i.e f0*0.1 & last col = 0.05)
-# taxa    = Cell array of taxa names
-# pigm    = Cell array of pigment names
+# ---- OUTPUTS: ----------
+# df_matrix_sd   = Matrix of samples by pigment readings
+# df_matrix_sd   = Standard deviations for df_matrix_sd (i.e. df_matrix_sd*0.01+0.0003)
+# init_pig_ratio = Initial pigment ratio matrix by taxa
+# pig_ratio_sd   = Standard deviations for f (i.e init_pig_ratio*0.1 & last col = 0.05)
+# taxa           = Cell array of taxa names
+# pigm_sel       = Cell array of selected pigment names
 #
-# --------
-# NOTES:
-# --------
+# ---- NOTES: ------------
 # Original: 2010-03-21  Matlab7  W.Whiten
-# --------
-# References:
-# --------
 #
-# --------
-# Author:
-# --------
+# ---- REFERENCES(s): ----
+#
+# ---- AUTHOR(s): --------
 # Sebastian Di Geronimo (Mon Jun 13 18:21:17 2022)
- 
-# function [s,ssd,f0,fsd,taxa,pigm]=chemtaxbrokewest
-# % chemtxbrokewest  Read phytoplanton data for chemtaxbrokewest
-# %  2010-03-21  Matlab7  W.Whiten
-# %
-# % [s,ssd,f0,fsd,taxa,pigm]=chemtaxbrokewest
-# %  Input data from this filw and CHEMTAXBROKEWests
-# %
-# %  s    Matrix of samples by pigment readings
-# %  ssd  Standard deviations for s
-# %  f0    Initial matrix of taxa by pigment estiments
-# %  fsd  Standard deviations for f
-# %  taxa Cell array of taxa names
-# %  pigm Cell array of pigment names
-# %
-# % Pigments are selected according to the indicator array
-# %  and origanised so columns of pigments correspond
-# % For other data change function name and paste data in as bolow
-# %  and similarly for a file of the sample data
-# 
-# % put sample data file name here
-# % get s matrix and scol column names
-  
-  # library("readr")
   
   root <- rprojroot::find_rstudio_root_file()
-  # root <- "D:/rchemtax"
   raw  <- "/data/raw/"
   
-  # CHEMTAXBROKEWests # Pigment concentration in samples
-  # should make this a function?
-  s    <- as.matrix(read.csv(paste0(root, raw, "CHEMTAXBROKEWests.csv")))
-  scol <- colnames(s)
-  colnames(s) <- NULL
- 
-  # % ind tell which columns can be used
-  # ind=[1	0	0	1	1	0	1	1	1	1	1	0	1	1	0	0	1	0	1];
+  # ---- CHEMTAXBROKEWests  ----
+  # pigment concentration in samples
+  # TODO: should make this a function?
+  sample_filepath     <- paste0(root, raw, "CHEMTAXBROKEWests.csv")
+  df_matrix           <- as.matrix(read.csv(sample_filepath))
   
-  # % column names of pigments for f matrix
-  # fcol={'chlc3'	'MgDVP'	'chlc2'	'chlc1'	'per'	'but'	'fuc'	'neox'	'prx'	'violax'	'hex'	'Mmal'	'alx'	'lut'	'dhlut'	'GyroxTotal'	'chl_b'	'np_chl_c2'	'chl_a'};
+  # extract pigment names
+  df_pig              <- colnames(df_matrix)
+  colnames(df_matrix) <- NULL
  
- # don't need as is in f0 file as colname 
- # fcol <- c("chlc3","MgDVP","chlc2","chlc1","per","but","fuc","neox","prx",
- #           "violax","hex","Mmal","alx","lut","dhlut","GyroxTotal","chl_b",
- #           "np_chl_c2","chl_a"
- #           )
+  # ---- index for selected pigments of pigment ratios matrix ----
+  # TODO: make input for this 
+  idx <- c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1)
+  
+  # ---- read pigment ratios ----
+  pig_ratio_filepath       <- paste0(root,"/scripts/brokewest_pigment_ratios.csv")
+  temp_ratio               <- read.csv(pig_ratio_filepath)
+  
+  # initialize ratio matrix by removing taxa and pigment names
+  init_pig_ratio           <- as.matrix(temp_ratio[,-1])[, which(idx==1)] 
+  colnames(init_pig_ratio) <- NULL # TODO: decide if it matters or not
+  
+  # extract pigment names
+  pigm_sel                 <- colnames(temp_ratio)[which(idx==1)][-1] 
+  
+  # extract taxa names
+  taxa                     <- temp_ratio[,1]
 
-  # % f matrix taxa by pigment
-  # f0=[0	0.082815484	0	0	0	0	0	0.076017708	0.093775606	0.048498574	0	0.034069268	0	0.006383245	0.023810763	0	0.663053868	0	1
-  #     0	0.001674811	0	0	0	0	0	0.074384251	0	0.036350279	0	0	0	0.220905086	0	0	0.167089565	0	1
-  #     0	0.001280276	0.14910557	0	0	0	0	0	0	0	0	0	0.224584718	0	0	0	0	0	1
-  #     0	0.001108976	0.076997483	0.15	0	0	0.8	0	0	0	0	0	0	0	0	0	0	0	1
-  #     0.033	0	0.131	0	0	0	0.61	0	0	0	0	0	0	0	0	0	0	0	1
-  #     0	0.000974879	0.367132108	0	0.876791629	0	0	0	0	0	0	0	0	0	0	0	0	0	1
-  #     0.13	0.001284182	0.023	0	0	0.01	0.08	0	0	0	0.4	0	0	0	0	0	0	0.03	1
-  #     0.27	0.001120303	0.16	0	0	0.12	0.01	0	0	0	1.1	0	0	0	0	0	0	0.06	1];
-   
-  # % row names for f matrix
-  # taxa={'Prasinophytes'
-  #   'Chlorophytes'
-  #   'Cryptophytes'
-  #   'Diatoms-A'
-  #   'Diatoms-B'
-  #   'Dinoflagellates-A'
-  #   'Haptophytes-HiFe'
-  #   'Haptophytes-LoFe'};
-  # included in pigment_ratio csv as well
-  # taxa <- c('Prasinophytes', 'Chlorophytes', 'Cryptophytes', 'Diatoms-A',
-  # 'Diatoms-B','Dinoflagellates-A','Haptophytes-HiFe',
-  # 'Haptophytes-LoFe')
- 
-  # read pigment ratios, extract phyto names, pigment names, and ratios as
-  # separate variables
-  ind          <- c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1)
-  temp         <- read.csv(paste0(root,"/scripts/brokewest_pigment_ratios.csv"))
-  f0           <- as.matrix(temp[,-1])
-  fcol         <- colnames(f0)
-  taxa         <- temp[,1]
-  colnames(f0) <- NULL
-  rm(temp)
-
+  # ---- find columns that match and rearrange ----
   source(paste0(root,"/scripts/permcalc.R"))
-  # % find columns that match
-  # si=permcalc(fcol(ind==1),scol);
-  # fi=find(ind);
-  si <- permcalc(fcol[ind == 1], scol)
-  fi <- which(ind == 1)
+  df_pig_idx <- permcalc(pigm_sel, df_pig)
   
-  # a is filtered vector for pigment names
-  # b is a data set of column names
-  # si which is the column names that are the same as the selected ones in fcol 
-  # filtered by the index
+  # filter columns for pigment that match selected pigments
+  df_matrix  <- df_matrix[, df_pig_idx]
   
-  
-  # if(~isequal(fcol(fi),scol(si)))
-  #   disp('Names do not match')
-  # disp([fcol(fi),scol(si)])
-  # return
-  # end
-  # pigm=fcol(fi);
+  # ---- set standard deviation values ----
+  df_matrix_sd                       <- df_matrix * 0.01 + 0.0003
+  pig_ratio_sd                       <- init_pig_ratio * 0.1
+  pig_ratio_sd[, ncol(pig_ratio_sd)] <- 0.005 # set chlor-a sd to 0.005
 
-  if (!all.equal(fcol[fi],scol[si])) {
-    message('Names do not match')
-    stop(cbind(fcol[fi],scol[si]))
-    stop()
-  }
+  # return list of all variables created
+  result <-
+    list(
+      df_matrix      = df_matrix,
+      df_matrix_sd   = df_matrix_sd,
+      init_pig_ratio = init_pig_ratio,
+      pig_ratio_sd   = pig_ratio_sd,
+      taxa           = taxa,
+      pigm_sel       = pigm_sel
+    )
   
-  pigm            <- fcol[fi]
-  
-  # % get columns that match
-  # s=s(:,si); %#ok<NODEF>
-  # f0=f0(:,fi);
-  
-  s               <- s[, si]
-  f0              <- f0[, fi]
-  
-  # % set sd values
-  # ssd=s*0.01+0.0003;
-  # fsd=f0*0.1;
-  # fsd(:,end)=0.005;
-  
-  ssd             <- s*0.01+0.0003
-  fsd             <- f0*0.1
-  fsd[,ncol(fsd)] <- 0.005
-    
-  # return
-  # end
-  # 
-   
- result <-  list(s=s,ssd=ssd,f0=f0,fsd=fsd,taxa=taxa,pigm=pigm)
-
 }
+
 
 
