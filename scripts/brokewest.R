@@ -1,41 +1,27 @@
+################################################################################
+#                                                                              # 
+#               Command file to fit brokwest data                              #
+#                                                                              #    
+################################################################################
+# ---- DESCRIPTION: ------
+# Will call `chemtaxbrokewest()` and extract from brokewest data set.
+#
+# ---- INPUTS: -----------
+# NA 
+#
+# ---- OUTPUTS: ----------
+# brokewest.csv = a .csv file of the matrix factorization 
+#
+# ---- NOTES: ------------
+# Original: 2010-04-11  Matlab7  W.Whiten
+#
+# ---- REFERENCES(s): ----
+#
+# ---- AUTHOR(s): --------
+# Sebastian Di Geronimo (2022-06-19 19 22:22:08 EDT)
+
 # will need to update
 # TODO: create this as a standalone function 
-
-
-# % brokewest  Command file to fit sazchemtax090210 data
-# %  2010-04-11  Matlab7  W.Whiten
-# %
-# % Input from chemtaxbrokewest function
-# % Output to file brokewest.csv in comma separated format
-# 
-# % get data values
-# [s,ssd,f0,fsd,taxa,pigm]=chemtaxbrokewest;
-# 
-# % fit the matrix factors
-# [c,f,info]=nnmatfactsd(s,ssd,f0,fsd);
-# 
-# % scale the factors and original data
-# [ss,cc,ff,rms]=normprod(s,c,f);
-# 
-# % write results to file brokewest.csv
-# fid=fopen('brokewest.csv','w+');
-# fprintf(fid,'chemtaxbrokewest\r\n\r\n');
-# dataout(taxa,pigm,ff,fid);
-# fprintf(fid,'\r\n');
-# dataout(taxa,cc,fid);
-# fclose(fid);
-# 
-# % % plot showing the effect of regularisation
-# % regplot(s,ssd,f,fsd)
-# %
-# % % show converges from random starts for c
-# % randstart(s,ssd,f0,fsd);
-# % 
-# % % bootstrap using parimetric log normal
-# % bootln(s,ssd,f0,fsd);
-# % 
-# % % bootstrap non parametric on s
-# % bootnp(s,ssd,f0,fsd)
 
 # set directory for saving 
 root <- rprojroot::find_rstudio_root_file()
