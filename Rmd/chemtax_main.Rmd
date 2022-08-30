@@ -71,6 +71,7 @@ x 2 not needed
 15
 * "nnmatfactsd"                   ---- *finished*  
                                        - connected to `amatfactsd`
+                                       - connected to  `initstruct`
 16
 * "normprod"                      ---- *finished* 
 17
@@ -109,6 +110,10 @@ x 2 not needed
 * mod(a,m) is same as a %% m in R
 * df(:) puts matrix into 1 column
 * df(end) gets the last digit, bottom right of matrix
+
+## Normalization to Chlor-a 
+I think this is done in `matfactuvw` using `pracma::Diag(1/chlor-a col)` then 
+the dot product with df
 
 
 #TODO: something to include is:
@@ -172,9 +177,28 @@ fs::dir_create(path = paste0(mainDir,"/",subDir))
 rm(mainDir, subDir)
 ```
 
-this is a test help me
-```{r}
-readr::read_csv("./data/raw/SAZS_CHEMTAX090210s.csv")
+# Normalize by last column
+when normalizing by a column, if you take last column and create into square 
+matrix with diagonal being each value in last column and take the inverse, you
+can take the dot product of the diagnoal matrix and the original dataframe to 
+get a normalized matrix by last column
+
+Ex: dataset = 6x12
+Take last column to normalize to
+diag(1 / col 12) %*% dataset
+will results if took last column and divided by each value in the same row
+
+```{r how-to-normalize-by-last-col}
+test_norm <- pracma::rand(6, 12)
+
+# last column should be a 1 because normalized to last column
+# 2 methods:
+# diagonol approach
+pracma::Diag(1/test_norm[,ncol(test_norm)]) %*% test_norm
+
+# apply method *more confusing
+t(apply(test_norm, 1, function(x) x / x[length(x)]))
+
 
 ```
 
