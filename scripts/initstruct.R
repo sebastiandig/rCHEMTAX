@@ -1,56 +1,38 @@
-initstruct <- function(values,default) {
+initstruct <- function(values, default) {
 ################################################################################
 #                                                                              # 
-#           Initialize struct with default values when not given              #
+#             Initialize options with default values when not given            #
 #                                                                              #    
 ################################################################################
-# DESCRIPTION:
-# --------
-# Initialize the structure for matrix factorization 
+# ---- DESCRIPTION: ------
+# Initialize the structure for matrix factorization.
+# Default values:
+#                maxitr   = 20000;      maximum iterations
+#                convitr  = 500;        convergence iterations?
+#                printitr = 1000,       print results every 1000 iterations
+#                conv     = 1e-6,       convergence tolerance
+#                initb    = pig_r_init, initial pigment ratios matrix
+#                maxaitr  = -1          maximum for initial iterations for a
 # 
-# --------
-# INPUTS:
-# --------
-# values  = Struct with given values, should be a list or tibble?
-# default = Struct with default values, should be a list or tibble?
+# ---- INPUTS: -----------
+# values  = Struct with given values, should be a list
+# default = Struct with default values, should be a list
 #
-# --------
-# OUTPUTS:
-# --------
+# ---- OUTPUTS: ----------
 # str     = Struct with default values added, should be a list or tibble?
 #
-# --------
-# NOTES:
-# --------
+# ---- NOTES: ------------
 # Original: 2010-01-23  Matlab7  W.Whiten
 #
-# --------
-# References:
-# --------
+# ---- REFERENCES(s): ----
 #
-# --------
-# Author:
-# --------
+# ---- AUTHOR(s): --------
 # Sebastian Di Geronimo (Sat Jun 18 17:26:29 2022) 
-  
 
-  # function str=initstruct(values,default)
-  # % initstruct  Initiallise struct with default values when not given
-  # %  2010-01-23  Matlab7  W.Whiten
-  # %
-  # % str=initstruct(value,default)
-  # %  values  Struct with given values
-  # %  default Struct with default values
-  # %
-  # %  str     Struct with default values added.
-  # 
-  
-  # % copy default values
-  # str=default;
+  # copy default values
   str <- default 
   
-  # % copy new values to output
-  # names=fieldnames(values);
+  # copy new values to output
   if (is.list(values)) {
     name <- names(values)
   } else {
@@ -58,33 +40,12 @@ initstruct <- function(values,default) {
   }
   
   # this adds the non-default info
-  # for i=1:length(names)
-  # str.(names{i})=values.(names{i});
-  # end
-  
-  # DOESNT WORK 
-  # this adds the non-default info
-  # for (i in 1:length(name)) {
-  #   # str${{name}}
-  #   str <- append(str, values[name[i]])
-  # }
-  # str
-  
-  # this adds the non-default info
   for (i in 1:length(name)) {
-    # str${{name}}
-    str[{{name[i]}}] <- values[name[i]]
+    str[ {{name[i]}} ] <- values[name[i]]
   }
+  
+  # return structure
   str
-  # return
-  # end
+
 }
 
-# testing parts
-# values <- list('maxitr22'=111000)
-# 
-# deflt=list('maxitr'=1000,'printitr'=100,'conve'=1e-6,'conva'=1e-6,  
-#              'convb'=1e-6)
-# 
-# tes <- initstruct(values, deflt)
-# tes
