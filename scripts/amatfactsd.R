@@ -1,86 +1,51 @@
-amatfactsd <- function(x, sdx, b){
+amatfactsd <- function(.df, .df_sd, .pig_r){
 ################################################################################
 #                                                                              # 
 #               Calculate Factor a in min(x-ab) using least square             #
 #                                                                              #    
 ################################################################################
-# DESCRIPTION:
-# --------
+# ---- DESCRIPTION: ------
+# brokewest -> chemtaxbrokewest() -> line 57 -> nnmatfactsd -> amatfactsd
+# 
+# ---- INPUTS: -----------
+# df           = Matrix to be factored as taxa_amt_min*pig_r
+# sdx          = Standard deviations of df
+# pig_r        = Value of pigment ratios
 #
-# --------
-# INPUTS:
-# --------
-# x       = Matrix to be factored as a*b
-# sdx     = Standard deviations of x
-# b       = Value of b
+# ---- OUTPUTS: ----------
+# taxa_amt_min = Result left factor of df
 #
-# --------
-# OUTPUTS:
-# --------
-# a       = Result left factor of x
-#
-# --------
-# NOTES:
-# --------
+# ---- NOTES: -------------
 # Original: 2010-03-14  Matalb7  W.Whiten
 #
-# --------
-# References:
-# --------
+# ---- REFERENCES(s): ----
 #
-# --------
-# Author:
-# --------
+# ---- AUTHOR(s): --------
 # Sebastian Di Geronimo (Thu Jun 02 18:30:06 2022)
+library("pracma")
   
-
+  # ---- row numbers of the data set and pigment ratios matrix ----
+  ns <- dim(.df)[1]
+  nt <- dim(.pig_r)[1]
   
-# amatfact  Calculate factor a in min(x-ab) using lsqnonneg
-# 
-# ns=size(x,1);
-# nt=size(b,1);
-# 
-# a=zeros(ns,nt);
-# for j=1:ns
-# %        aa=lsqnonneg(bb,x(j,:)'); 
-#     aa=lsqnonneg(b'./repmat(sdx(j,:)',1,nt),(x(j,:)./sdx(j,:))');
-#     a(j,:)=aa';
-# end
-# 
-# return
-# end
-
-  library("pracma")
+  # ---- initialize empty matrix ----
+  taxa_amt_min <- matrix(0, ns, nt)
   
-  # brokewest -> chemtaxbrokewest() -> line 57 -> nnmatfactsd -> amatfactsd
-  # amatfactsd(x,sdx,b) from nnmatfactsd
-  # TODO: delete later 
-  # x <- x
-  # sdx <- sdx
-  # b <- b
-  
-  ns <- dim(x)[1]
-  nt <- dim(b)[1]
-  
-  a <- matrix(0, ns, nt)
-  
+  # ---- loop through rows of df ----
   for (j in seq(ns)) {
-  #  aa=lsqnonneg(b'./    repmat(sdx(j,:)',1,nt),
-  #               (x(j,:)./sdx(j,:))');
-    # sdx(j,:) is row j all columns, repeate
-    # aa <- FUN( Conj(b)/ pracma::repmat(Conj(sdx[j,]),1,nt) , Conj(x[j,] / sdx[j,])  )
     
-  # aa <- pracma::lsqnonneg(Conj(b)/ pracma::repmat(Conj(sdx[j,]),1,nt), 
-  #                         Conj(x[j,] / sdx[j,])) 
+    # ---- setup row values ----
+    sdx_j   <- pracma::repmat(as.matrix(.df_sd[j,]), 1, nt)
+    df_j    <- as.vector(t((.df[j,] / .df_sd[j,])))
+    pig_r_j <- t(.pig_r) / sdx_j
     
-  aa <- pracma::lsqnonneg(t(b)/ pracma::repmat(as.matrix((sdx[j,])),1,nt), 
-                          as.vector(t((x[j,] / sdx[j,])))
-                          )
-  
-  # a(j,:)=aa';
-  a[j,] <- t(aa$x)
+    # ---- non-negative least linear square minimization ----
+    temp    <- pracma::lsqnonneg(pig_r_j, df_j)
+    
+    # ---- results transposed ----
+    taxa_amt_min[j,] <- t(temp$x)
   }
   
-  a
+  taxa_amt_min
   
 }
