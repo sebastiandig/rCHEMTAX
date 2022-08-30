@@ -23,33 +23,33 @@
 # will need to update
 # TODO: create this as a standalone function 
 
-# set directory for saving 
+# ---- set directory for saving  ----
 root <- rprojroot::find_rstudio_root_file()
 dir <- "/data/processed/"
 
-# TODO: source data
+# source scripts
 source(paste0(root, "/scripts/chemtaxbrokewest.R"))
 source(paste0(root, "/scripts/nnmatfactsd.R"))
 source(paste0(root, "/scripts/normprod.R"))
 
-# get data from chemtaxbrokewest dataset
+# ---- extract data from chemtaxbrokewest ----
 temp           <- chemtaxbrokewest()  # should this be a function?
-df_matrix      <- temp$df_matrix      # pigment data
-df_matrix_sd   <- temp$df_matrix_sd   # df_matrix * 0.01 + 0.0003
-init_pig_ratio <- temp$init_pig_ratio # init_pig_ratio = ratio matrix
-pig_ratio_sd   <- temp$pig_ratio_sd   # init_pig_ratio * 0.1 w/ last col = 0.005
-taxa           <- temp$taxa           # name of taxa groups, comes from pigment ratio col 1
-pigm_sel       <- temp$pigm_sel       # pigment names, comes from pigment ratio colnames, keeps names where index is 1
+# df_matrix      <- temp$df_matrix      # pigment data
+# df_matrix_sd   <- temp$df_matrix_sd   # df_matrix * 0.01 + 0.0003
+# init_pig_ratio <- temp$init_pig_ratio # init_pig_ratio = ratio matrix
+# pig_ratio_sd   <- temp$pig_ratio_sd   # init_pig_ratio * 0.1 w/ last col = 0.005
+# taxa           <- temp$taxa           # name of taxa groups, comes from pigment ratio col 1
+# pigm_sel       <- temp$pigm_sel       # pigment names, comes from pigment ratio colnames, keeps names where index is 1
 
-s     <- temp$df_matrix      # pigment data
-ssd   <- temp$df_matrix_sd   # df_matrix * 0.01 + 0.0003
-f0    <- temp$init_pig_ratio # init_pig_ratio = ratio matrix
-fsd   <- temp$pig_ratio_sd   # init_pig_ratio * 0.1 w/ last col = 0.005
+s     <- temp$df      # pigment data
+ssd   <- temp$df_sd   # df_matrix * 0.01 + 0.0003
+f0    <- temp$pig_r_init # init_pig_ratio = ratio matrix
+fsd   <- temp$pig_r_sd   # init_pig_ratio * 0.1 w/ last col = 0.005
 taxa  <- temp$taxa           # name of taxa groups, comes from pigment ratio col 1
 pigm  <- temp$pigm_sel 
 
-# fit the matrix factors
-temp2 <- nnmatfactsd(s,ssd,f0,fsd)
+# ---- fit the matrix factors ----
+temp2 <- nnmatfactsd(df = s,df_sd=ssd,pig_r_init=f0,pig_r_sd=fsd,info=NULL)
 c     <- temp2$a
 f     <- temp2$b
 info  <- temp2$info
@@ -71,7 +71,7 @@ bmatfactsd(
   sdb = fsd
 )
 
-# scale the factors and original data
+# ---- scale the factors and original data ----
 temp3 <- normprod(s,c,f)
 ss    <- temp3$ss
 cc    <- temp3$cc
