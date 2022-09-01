@@ -1,57 +1,30 @@
-regplot <- function(s,ssd,f,fsd) {
+regplot <- function(.df,.df_sd,.pig_r,.pig_r_sd) {
 ################################################################################
 #                                                                              # 
 #          Plot the effect of weighting of f in positive matrix factors        #
 #                                                                              #    
 ################################################################################
-# DESCRIPTION:
-# --------
+# ---- DESCRIPTION: ------
 # Ploting function
 #
-# --------
-# INPUTS:
-# --------
-# s       = Matrix to be factored as a*b (best if a larger than b)
-# ssd     = Matrix of standard deviations for x
-# f       = Stabilising value for b, non zero locations, & initial value
-# fsd     = Matrix of standard deviations for b
+# ---- INPUTS: -----------
+# df       = Matrix to be factored as a*b (best if a larger than b)
+# df_sd    = Matrix of standard deviations for df
+# pig_r    = Stabilizing value for pig_r, non zero locations, & initial value
+# pig_r_sd = Matrix of standard deviations for pig_r
 #
-# --------
-# OUTPUTS:
-# --------
+# ---- OUTPUTS: ----------
 # Plot
 #
-# --------
-# NOTES:
-# --------
+# ---- NOTES: ------------
 # Original: 2010-02-21  Matlab7  W.Whiten
 #
-# --------
-# References:
-# --------
+# ---- REFERENCES(s): ----
 #
-# --------
-# Author:
-# --------
+# ---- AUTHOR(s): --------
 # Sebastian Di Geronimo (Sat Jun 18 20:54:16 2022)
-
-  # function regplot(s,ssd,f,fsd)
-  # % regplot  Plot the effect of weighting of f in positive matrix factors
-  # %  2010-02-21  Matlab7  W.Whiten
-  # %
-  # %  regplot(s,sds,f,fsd)
-  # %  s    Matrix to be factored as a*b (best if a larger than b)
-  # %  ssd  Matrix of standard deviations for x
-  # %  f    Stabilising value for b, non zero locations, & initial value
-  # %  fsd  Matrix of standard deviations for b
   
-  # % plot the effect of prior on f
-  # t=[10, sqrt(10)];
-  # fsdx=[ t 0.1*t 0.01*t 0.02 0.001*t 0.0001*t]';
-  # n=length(fsdx);
-  # rmsx=zeros(n,1);
-  # rmsxwt=zeros(n,1);
-  
+  # ---- load library ----
   library("tictoc")
   library("ggplot2")
   
@@ -60,71 +33,113 @@ regplot <- function(s,ssd,f,fsd) {
   
   source(paste0(root, "/scripts/nnmatfactsd.R"))
   
-  t      <- c(10, sqrt(10))
-  fsdx   <- c(t, 0.1*t, 0.01*t, 0.02, 0.001*t, 0.0001*t)
+  # ---- create factors to test on pigment ratio matrix ----
+  val    <- c(10, sqrt(10))
+  fsdx   <- c(val, 0.1*val, 0.01*val, 0.02, 0.001*val, 0.0001*val)
   n      <- length(fsdx)
   rmsx   <- matrix(0, n, 1)
   rmsxwt <- matrix(0, n, 1)
   
-  # for i=1:n
-  #     # disp(' ')
-  #     disp(['Factor=' num2str(fsdx(i))])
-  #     tic;[cc,ff,info]=nnmatfactsd(s,ssd,f,fsdx(i)*fsd);toc %#ok<ASGLU>
-  #     rmsx(i)=info.rmsx;
-  #     rmsxwt(i)=info.rmsxwt;
-  # end
+  logs <- list()
   
-  for (i in 1:n) {
+  # ---- factor analysis with varying pig ratios multipled by a factor  ----
+  for (i in seq(fsdx)) {
     
-    print(paste("Factor = ", fsdx[i]))
+    
+    pracma::fprintf('\nFactor = %8.5f (%02d of %02d)\n\n', fsdx[i], i, length(fsdx))
     
     tictoc::tic()
-    temp      <- nnmatfactsd(s,ssd,f,fsdx[i]*fsd)
+    temp      <- nnmatfactsd(.df,.df_sd,.pig_r,fsdx[i]*.pig_r_sd)
     
     info      <- temp$info
     rmsx[i]   <- info$rmsx
     rmsxwt[i] <- info$rmsxwt
     
+    
+    fact_num         <- paste0("factor_", i)
+    logs[[fact_num]] <- temp
+    
+    pracma::fprintf('\n')
     tictoc::toc()
+    pracma::fprintf('\n-----------------------------\n')
   }    
+
+  # ---- initialize plot info ----
+  source(paste0(root,"/scripts/fancy_scientific.R"))
+  yticks = outer(1:10, 10^(-5:-1))
+  xticks_minor = outer(1:10, 10^(0:1))
   
-  # figure
-  # semilogx(fsdx,rmsxwt)
-  # title('Weighted root mean square error vs sd factor')
-  # xlabel('Factor on f sd')
-  # ylabel('Root mean square')
+  df <- data.frame(fsdx = fsdx,rmsxwt = rmsxwt)
   
-  # allow y log style plotting from Matlab in semilogy
-  fancy_scientific <- function(l) {
-    # turn in to character string in scientific notation
-    l <- format(l, scientific = TRUE)
-    # quote the part before the exponent to keep all the digits
-    l <- gsub("^(.*)e", "'\\1'e", l)
-    # turn the 'e+' into plotmath format
-    l <- gsub("e", "%*%10^", l)
-    # return this as an expression
-    parse(text=l)
-  }
+  df_xmin <-  floor(log10(min(df$fsdx)))
   
-  yticks = outer((1:10),(10^(-5:-1)))
-  xticks = outer((1:10),(10^(0:1)))
-  
-  
-  df <- data.frame(fsdx = fsdx,rmsxwt= rmsxwt)
-  
-  ggplot(df, aes(x = fsdx, y = rmsxwt)) +
+  # ---- print plot ----
+  plt <- ggplot(df, aes(x = fsdx, y = rmsxwt)) +
+    
     geom_path() +
-    labs(title = 'Weighted root mean square error vs sd factor',
-         x = 'Factor on f sd',
-         y ='Root mean square') +
-    scale_x_log10(limits = c(1, 100),
+    geom_point(color = "red") +
+    
+    labs(
+         title = 'Weighted root mean square error vs standard deviation x factor',
+         x     = 'Factor on Pigment Ratio Standard Deviation',
+         y     = 'Root mean square'
+         ) +
+    
+    scale_x_log10(limits = c(10^(df_xmin), 100),
                   labels = fancy_scientific,
-                  minor_breaks = xticks) +
-    theme_bw()
+                  breaks = 10^(df_xmin:2),
+                  minor_breaks = xticks_minor,
+                  expand = expansion(add = c(0, 0.15))
+                  ) +
+    
+    theme_bw() +
+    theme(panel.grid.major.x = element_line(color = "gray"),
+          panel.grid.minor.x = element_line(color = "gray")
+          )
   
-  # return
-  # end
+  print(plt)
   
+  results         <- list()
+  results$factors <- fsdx
+  results$df      <- df
+  results$plt     <- plt
+  results$logs    <- logs
   
+  return(results)
 }
 
+# reg_test$df
+# df_xmin <-  floor(log10(min(reg_test$df$fsdx)))
+# ggplot(reg_test$df, aes(x = fsdx, y = rmsxwt)) +
+# 
+#   geom_path() +
+#   geom_point(color = "red") +
+#   labs(
+#     title = 'Weighted root mean square error vs standard deviation x factor',
+#     x = 'Factor on Pigment Ratio Standard Deviation',
+#     y = 'Root mean square'
+#     ) +
+# 
+#   scale_x_log10(
+#                 # limits = c(min(reg_test$df$fsdx), 100),
+#                 limits = c(10^(floor(log10(min(reg_test$df$fsdx)))), 100),
+#                 labels = fancy_scientific,
+#                 breaks = 10^(df_xmin:2),
+#                 minor_breaks = xticks_minor,
+#                 expand = expansion(add = c(0, 0.15))
+#                 ) +
+#   # scale_y_log10(limits = c(min(reg_test$df$fsdx), 100),
+#                 # labels = fancy_scientific,
+#                 # minor_breaks = yticks) +
+#   theme_bw() +
+#   theme(panel.grid.major.x = element_line(color = "gray"),
+#         panel.grid.minor.x = element_line(color = "gray"))
+
+# 
+# round(log10(min(reg_test$df$fsdx)))
+# log10(0.00000001)
+# expoen <- round(log10(min(reg_test$df$fsdx)))
+# 10^(floor(log10(min())))
+# for (i in seq(fsdx)) {
+# pracma::fprintf('\nFactor = %8.5f (%02d of %02d)\n\n', fsdx[i], i, 1)
+# }
