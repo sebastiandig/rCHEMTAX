@@ -6,7 +6,7 @@ fancy_scientific <- function(l) {
 ################################################################################
 # ---- DESCRIPTION: ------
 # When given a vector of numbers, will change the form to be in scientific 
-# notation as a string. 
+# notation as a string. This can be used in either x or y axis of a plot.
 # 
 # Example:
 #         x <- c(0.1,1,10,100)
@@ -14,7 +14,15 @@ fancy_scientific <- function(l) {
 #         fancy_scientific(x)
 #         expression('1'%*%10^-01, '1'%*%10^+00, '1'%*%10^+01, '1'%*%10^+02)
 #
-# The resulting form will look like: 1x10^-1, 1x10^0, 1x10^1, 1x10^2 
+# The resulting form will look like: 1x10^-1, 1x10^0, 1x10^1, 1x10^2
+# 
+# May be use in ggplot as number labels on x or y axis marks
+# scale_x_log10(limits = c(10^(df_xmin), 100),
+#               labels = fancy_scientific,
+#               breaks = 10^(df_xmin:2),
+#               minor_breaks = xticks_minor,
+#               expand = expansion(add = c(0, 0.15))
+#               ) +
 # 
 # ---- INPUTS: -----------
 # l    = vector of numbers to form expressions in the form of num x 10^y 
@@ -25,7 +33,8 @@ fancy_scientific <- function(l) {
 # ---- NOTES: ------------
 #
 # ---- REFERENCES(s): ----
-#
+# Original: https://stackoverflow.com/questions/11610377/how-do-i-change-the-formatting-of-numbers-on-an-axis-with-ggplot
+# 
 # ---- AUTHOR(s): --------
 # Sebastian Di Geronimo (2022-08-31 17:25:11)
   
