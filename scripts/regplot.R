@@ -49,6 +49,8 @@ regplot <- function(.df,.df_sd,.pig_r,.pig_r_sd) {
     pracma::fprintf('\nFactor = %8.5f (%02d of %02d)\n\n', fsdx[i], i, length(fsdx))
     
     tictoc::tic()
+    
+    # run factor analysis
     temp      <- nnmatfactsd(.df,.df_sd,.pig_r,fsdx[i]*.pig_r_sd)
     
     info      <- temp$info
@@ -99,6 +101,7 @@ regplot <- function(.df,.df_sd,.pig_r,.pig_r_sd) {
   
   print(plt)
   
+  # ---- return final values ----
   results         <- list()
   results$factors <- fsdx
   results$df      <- df
