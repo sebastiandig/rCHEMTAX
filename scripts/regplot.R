@@ -107,39 +107,3 @@ regplot <- function(.df,.df_sd,.pig_r,.pig_r_sd) {
   
   return(results)
 }
-
-# reg_test$df
-# df_xmin <-  floor(log10(min(reg_test$df$fsdx)))
-# ggplot(reg_test$df, aes(x = fsdx, y = rmsxwt)) +
-# 
-#   geom_path() +
-#   geom_point(color = "red") +
-#   labs(
-#     title = 'Weighted root mean square error vs standard deviation x factor',
-#     x = 'Factor on Pigment Ratio Standard Deviation',
-#     y = 'Root mean square'
-#     ) +
-# 
-#   scale_x_log10(
-#                 # limits = c(min(reg_test$df$fsdx), 100),
-#                 limits = c(10^(floor(log10(min(reg_test$df$fsdx)))), 100),
-#                 labels = fancy_scientific,
-#                 breaks = 10^(df_xmin:2),
-#                 minor_breaks = xticks_minor,
-#                 expand = expansion(add = c(0, 0.15))
-#                 ) +
-#   # scale_y_log10(limits = c(min(reg_test$df$fsdx), 100),
-#                 # labels = fancy_scientific,
-#                 # minor_breaks = yticks) +
-#   theme_bw() +
-#   theme(panel.grid.major.x = element_line(color = "gray"),
-#         panel.grid.minor.x = element_line(color = "gray"))
-
-# 
-# round(log10(min(reg_test$df$fsdx)))
-# log10(0.00000001)
-# expoen <- round(log10(min(reg_test$df$fsdx)))
-# 10^(floor(log10(min())))
-# for (i in seq(fsdx)) {
-# pracma::fprintf('\nFactor = %8.5f (%02d of %02d)\n\n', fsdx[i], i, 1)
-# }
