@@ -100,9 +100,10 @@ bootnp <- function(s,ssd,f,fsd) {
   start <- tictoc::tic()
   
   for (i in 1:nrep) {
-    ind <- pracma::ceil(pracma::rand(ns,1) * ns)
+    ind <- ceiling(pracma::rand(ns,1) * ns)
+    # ind <- pracma::ceil(pracma::rand(ns,1) * ns)
     temp   <- nnmatfactsd(s[ind,], ssd[ind,], f, fsd, 
-                          info = list(printitr = 1e6))
+                          .info = list(printitr = 1e6))
     cc     <- temp$a
     ff     <- temp$b
     info   <- temp$info

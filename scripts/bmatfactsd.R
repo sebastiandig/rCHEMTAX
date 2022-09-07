@@ -1,139 +1,74 @@
-bmatfactsd <- function(x, sdx, a, b0, sdb) {
-################################################################################
-#                                                                              # 
-#       Calculate factor b in min(x-ab, b-b0) using Least Linear Squares       #
-#                                                                              #    
-################################################################################
-# DESCRIPTION:
-# --------
-#
-# --------
-# INPUTS:
-# --------
-# x       = Matrix to be factored as a*b
-# sdx     = Standard deviations of x
-# a       = result of a=amatfactsd(x,sdx,b,sdb)
-# b0      = Initial estimate for b
-# sdb     = Standard deviations of b0?
-#        
-# --------
-# OUTPUTS:
-# --------
-# b       = Result left factor of x
-# 
-# --------
-# NOTES:
-# --------
-# Original: 2010-03-14  Matalb7  W.Whiten
-#
-# --------
-# References:
-# --------
-#
-# --------
-# Author:
-# --------
-# Sebastian Di Geronimo (Thu Jun 02 19:54:42 2022)
+bmatfactsd <- function(.df, .df_sd, .taxa_amt, .pig_r, .pig_r_sd) {
+  ################################################################################
+  #                                                                              # 
+  #                  Calculate factor b in min(x-ab, b-b0) using                 #
+  #                       Non-negative Least Linear Squares                      #
+  #                                                                              #
+  ################################################################################
+  # ---- DESCRIPTION: ------
+  # Solve for b
+  # This calculates the pigment ratio matrix using the taxa contribution matrix 
+  # from the results of `nnmatfactsd` algorithm. The pigment ratio matrix is `b` 
+  # from min||x-ab, b-b0||.
+  #
+  # ---- INPUTS: -----------
+  # df        = Matrix to be factored as a*b
+  # df_sd     = Standard deviations of df
+  # taxa_amt  = result of amatfactsd(x,sdx,b,sdb)
+  # pig_r     = Initial estimate for b
+  # pig_r_sd  = Standard deviations of pig_r?
+  #        
+  # ---- OUTPUTS: ----------
+  # pig_r_new = Result left factor of x
+  # 
+  # ---- NOTES: ------------
+  # Original: 2010-03-14  Matalb7  W.Whiten
+  #
+  # ---- REFERENCES(s): ----
+  #
+  # ---- AUTHOR(s): --------
+  # Sebastian Di Geronimo (Thu Jun 02 19:54:42 2022)
   
-
-# function b=bmatfactsd(x,sdx,a,b0,sdb)
-# % bmatfact  Calculate factor b in min(x-ab,b-b0) using lsqnonneg
-# %  
-# %
-# % a=amatfactsd(x,sdx,b,sdb)
-# %  x    Matrix to be factored as a*b
-# %  sdx  Standard deviations of x
-# %  b    Value of b
-# %  b0   Initial estimate for b
-# %  
-# %
-# %  a    Result left factor of x
-# 
-# %ns=size(x,1);
-# [nt,np]=size(b0);
-# 
-# indx1=b0~=0;
-# b=zeros(nt,np);
-# for j=1:np
-# indx=indx1(:,j);
-# %        t=lsqnonneg(a(:,indx),x(:,j));
-# t=lsqnonneg([a(:,indx)./  ...
-#              repmat(sdx(:,j),1,sum(indx));diag(1./sdb(indx,j))], ...
-#             [x(:,j)./sdx(:,j);b0(indx,j)./sdb(indx,j)]);
-# b(indx,j)=t;
-# end
-# 
-# return
-# end
-  
+  # ---- load library ----
   library("pracma")
   
-  # dimensions of b0
-  nt <- dim(b0)[1] # row
-  np <- dim(b0)[2] # col
+  # ---- dimensions of pigment ratio matrix ----
+  .pig_r_row <- dim(.pig_r)[1] # row
+  .pig_r_col <- dim(.pig_r)[2] # col
   
   # index where b0 does not equal 0
-  indx1 <- b0 != 0
+  indx      <- .pig_r != 0
   
   # create empty matrix of 0s with nt and np dimenstions
-  b <- matrix(0, nt, np)
+  pig_r_new <- matrix(0, .pig_r_row, .pig_r_col)
   
-  for (j in seq(np)) {
-    indx <- indx1[,j]
+  # ---- iterate through each row in pigment ratio then calc b ----
+  for (j in seq(.pig_r_col)) {
+    idx <- indx[,j]
     
-    # t=lsqnonneg([a(:,indx)./ repmat(sdx(:,j),1,sum(indx));
-    #              diag(1./sdb(indx,j))], 
-    #             
-    #              [x(:,j)./sdx(:,j);
-    #               b0(indx,j)./sdb(indx,j)])
+    # ---- setup variables for lsqnonneg  ----
+    # take columns in taxa_j where has the pigment in df_sd[,j], divide by sd
+    taxa_by_df_sd <- .taxa_amt[,idx] / pracma::repmat(as.matrix(.df_sd[,j]),1, sum(idx))
+    pig_r_sd_diag <- diag(1 / .pig_r_sd[idx,j])
     
-    # t <- pracma::lsqnonneg(
-    #   
-    #   cbind( # might be c or rbind, not sure of input dimensions
-    #     a[,indx] / pracma::repmat(sdx[,j],1, sum(indx)),
-    #     diag(1 / sdb[indx,j])
-    #   ),
-    #   cbind( # might be c or rbind, not sure of input dimensions
-    #     (x[,j] / sdx[,j]), 
-    #     (b0[indx,j] / sdb[indx,j])
-    #   )
-    # )  
+    # vars pigment column j and divide by its sd
+    df_by_sd      <- .df[,j] / .df_sd[,j]
+    pig_by_sd     <- .pig_r[idx,j] / .pig_r_sd[idx,j]
     
-    t <- pracma::lsqnonneg(
-      
-      as.matrix(rbind( 
-        a[,indx] / pracma::repmat(as.matrix(sdx[,j]),1, sum(indx)),
-        pracma::Diag(1 / sdb[indx,j])
-      )),
-      as.vector(c( 
-        (x[,j] / sdx[,j]), 
-        (b0[indx,j] / sdb[indx,j])
-      ))
-    )  
+    # combine data into matrix and vector for 
+    taxa_norm     <- as.matrix(rbind(taxa_by_df_sd, pig_r_sd_diag))
+    df_pig_norm   <- as.vector(c(df_by_sd,pig_by_sd))
     
-    b[indx,j] <- t(t$x) 
+    # ---- lsqnonneg (formula min||x - a*b||) ----
+    # gives `a` with taxa_norm
+    b_j <- pracma::lsqnonneg(
+                              taxa_norm,
+                              df_pig_norm
+                             )
+    
+    pig_r_new[idx,j] <- t(b_j$x) 
   }
   
-  b
+  # ---- return values ----
+  pig_r_new
 }
-
-# indx=indx1(:,j);
-# 
-# t=lsqnonneg(, ...
-#            );
-# 
-# [a(:,indx)./ repmat(sdx(:,j),1,sum(indx));diag(1./sdb(indx,j))]
-# 
-# a[,indx] / pracma::repmat(as.matrix(sdx[,j]), 1, sum(indx) )
-# 
-# diag(1 / sdb[indx,j])
-# 
-# 
-# [x(:,j)./sdx(:,j);b0(indx,j)./sdb(indx,j)]
-# 
-# 
-# a[1:3,indx]
-# pracma::repmat(as.matrix(sdx[,j]), 1, sum(indx) )
-# 
-# 
-# dim(a[,indx] / pracma::repmat(as.matrix(sdx[,j]),1, sum(indx)))

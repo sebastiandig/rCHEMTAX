@@ -1,11 +1,13 @@
-regplot <- function(.df,.df_sd,.pig_r,.pig_r_sd) {
+regplot <- function(.df,.df_sd,.pig_r,.pig_r_sd,.info = NULL,verbose = TRUE) {
 ################################################################################
 #                                                                              # 
 #          Plot the effect of weighting of f in positive matrix factors        #
 #                                                                              #    
 ################################################################################
 # ---- DESCRIPTION: ------
-# Ploting function
+# Runs `nnmatfactsd` with factors applied to the input `.pig_r_sd`. This records
+# each iteration of the factors used and will have a resulting plot with the 
+# factors used on the x axis and the weighted RMS on the y-axis. 
 #
 # ---- INPUTS: -----------
 # df       = Matrix to be factored as a*b (best if a larger than b)
@@ -14,7 +16,14 @@ regplot <- function(.df,.df_sd,.pig_r,.pig_r_sd) {
 # pig_r_sd = Matrix of standard deviations for pig_r
 #
 # ---- OUTPUTS: ----------
-# Plot
+# results  = Results of the effects from the different factors on the starting 
+#            pigment ratios matrix
+#            $factors Vector of factors used to multiply pigment ratio matrix
+#            $df      From `nnmatfactsd`, the factor multiplier and weighted RMS 
+#                     for each factor
+#            $plt     The plot `Weighted root mean square error vs standard 
+#                     deviation x factor`
+#            $logs    The data from each factor as output by `nnmatfactsd`
 #
 # ---- NOTES: ------------
 # Original: 2010-02-21  Matlab7  W.Whiten
@@ -34,36 +43,43 @@ regplot <- function(.df,.df_sd,.pig_r,.pig_r_sd) {
   source(paste0(root, "/scripts/nnmatfactsd.R"))
   
   # ---- create factors to test on pigment ratio matrix ----
-  val    <- c(10, sqrt(10))
-  fsdx   <- c(val, 0.1*val, 0.01*val, 0.02, 0.001*val, 0.0001*val)
-  n      <- length(fsdx)
-  rmsx   <- matrix(0, n, 1)
-  rmsxwt <- matrix(0, n, 1)
+  # TODO: add param for values as factors
+  val     <- c(10, sqrt(10))
+  fact_sd <- c(val, 0.1*val, 0.01*val, 0.02, 0.001*val, 0.0001*val)
+  n       <- length(fact_sd)
+  rmsx    <- matrix(0, n, 1)
+  rmsxwt  <- matrix(0, n, 1)
   
   logs <- list()
   
   # ---- factor analysis with varying pig ratios multipled by a factor  ----
-  for (i in seq(fsdx)) {
+  for (i in seq(fact_sd)) {
     
-    
-    pracma::fprintf('\nFactor = %8.5f (%02d of %02d)\n\n', fsdx[i], i, length(fsdx))
+    cat(sprintf('\nFactor = %8.5f (%02d of %02d)\n', 
+                    fact_sd[i], i, length(fact_sd)))
+    # pracma::fprintf('\nFactor = %8.5f (%02d of %02d)\n', 
+                    # fact_sd[i], i, length(fact_sd))
     
     tictoc::tic()
     
     # run factor analysis
-    temp      <- nnmatfactsd(.df,.df_sd,.pig_r,fsdx[i]*.pig_r_sd)
+    temp      <- nnmatfactsd(.df, .df_sd, .pig_r, .pig_r_sd * fact_sd[i], verbose = verbose)
     
     info      <- temp$info
     rmsx[i]   <- info$rmsx
     rmsxwt[i] <- info$rmsxwt
     
-    
     fact_num         <- paste0("factor_", i)
     logs[[fact_num]] <- temp
     
-    pracma::fprintf('\n')
+    # pracma::fprintf('\n')
+    # tictoc::toc()
+    # pracma::fprintf('\n-----------------------------\n')
+    
+    cat(sprintf('\n'))
     tictoc::toc()
-    pracma::fprintf('\n-----------------------------\n')
+    cat(sprintf('\n-----------------------------\n'))
+    
   }    
 
   # ---- initialize plot info ----
@@ -71,12 +87,12 @@ regplot <- function(.df,.df_sd,.pig_r,.pig_r_sd) {
   yticks = outer(1:10, 10^(-5:-1))
   xticks_minor = outer(1:10, 10^(0:1))
   
-  df <- data.frame(fsdx = fsdx,rmsxwt = rmsxwt)
+  df      <- data.frame(fact_sd = fact_sd,rmsxwt = rmsxwt)
   
-  df_xmin <-  floor(log10(min(df$fsdx)))
+  df_xmin <-  floor(log10(min(df$fact_sd)))
   
   # ---- print plot ----
-  plt <- ggplot(df, aes(x = fsdx, y = rmsxwt)) +
+  plt <- ggplot(df, aes(x = fact_sd, y = rmsxwt)) +
     
     geom_path() +
     geom_point(color = "red") +
@@ -99,11 +115,13 @@ regplot <- function(.df,.df_sd,.pig_r,.pig_r_sd) {
           panel.grid.minor.x = element_line(color = "gray")
           )
   
-  print(plt)
+  if (verbose) {
+    print(plt)
+  }
   
   # ---- return final values ----
   results         <- list()
-  results$factors <- fsdx
+  results$factors <- fact_sd
   results$df      <- df
   results$plt     <- plt
   results$logs    <- logs

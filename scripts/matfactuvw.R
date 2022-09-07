@@ -161,8 +161,9 @@ matfactuvw <- function(x,u=NULL,v=NULL,b,w=NULL,wb=1,info=NULL) {
   xuv <- x / (matrix(u) %*% t(matrix(v)))
   xb <- rbind(xuv,
               b / (matrix(w) %*% t(matrix(v))))
-  sq <- xb - rbind(aa,
-                  pracma::Diag(1 / w)) %*% bb
+  sq <- xb - rbind(aa, diag(1 / w)) %*% bb
+  # sq <- xb - rbind(aa, pracma::Diag(1 / w)) %*% bb
+  
   rms <- sqrt( sum(sq^2) / length(sq))
 
   
@@ -183,16 +184,23 @@ matfactuvw <- function(x,u=NULL,v=NULL,b,w=NULL,wb=1,info=NULL) {
     rmsxuv <- sqrt(sum((xuv - aa %*% bb)^2) / length(xuv))
     rmsbb  <-
       sqrt(sum((
-        b / (matrix(w) %*%  t(matrix(v))) - pracma::Diag(1 / w) %*% bb) ^ 2) /
-        sum(matrix(b)!= 0))
+        b / (matrix(w) %*%  t(matrix(v))) - diag(1 / w) %*% bb) ^ 2) /
+          sum(matrix(b) != 0))
+    # rmsbb  <-
+    #   sqrt(sum((
+    #     b / (matrix(w) %*%  t(matrix(v))) - pracma::Diag(1 / w) %*% bb) ^ 2) /
+    #     sum(matrix(b) != 0))
     
     rmsx   <-  
       sqrt(sum((
       x - (aa * pracma::repmat(u, 1, nt)) * (bb * pracma::repmat(v, nt, 1))) ^ 2) 
       / length(x))
     
-    pracma::fprintf('   itr    rmsx      rmsxwt     rmsb     drms       daa       dbb\n')
-    pracma::fprintf('%6i%#11.3g%#11.3g%#11.3g\n',0,rmsx,rmsxuv,rmsbb)
+    # pracma::fprintf('   itr    rmsx      rmsxwt     rmsb     drms       daa       dbb\n')
+    # pracma::fprintf('%6i%#11.3g%#11.3g%#11.3g\n',0,rmsx,rmsxuv,rmsbb)
+    
+    cat(sprintf('   itr    rmsx      rmsxwt     rmsb     drms       daa       dbb\n'))
+    cat(sprintf('%6i%#11.3g%#11.3g%#11.3g\n',0,rmsx,rmsxuv,rmsbb))
   }
   
   # for itr=1:info.maxitr
@@ -207,7 +215,8 @@ matfactuvw <- function(x,u=NULL,v=NULL,b,w=NULL,wb=1,info=NULL) {
     # %bb1=bb.*(1+(aw'*(xb-aw*bb))./(aw'*(aw*bb)));
     # %bb1=bb1./repmat(v(end).*bb(:,end),1,np);
     
-    aw  <- rbind(aa1, pracma::Diag(1 / w))
+    aw  <- rbind(aa1, diag(1 / w))
+    # aw  <- rbind(aa1, pracma::Diag(1 / w))
     bb1 <- bb * (t(aw) %*% xb) / (t(aw) %*% (aw %*% bb))
     
     # daa=sqrt(sum((aa1(:)-aa(:)).^2)/numel(aa));
@@ -251,18 +260,26 @@ matfactuvw <- function(x,u=NULL,v=NULL,b,w=NULL,wb=1,info=NULL) {
       rmsxuv <- sqrt(sum((xuv - aa %*% bb)^2)/length(xuv))
       rmsbb <-
         sqrt(sum((
-          b / (matrix(w) %*%  t(matrix(v))) - pracma::Diag(1 / w) %*% bb) ^ 2) /
+          b / (matrix(w) %*%  t(matrix(v))) - diag(1 / w) %*% bb) ^ 2) /
             sum(matrix(b)!= 0))
+      # rmsbb <-
+      #   sqrt(sum((
+      #     b / (matrix(w) %*%  t(matrix(v))) - pracma::Diag(1 / w) %*% bb) ^ 2) /
+      #       sum(matrix(b)!= 0))
       rmsx <-  
         sqrt(sum((
           x - (aa * pracma::repmat(u, 1, nt)) * (bb * pracma::repmat(v, nt, 1))) ^ 2) 
           / length(x))
       
-      pracma::fprintf('%6i%#11.3g%#11.3g%#11.3g%#11.3e%11.3e%#11.3e\n',
-              itr,rmsx,rmsxuv,rmsbb,drms,daa,dbb)
+      # pracma::fprintf('%6i%#11.3g%#11.3g%#11.3g%#11.3e%11.3e%#11.3e\n',
+      #         itr,rmsx,rmsxuv,rmsbb,drms,daa,dbb)
+      
+      cat(sprintf('%6i%#11.3g%#11.3g%#11.3g%#11.3e%11.3e%#11.3e\n',
+                  itr,rmsx,rmsxuv,rmsbb,drms,daa,dbb))
+      
     }
     
-    if(daa<info$conva || dbb<info$convb||drms<info$conve)
+    if (daa < info$conva || dbb < info$convb || drms < info$conve)
       break
         
     }
@@ -279,16 +296,16 @@ matfactuvw <- function(x,u=NULL,v=NULL,b,w=NULL,wb=1,info=NULL) {
   # info.convb=dbb;
   # info.conve=drms;
   
-  a <- aa * pracma::repmat(u,1,nt)
-  b <-bb * pracma::repmat(v,nt,1)
-  t <-b[,ncol(b)]
-  b <-b / pracma::repmat(t,1,np)
-  a <-a *  pracma::repmat(t(t),ns,1)
+  a <- aa * pracma::repmat(u, 1, nt)
+  b <- bb * pracma::repmat(v, nt, 1)
+  t <- b[, ncol(b)]
+  b <- b / pracma::repmat(t, 1, np)
+  a <- a *  pracma::repmat(t(t), ns, 1)
   
-  info$itr   <-itr
-  info$conva <-daa
-  info$convb <-dbb
-  info$conve <-drms
+  info$itr   <- itr
+  info$conva <- daa
+  info$convb <- dbb
+  info$conve <- drms
         
   results <- list(a=a,b=b,t=t,info)     
   

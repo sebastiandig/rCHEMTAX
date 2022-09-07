@@ -1,50 +1,32 @@
-randstart <- function(s,ssd,f,fsd) {
+randstart <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info = NULL,.nrep = 10, verbose = TRUE) {
 ################################################################################
 #                                                                              # 
 #   Plot the effect of random starts for s% effect of random start locations   #
 #                                                                              #    
 ################################################################################
-# DESCRIPTION:
-# --------
+# ---- DESCRIPTION: ------
 # 
-# --------
-# INPUTS:
-# --------
-# s       = Matrix to be factored as a*b (best if a larger than b)
-# ssd     = Matrix of standard deviations for x
-# f       = Stabilising value for b, non zero locations, & initial value
-# fsd     = Matrix of standard deviations for b
+# ---- INPUTS: -----------
+# df       = Matrix to be factored as a*b (best if a larger than b)
+# df_sd    = Matrix of standard deviations for x
+# pig_r    = Stabilizing value for b, non zero locations, & initial value
+# pig_r_sd = Matrix of standard deviations for b
 #
-# --------
-# OUTPUTS:
-# --------
-# NA
+# ---- OUTPUTS: ----------
+# TODO: edit this
 #
-# --------
-# NOTES:
-# --------
+# ---- NOTES: ------------
 # Original: 2010-02-26  Matlab7  W.Whiten
 #  
-# --------
-# References:
-# --------
+# ---- REFERENCES(s): ----
 #
-# --------
-# Author:
-# --------
+# ---- AUTHOR(s): --------
 # Sebastian Di Geronimo (Sun Jun 19 14:01:35 2022)  
 
+  # ---- remove after testing! ----
+  # .nrep <- 10
   
-  # function randstart(s,ssd,f,fsd)
-  # % randstart  Plot the effect of random starts for s% effect of random start locations
-  # %  2010-02-26  Matlab7  W.Whiten
-  # %
-  # %  regplot(s,sds,f,fsd)
-  # %  s    Matrix to be factored as a*b (best if a larger than b)
-  # %  ssd  Matrix of standard deviations for x
-  # %  f    Stabilising value for b, non zero locations, & initial value
-  # %  fsd  Matrix of standard deviations for b
-  
+  # ---- load library ----
   library("tictoc")
   library("pracma")
   library("ggplot2")
@@ -54,134 +36,172 @@ randstart <- function(s,ssd,f,fsd) {
   
   # references another function
   source(paste0(root,"/scripts/nnmatfactsd.R"))
+  source(paste0(root,"/scripts/initstruct.R"))
+ 
+  # ---- initialize matrices for random starting points ----
+  df_row    <- dim(.df)[1]             # row # .df
+  pig_r_col <- dim(.pig_r)[1]          # row # .pig_r 
+  indx      <- which(.pig_r > 0)       # index of non-zero pigments
+  n_pig     <- length(indx)            # number of pigments
   
-  # nrep=10;
-  nrep <- 10 # should add as default arg
+  # initialize pigment ratio and taxa contributions matrix for each random start
+  pig_rep   <- matrix(0, .nrep, n_pig) 
+  taxa_amt_rep <- matrix(0, .nrep, df_row*pig_r_col)
   
-  # [ns,np]=size(s); %#ok<NASGU>
-  # [nt,np]=size(f); %#ok<NASGU>
-  # indx=find(f>0);
-  # ni=length(indx);
-  # tf=zeros(nrep,ni);
-  # tc=zeros(nrep,ns*nt);
+  # initialize list for logs
+  logs <- list() 
   
-  ns   <- dim(s)[1]              # row of s (sample)
-  np   <- dim(s)[2]              # col of s (sample)
-  nt   <- dim(f)[1]              # row of f (ratio matrix)
-  np   <- dim(f)[2]              # col of f (ratio matrix)
-  indx <- which(f > 0)           # basically asking what pigments are used and where
-  ni   <- length(indx)           # how many values being used
-  tf   <- matrix(0, nrep, ni)    # matrix of zeros, where row # of repeats, col of 
-                                 # pigments ratios to change
-  tc   <- matrix(0, nrep, ns*nt) # matrix of zeros, where row is # of repeats, 
-                                 # col is # of samples * # of taxa
+  if (is.null(.info)) {
+    info_init <- list()
+  } else {
+    info_init <- .info
+  }
   
-  
-  # disp('   Time      rmsx      rmsxwt   itr/1000  conv*1e6')
-  # tic
-  # for i=1:nrep
-  # [cc,ff,info]=nnmatfactsd(s,ssd,f,fsd,  ...
-  #                          struct('inita',rand(ns,nt),'maxitr',30000,'printitr',1e12,   ...
-  #                                 'conv',1e-10));
-  #
-  # tf(i,:)=ff(indx)';
-  # tc(i,:)=cc(:)';
-  # disp([toc,info.rmsx,info.rmsxwt,info.itr/1000,info.conv*1e6])
-  # end
-  
+  # ---- random starting points loop ----
   # starts clock to see time passed
   tictoc::tic.clearlog()
   start <- tictoc::tic()
   
-  # repeats by # in nrep
-  # randomizes #s between 0 and 1 by size (ns,nt) for inita
-  for (i in seq(nrep)) {
-    temp   <- nnmatfactsd(s,
-                          ssd,
-                          f,
-                          fsd,
-                          info = list(
-                            inita = pracma::rand(ns, nt),
-                            maxitr = 30000,
-                            printitr = 1e12,
-                            conv = 1e-10
-                          ))
-    cc     <- temp$a
-    ff     <- temp$b
-    info   <- temp$info
+  for (i in seq(.nrep)) {
+    tictoc::tic()
     
-    tf[i,] <- t(ff[indx])
-    tc[i,] <- t(cc)
+    # ---- initialize options ----
+    # TODO: make sure original settings do not get overwritten with each iteration
+    deflt <- list(
+                    inita    = pracma::rand(df_row, pig_r_col),
+                    maxitr   = 30000,
+                    printitr = 1e12,
+                    conv     = 1e-10
+                  )
     
+  
+    # add/replace default options if not set
+    .info  <- initstruct(info_init, deflt)
+    
+    # ---- run factor analysis ----
+    cat(sprintf('\nRandom Start Number: %02d of %02d\n', i, .nrep))
+    # pracma::fprintf('\nRandom Start Number: %02d of %02d\n', i, .nrep)
+
+    temp          <- nnmatfactsd(.df,
+                                 .df_sd,
+                                 .pig_r,
+                                 .pig_r_sd,
+                                 .info   = .info,
+                                 verbose = verbose
+                                 )
+    taxa_amt_temp <- temp$a
+    pig_r_temp    <- temp$b
+    info          <- temp$info
+
+    # log each run
+    rep_num          <- paste0("rep_num_", i)
+    logs[[rep_num]]  <- temp
+
+    # log taxa contribution and pigment ratio out
+    pig_rep[i,]      <- t(pig_r_temp[indx])
+    taxa_amt_rep[i,] <- t(taxa_amt_temp)
+
     end <- (tictoc::toc(quiet = T))$toc - start
-    print(c(Time   = end,
-            rmsx   = info$rmsx,
-            rmsxwt = info$rmsxwt,
-            itr    = info$itr/1000,
-            conv   = info$conv*1e6))
+
+    # when printitr is above maxitr, will only print last iterations
+    if (!(info$printitr <= info$maxitr) & verbose) {
+      cat(sprintf('\nIter:    RMS:   Wt RMS:   Pigment Ratio RMS:   Weighted PR RMS:     dRMS:   dTaxa RMS:   dPig RMS:\n'))
+      cat(sprintf('%5i%#8.3g%#10.3g%#21.3g%#19.3g%#10.2e%13.2e%#12.2e\n',
+                  info$itr,info$rms_pig,info$rmsxwt,info$rms_pig_r,info$rmsbwt,
+                  info$logs$rms_chg[2],info$logs$taxa_amt_chg[2],info$logs$pig_r_chg[2]))
+      
+      # pracma::fprintf('\nIter:    RMS:   Wt RMS:   Pigment Ratio RMS:   Weighted PR RMS:     dRMS:   dTaxa RMS:   dPig RMS:\n')
+      # pracma::fprintf('%5i%#8.3g%#10.3g%#21.3g%#19.3g%#10.2e%13.2e%#12.2e\n',
+      #                 info$itr,info$rms_pig,info$rmsxwt,info$rms_pig_r,info$rmsbwt,
+      #                 info$logs$rms_chg[2],info$logs$taxa_amt_chg[2],info$logs$pig_r_chg[2])
+    }
+    
+    cat(sprintf('\n-----------------------------\n'))
+    cat(sprintf('\nTime Elapsed: %.2f (s)\nConverged at: %.4e\n',
+                end, info$conv))
+    cat(sprintf('\n-----------------------------\n'))
+    # pracma::fprintf('\n-----------------------------\n')
+    # pracma::fprintf('\nTime Elapsed: %.2f (s)\nConverged at: %.4e\n',
+    #                 end, info$conv)
+    # pracma::fprintf('\n-----------------------------\n')
+    
   }
   
-  # disp(' ')
-  # disp('Range of variation in tf and tc')
-  # tf1=tf-repmat(mean(tf),10,1);
-  # disp([min(min(tf1)),max(max(tf1))])
-  # tc1=tc-repmat(mean(tc),10,1);
-  # disp([min(min(tc1)),max(max(tc1))])
+  # ---- display range of values for each pigment and taxa contributions ----
+  pig_rep_range    <-
+    pig_rep - pracma::repmat(apply(pig_rep, 2, mean, na.rm = T), .nrep, 1)
   
-  # may need to wrap mean(tf/tc) -> as.matrix(apply(tf, 1/2, mean))
-  tf1 <- tf - pracma::repmat(apply(tf, 2, mean, na.rm = T),nrep,1)
-  tc1 <- tc - pracma::repmat(apply(tc, 2, mean, na.rm = T),nrep,1)
+  df_pig_rep_range <-
+    taxa_amt_rep - pracma::repmat(apply(taxa_amt_rep, 2, mean, na.rm = T), .nrep, 1)
   
-  
-  print('Range of variation in tf and tc')
-  print(c(min(tf1, na.rm = T),max(tf1, na.rm = T)))
-  print(c(min(tc1, na.rm = T),max(tc1, na.rm = T)))
-  
-  
-  # allow y log style plotting from Matlab in semilogy
-  fancy_scientific <- function(l) {
-    # turn in to character string in scientific notation
-    l <- format(l, scientific = TRUE)
-    # quote the part before the exponent to keep all the digits
-    l <- gsub("^(.*)e", "'\\1'e", l)
-    # turn the 'e+' into plotmath format
-    l <- gsub("e", "%*%10^", l)
-    # return this as an expression
-    parse(text=l)
+  if (verbose) {
+    cat(sprintf('\nRange of variation in Pigment Ratios and Taxa Contribution:\n'))
+    cat(sprintf('\n-----------------------------\n'))
+    cat(sprintf('\nPigment Ratio:\n%14s%7.3g\n%14s%7.3g\n',
+                "Max:",min(pig_rep_range, na.rm = T), "Min:", max(pig_rep_range, na.rm = T)))
+    cat(sprintf('\nTaxa Contributon:\n%14s%7.3g\n%14s%7.3g\n',
+                "Max:",min(df_pig_rep_range, na.rm = T), "Min:",max(df_pig_rep_range, na.rm = T)))
+    cat(sprintf('\n-----------------------------\n'))
+    
+    # pracma::fprintf('\nRange of variation in Pigment Ratios and Taxa Contribution:\n')
+    # pracma::fprintf('\n-----------------------------\n')
+    # pracma::fprintf('\nPigment Ratio:\n%14s%7.3g\n%14s%7.3g\n',
+    #                 "Max:",min(pig_rep_range, na.rm = T), "Min:", max(pig_rep_range, na.rm = T))
+    # pracma::fprintf('\nTaxa Contributon:\n%14s%7.3g\n%14s%7.3g\n',
+    #                 "Max:",min(df_pig_rep_range, na.rm = T), "Min:",max(df_pig_rep_range, na.rm = T))
+    # pracma::fprintf('\n-----------------------------\n')
   }
   
-  yticks = outer((1:10),(10^(-5:-1)))
-  xticks = outer((1:10),(10^(0:1)))
+  # ---- initialize plotting variables ----
+  source(paste0(root,"/scripts/fancy_scientific.R"))
+  yticks_minor = outer((1:10),(10^(-5:-1)))
+  xticks_minor = outer((1:10),(10^(0:1)))
   
   
   # figure
   # loglog(mean(tf),std(tf)./mean(tf),'o')
-  # title('Variation in f coefficients')
   # xlabel('Mean coefficient value')
   # ylabel('standard deviation/mean')
   
-  # tf
-  df <- data.frame(x = apply(tf, 2, mean, na.rm=TRUE),
-                   y = apply(tf, 2, function(x) 
+  # pigment ratios
+  df <- data.frame(x = apply(pig_rep, 2, mean, na.rm = TRUE),
+                   y = apply(pig_rep, 2, function(x) 
                      sd(x, na.rm = TRUE)/mean(x, na.rm = TRUE))
+                   )
+  
+  df_xmin <- floor(log10(min(df$x)))
+  df_ymin <- floor(log10(min(df$y)))
+  
+  # taxa contribution
+  # might have issue with transpose?
+  df2 <- data.frame(x = apply(taxa_amt_rep + 1e-100, 2, mean, na.rm = TRUE),
+                    y = apply(taxa_amt_rep + 1e-100, 2, function(x)
+                      sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE))
   )
   
-  print(ggplot() + 
-  # original had bubble dots - shape?
-  geom_point(data = df,
-             aes(x = x,
-                 y = y),
-             colour = "red") +
-    # scale_x_log10(limits = c(1, 100),
+  df2_xmin <- floor(log10(min(df2$x)))
+  df2_ymin <- floor(log10(min(df2$y)))
+  
+  # ---- create plots ----
+  # pigment ratios
+  plt1 <- ggplot(data = df, aes(x = x, y = y)) + 
+  geom_point(colour = "red") +
+    # scale_x_log10(limits = c(10^df_xmin, 100),
     #               labels = fancy_scientific,
-    #               minor_breaks = xticks) +
-    # scale_y_log10(limits = c(1e-5, 1),
+    #               breaks = 10^(df_xmin:2),
+    #               minor_breaks = xticks_minor,
+    #               expand = c(0,0)) +
+
+    # scale_y_log10(limits = c(10^(df_ymin), 100),
     #               labels = fancy_scientific,
-    #               minor_breaks = yticks) +
-    labs(title = "Variation in f coefficients",
-         x     = "Mean coefficient value",
-         y     = "standard deviation/mean") +
-    theme_bw())
+    #               breaks = c(10^(df_ymin:2)),
+    #               minor_breaks = yticks_minor,
+    #               expand = c(0,0)) +
+    labs(
+         title = "Variation in Pigment Ratio Coefficients",
+         x     = "Mean Coefficient Value",
+         y     = "Coefficient of Variation (Standard Deviation / Mean)") +
+    theme_bw()
   
   
   # figure
@@ -190,28 +210,42 @@ randstart <- function(s,ssd,f,fsd) {
   # xlabel('Mean coefficient value')
   # ylabel('standard deviation/mean')
   
-  # tc
-  # might have issue with transpose?
-  df2 <- data.frame(x = apply(tc, 2, mean, na.rm = TRUE),
-                    y = apply(tc, 2, function(x)
-                      sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE))
-                    )
-  
-  print(ggplot() +
+  # taxa contribution
+  plt2 <- ggplot() +
     # original had bubble dots - shape?
     geom_point(data = df2,
                aes(x = x,
                    y = y),
                colour = "red") +
-    # scale_x_log10(limits = c(1, 100),
-    #               labels = fancy_scientific,
-    #               minor_breaks = xticks) +
-    # scale_y_log10(limits = c(1e-5, 1),
-    #               labels = fancy_scientific,
-    #               minor_breaks = yticks) +
-    labs(title = "Variation in c coefficients",
-         x     = "Mean coefficient value",
-         y     = "standard deviation/mean") +
-    theme_bw())
+      # scale_x_log10(limits = c(10^df2_xmin, 100),
+      #               labels = fancy_scientific,
+      #               breaks = 10^(df2_xmin:2),
+      #               minor_breaks = xticks_minor,
+      #               expand = c(0,0)) +
+      #
+      # scale_y_log10(limits = c(10^(df2_ymin), 100),
+      #               labels = fancy_scientific,
+      #               breaks = c(10^(df2_ymin:2)),
+      #               minor_breaks = yticks_minor,
+      #               expand = c(0,0)) +
+    labs(title = "Variation in Taxa Contribution",
+         x     = "Mean Coefficient Value",
+         y     = "Standard Deviation / Mean") +
+    theme_bw()
   
-}
+  if (verbose) {
+    print(plt1)
+    print(plt2)
+  }
+  
+  
+  # ---- return final values ----
+  results            <- list()
+  results$replicates <- .nrep
+  results$rep_df     <- list(pig_rep = pig_rep, taxa_amt_rep = taxa_amt_rep)
+  results$dfs        <- list(pig_r_avg = df,taxa_r_avg = df2)
+  results$plt        <- list(pig_plt = plt1, taxa_plt = plt2)
+  results$logs       <- logs
+  
+  return(results)
+  }

@@ -60,8 +60,8 @@ permcalc <- function(ratio_pig_filt, df_pig) {
   # ---- stop if any of the selected pigments were not found in the sample  ----
   if (!identical(ratio_pig_filt, df_pig[new_idx])) {
     message('Names do not match')
-    print(cbind("Selected Pigments"= ratio_pig_filt,
-                "Sample Pigments"  = df_pig[new_idx]))
+    print(cbind("Selected Pigments" = ratio_pig_filt,
+                "Sample Pigments"   = df_pig[new_idx]))
     stop("Look at list of non-matching names!")
   }
   

@@ -1,4 +1,4 @@
-chemtaxbrokewest <- function() {
+chemtaxbrokewest <- function(idx = c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1)) {
 ################################################################################
 #                                                                              # 
 #            ---- Read phytoplankton data for chemtaxbrokewest ----            #
@@ -6,15 +6,15 @@ chemtaxbrokewest <- function() {
 ################################################################################
 # ---- DESCRIPTION: ------
 # The chemtaxbrokewest.csv is read that contains the pigment data for all
-# measured pigments (rows = sample, col = pigment). The 
-# brokewest_pigment_ratios.csv is read that contains the initial pigments ratio
-# matrix (row = taxa ratio, col 1 = species name, others = pigment ratio). The
-# pigments are selected by an index of 1/0 representing the cols in the pigment 
-# ratio matrix that is used. This is pre-selected for testing. A comparison 
-# between pigments names from pigment ratio matrix and sample matrix is done to
-# select the same pigments (spelling counts) and check that none is missing from
-# the sample matrix. Two matrices are created for initial standard deviation 
-# using the formula(s):
+# measured pigments (rows = sample, col = pigment). The
+# brokewest_pigment_ratios.csv is read that contains the initial pigments
+# ratiomatrix (row = taxa ratio, col 1 = species name, others = pigment ratio).
+# The pigments are selected by an index of 1/0 representing the cols in the
+# pigment ratio matrix that is used. This is pre-selected for testing. A
+# comparison between pigments names from pigment ratio matrix and sample matrix
+# is done to select the same pigments (spelling counts) and check that none is
+# missing from the sample matrix. Two matrices are created for initial standard
+# deviation using the formula(s):
 #
 # df_sd = df_sd * 0.01 + 0.0003;
 # pig_r_sd  = pig_r_init*0.1; and
@@ -45,33 +45,51 @@ chemtaxbrokewest <- function() {
   root <- rprojroot::find_rstudio_root_file()
   raw  <- "/data/raw/"
   
-  # ---- CHEMTAXBROKEWests  ----
+  # ---- read data ----
   # pigment concentration in samples
   # TODO: should make this a function?
-  sample_filepath     <- paste0(root, raw, "CHEMTAXBROKEWests.csv")
-  df           <- as.matrix(read.csv(sample_filepath))
+  sample_filepath <- paste0(root, raw, "CHEMTAXBROKEWests.csv")
+  df              <- as.matrix(read.csv(sample_filepath))
+  
+  # pigment ratio matrix
+  pig_ratio_filepath   <- paste0(root,"/scripts/brokewest_pigment_ratios.csv")
+  temp_ratio           <- read.csv(pig_ratio_filepath)
   
   # extract pigment names
-  df_pig              <- colnames(df)
+  df_pig       <- colnames(df)
   colnames(df) <- NULL
  
+  # extract pigment names
+  pigm_temp <- colnames(temp_ratio)[-1]
+  
   # ---- index for selected pigments of pigment ratios matrix ----
   # TODO: make input for this 
-  idx <- c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1)
+  if (is.null(idx) | !(length(idx) > 0)) {
+    message(paste("Here are the pigment names to choose from\n"))
+    message(paste(pigm_temp, "\n"))
+    idx <- readline(prompt = paste0(
+                    "Give a vector of 1/0 the selected pigment \n",
+                    "Should be the same length. (ex 1 0 1 1 0) ")
+                    )
+    idx <- as.integer(strsplit(idx, " ")[[1]])
+    if (length(idx) != length(pigm_temp)) {
+      idx <-  NULL
+      stop("Input does not match length of pigments") 
+    }
+  }
+  
+  # idx <- c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1)
   
   # ---- read pigment ratios ----
-  pig_ratio_filepath       <- paste0(root,"/scripts/brokewest_pigment_ratios.csv")
-  temp_ratio               <- read.csv(pig_ratio_filepath)
-  
   # initialize ratio matrix by removing taxa and pigment names
-  pig_r_init           <- as.matrix(temp_ratio[,-1])[, which(idx==1)] 
+  pig_r_init           <- as.matrix(temp_ratio[,-1])[, which(idx == 1)] 
   colnames(pig_r_init) <- NULL # TODO: decide if it matters or not
   
   # extract pigment names
-  pigm_sel                 <- colnames(temp_ratio)[-1][which(idx==1)] 
+  pigm_sel             <- colnames(temp_ratio)[-1][which(idx == 1)] 
   
   # extract taxa names
-  taxa                     <- temp_ratio[,1]
+  taxa                 <- temp_ratio[,1]
 
   # ---- find columns that match and rearrange ----
   source(paste0(root,"/scripts/permcalc.R"))
@@ -81,19 +99,20 @@ chemtaxbrokewest <- function() {
   df  <- df[, df_pig_idx]
   
   # ---- set standard deviation values ----
+  # TODO: make this part of function
   df_sd                       <- df * 0.01 + 0.0003
-  pig_r_sd                   <- pig_r_init * 0.1
-  pig_r_sd [, ncol(pig_r_sd )] <- 0.005 # set chlor-a sd to 0.005
+  pig_r_sd                    <- pig_r_init * 0.1
+  pig_r_sd[, ncol(pig_r_sd )] <- 0.005 # set chlor-a sd to 0.005
 
-  # return list of all variables created
+  # ---- return list of variables created ----
   result <-
     list(
-      df      = df,
-      df_sd   = df_sd,
+      df         = df,
+      df_sd      = df_sd,
       pig_r_init = pig_r_init,
-      pig_r_sd    = pig_r_sd ,
-      taxa           = taxa,
-      pigm_sel       = pigm_sel
+      pig_r_sd   = pig_r_sd ,
+      taxa       = taxa,
+      pigm_sel   = pigm_sel
     )
   
 }

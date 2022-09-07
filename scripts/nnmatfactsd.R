@@ -1,4 +1,4 @@
-nnmatfactsd <- function(df,df_sd,pig_r_init,pig_r_sd ,info=NULL){
+nnmatfactsd <- function(.df,.df_sd,.pig_r_init,.pig_r_sd,.info=NULL, verbose = TRUE){
 ################################################################################
 #                                                                              # 
 #            Non negative matrix factors x=a*b with prior b0 & sd              #
@@ -27,13 +27,13 @@ nnmatfactsd <- function(df,df_sd,pig_r_init,pig_r_sd ,info=NULL){
 # taxa_amt   = Left factor of x (i.e. amount of taxa per sample)
 # pig_r      = Right factor of x
 # info       = Initial info and
-#              $itr    Iterations used
-#              $conv   Converge level for error
-#              $rms    Total rms error weighted for x & pig_r
-#              $rms_pig   Rms error in x unweighted
-#              $rmdxwt Weighted rms error in x
+#              $itr         Iterations used
+#              $conv        Converge level for error
+#              $rms         Total rms error weighted for x & pig_r
+#              $rms_pig     Rms error in x unweighted
+#              $rmdxwt      Weighted rms error in x
 #              $rms_pig_r   Rms error in pig_r unweighted
-#              $rmsbwt Weighted rms error in pig_r
+#              $rmsbwt      Weighted rms error in pig_r
 #         optional:
 #           TODO: $plots
 # ---- NOTES: ------------
@@ -45,11 +45,11 @@ nnmatfactsd <- function(df,df_sd,pig_r_init,pig_r_sd ,info=NULL){
 # Sebastian Di Geronimo (Sun Jun 19 22:22:08 2022) 
 
   # ---- remove when done testing! ----
-  # df = s
-  # df_sd = ssd
-  # pig_r_init = f0
-  # pig_r_sd = fsd
-  # info = NULL
+  # .df = s
+  # .df_sd = ssd
+  # .pig_r_init = f0
+  # .pig_r_sd = fsd
+  # .info = NULL
   
   
   library("pracma")
@@ -61,8 +61,8 @@ nnmatfactsd <- function(df,df_sd,pig_r_init,pig_r_sd ,info=NULL){
   
   # ---- options ----
   # create open list if no defaults are given for `info`  
-  if (is.null(info)) {
-    info <- list()
+  if (is.null(.info)) {
+    .info <- list()
   }
   
   # set defaults options
@@ -72,12 +72,12 @@ nnmatfactsd <- function(df,df_sd,pig_r_init,pig_r_sd ,info=NULL){
       convitr  = 500,
       printitr = 1000,
       conv     = 1e-6,
-      initb    = pig_r_init,
+      initb    = .pig_r_init,
       maxaitr  = -1
     )
   
   # add/replace default options if not set
-  info  <- initstruct(info, deflt)
+  info  <- initstruct(.info, deflt)
   
   # ensure iteration counts nest & convitr<=printitr<=maxitr
   convitr       <- info$convitr
@@ -85,11 +85,14 @@ nnmatfactsd <- function(df,df_sd,pig_r_init,pig_r_sd ,info=NULL){
   maxitr        <- info$maxitr
   
   if (printitr > maxitr) {
-    maxitr      <- pracma::ceil(maxitr/convitr)*convitr
+    maxitr      <- ceiling(maxitr/convitr)*convitr
+    # maxitr      <- pracma::ceil(maxitr/convitr)*convitr
     printitr    <- maxitr + 1 # if don't want to print values, could be different
   } else {
-    printitr    <- pracma::ceil(printitr/convitr)*convitr
-    maxitr      <- pracma::ceil(maxitr/printitr)*printitr
+    printitr    <- ceiling(printitr/convitr)*convitr
+    maxitr      <- ceiling(maxitr/printitr)*printitr
+    # printitr    <- pracma::ceil(printitr/convitr)*convitr
+    # maxitr      <- pracma::ceil(maxitr/printitr)*printitr
   }
   
   info$printitr <- printitr
@@ -97,25 +100,25 @@ nnmatfactsd <- function(df,df_sd,pig_r_init,pig_r_sd ,info=NULL){
   
   # ---- extract row and column info ----
   # checks for same number of columns
-  df_row           <- dim(df)[1]  # row #
-  df_col           <- dim(df)[2]  # col #
-  pig_r_init_row   <- dim(pig_r_init)[1] # row #, # of classes to estimate 
-  pig_r_init_col   <- dim(pig_r_init)[2] # col #, # of pigments to adjust
+  df_row           <- dim(.df)[1]  # row #
+  df_col           <- dim(.df)[2]  # col #
+  pig_r_init_row   <- dim(.pig_r_init)[1] # row #, # of classes to estimate 
+  pig_r_init_col   <- dim(.pig_r_init)[2] # col #, # of pigments to adjust
   if (df_col != pig_r_init_col) stop('matfactsd: matrix size error\nnot the same size')
   
   # 
   pig_conc_tot     <- df_row * df_col            # total number of pigment conc for all samples
   tax_conc_tot     <- df_row * pig_r_init_row    # total number of taxa concentrations
-  pig_adj_tot      <- sum(pig_r_init != 0)       # number of pigments being adjusted
+  pig_adj_tot      <- sum(.pig_r_init != 0)      # number of pigments being adjusted
   n_err_terms      <- pig_conc_tot + pig_adj_tot # number of error terms (sum of adjusted pigments and pigment concentrations)
 
   # transformed values as used in calculation
-  df_sd            <- df_sd + 1e-100     # create matrix of non-zeros
-  pig_r_sd         <- pig_r_sd  + 1e-100 # create matrix of non-zeros
-  w2x              <- 1 / (df_sd^2)      # create weight by inverse squared std dev sample matrix
-  w2b              <- 1 / (pig_r_sd^2)   # create weight by inverse squared std dev ratio matrix
-  xw               <- df * w2x           # multiply weight x by samples
-  b0w              <- pig_r_init * w2b   # multiply weight b by initial pigment ratio
+  df_sd            <- .df_sd + 1e-100     # create matrix of non-zeros
+  pig_r_sd         <- .pig_r_sd  + 1e-100 # create matrix of non-zeros
+  w2x              <- 1 / (df_sd^2)       # create weight by inverse squared std dev sample matrix
+  w2b              <- 1 / (pig_r_sd^2)    # create weight by inverse squared std dev ratio matrix
+  xw               <- .df * w2x           # multiply weight x by samples
+  b0w              <- .pig_r_init * w2b   # multiply weight b by initial pigment ratio
 
 
   # ---- initial estimate before running factorization through iteration ----
@@ -133,7 +136,7 @@ nnmatfactsd <- function(df,df_sd,pig_r_init,pig_r_sd ,info=NULL){
     taxa_amt       <- info$inita
   } else {
     taxa_amt       <-
-      pracma::repmat(sqrt(as.matrix(apply(df ^ 2, 1, sum)) / 
+      pracma::repmat(sqrt(as.matrix(apply(.df ^ 2, 1, sum)) / 
                             pig_r_init_row), 1, pig_r_init_row)
     if (maxaitr < 0) {
       maxaitr      <- 10
@@ -155,49 +158,40 @@ nnmatfactsd <- function(df,df_sd,pig_r_init,pig_r_sd ,info=NULL){
   }
 
   # ---- initial rms of a and b estimates ----
-
   # initial pigments minus predicted pigments based on b (the pig ratio) and a (amount of pigment)
-  pig_res   <- df - taxa_amt %*% pig_r 
-  pig_r_res <- pig_r_init - pig_r
+  pig_res   <- .df - taxa_amt %*% pig_r 
+  pig_r_res <- .pig_r_init - pig_r
   
   # error for a and b, from initial divided by std dev
   res.std   <- rbind(pig_res / df_sd, pig_r_res / pig_r_sd ) # this is standardized residuals
   rms_prev  <- sqrt(sum(res.std^2) / n_err_terms) # initial root mean square 
   conv      <- info$conv
-
-  # rmsxwt=sqrt(sum(sum((er./sdx).^2/nx)));
-  # rmsbwt=sqrt(sum(sum((erb./sdb).^2))/nb0);
-  # fprintf(['   itr    rmsx      rmsxwt     rmsb     '  ...
-  #          'rmsbwt   drms       da         db\n'])
-  # fprintf('%6i%#10.3g%#10.3g%#10.3g%#10.3g\n',  ...
-  #         0,rmsx,rmsxwt,rmsb,rmsbwt)
-
   
-  # print heading & initial values
-  if (printitr <= maxitr) {
-    # rms of initial pigments to predicted pigments
-    rms_pig   <- sqrt(sum(pig_res^2)/pig_conc_tot)
-    rmsxwt    <- sqrt(sum((pig_res/df_sd)^2/pig_conc_tot))
+  # ---- RMS of initial pigments to predicted pigments ----
+  rms_pig   <- sqrt(sum(pig_res^2)/pig_conc_tot)
+  rmsxwt    <- sqrt(sum((pig_res/df_sd)^2/pig_conc_tot))
+  
+  # alternate:
+  # rms_pig <- Metrics::rmse(df, taxa_amt %*% pig_r)
+  # rmsxwt  <- Metrics::rmse(df/df_sd, (taxa_amt %*% pig_r)/df_sd)
+  
+  # residuals of initial pigment ratio to current pigment ratio
+  rms_pig_r <- sqrt(sum(pig_r_res^2) / pig_adj_tot) # rms of pigment ratio
+  rmsbwt    <- sqrt(sum((pig_r_res / pig_r_sd )^2) / pig_adj_tot)
     
-    # alternate:
-    # rms_pig <- Metrics::rmse(df, taxa_amt %*% pig_r)
-    # rmsxwt  <- Metrics::rmse(df/df_sd, (taxa_amt %*% pig_r)/df_sd)
-    
-    # residuals of initial pigment ratio to current pigment ratio
-    rms_pig_r <- sqrt(sum(pig_r_res^2) / pig_adj_tot) # rms of pigment ratio
-    rmsbwt    <- sqrt(sum((pig_r_res / pig_r_sd )^2) / pig_adj_tot)
-    
-    # rms_pig <- Metrics::rmse(pig_r_init, pig_r)
-    # rmsxwt  <- Metrics::rmse(pig_r_init/pig_r_sd, pig_r/pig_r_sd)
-    
-    pracma::fprintf('Iter:    RMS:   Wt RMS:   Pigment Ratio RMS:   Weighted PR RMS:     dRMS:   dTaxa RMS:   dPig RMS:\n')
-    pracma::fprintf("%5i%#8.3g%#10.3g%#21.3g%#19.3g\n", 0,rms_pig,rmsxwt,rms_pig_r,rmsbwt)
+  # rms_pig <- Metrics::rmse(pig_r_init, pig_r)
+  # rmsxwt  <- Metrics::rmse(pig_r_init/pig_r_sd, pig_r/pig_r_sd)
+  
+  # ---- print heading & initial values ----
+  if (printitr <= maxitr & verbose) { 
+    cat(sprintf('\nIter:    RMS:   Wt RMS:   Pigment Ratio RMS:   Weighted PR RMS:     dRMS:   dTaxa RMS:   dPig RMS:\n'))
+    cat(sprintf("%5i%#8.3g%#10.3g%#21.4g%#19.3g\n", 0,rms_pig,rmsxwt,rms_pig_r,rmsbwt))
+    # pracma::fprintf('\nIter:    RMS:   Wt RMS:   Pigment Ratio RMS:   Weighted PR RMS:     dRMS:   dTaxa RMS:   dPig RMS:\n')
+    # pracma::fprintf("%5i%#8.3g%#10.3g%#21.4g%#19.3g\n", 0,rms_pig,rmsxwt,rms_pig_r,rmsbwt)
 
   }
   
-  # ---- factorization ----
-  # main iteration loop
-  
+  # ---- initialize factorization ----
   # set previous iteration values to check against
   taxa_amt_prev <- taxa_amt
   pig_r_prev    <- pig_r
@@ -215,8 +209,8 @@ nnmatfactsd <- function(df,df_sd,pig_r_init,pig_r_sd ,info=NULL){
       taxa_amt_chg = NA,
       pig_r_chg    = NA
     )
-  
-  
+
+  # ---- main factorization loop ----
   for (itr in seq(maxitr)) {
     # update a & b
     taxa_amt <- taxa_amt * (xw %*% t(pig_r)) / (((taxa_amt %*% pig_r) * w2x) %*% t(pig_r) + 1e-100)
@@ -231,8 +225,8 @@ nnmatfactsd <- function(df,df_sd,pig_r_init,pig_r_sd ,info=NULL){
       pig_r_chg     <- sqrt(sum((pig_r_prev - pig_r)^2) / pig_adj_tot) / convitr
       
       # calc residuals divided by std. dev.
-      pig_res       <- df - taxa_amt %*% pig_r 
-      pig_r_res     <- pig_r_init - pig_r
+      pig_res       <- .df - taxa_amt %*% pig_r 
+      pig_r_res     <- .pig_r_init - pig_r
       res.std       <- rbind(pig_res / df_sd, pig_r_res / pig_r_sd )
       
       # calc rms and rms change from previous iterations divided by # of iterations since last time (default = 500)
@@ -240,41 +234,36 @@ nnmatfactsd <- function(df,df_sd,pig_r_init,pig_r_sd ,info=NULL){
       rms_chg       <- (rms_prev - rms ) / convitr # change in rms from previous to current, where divide by nuber of convitr
       
       # non-negative least linear squares to calc matrix `a` in min||x - a %*% b||
-      taxa_amt      <- amatfactsd(df,df_sd,pig_r)
+      taxa_amt      <- amatfactsd(.df,df_sd,pig_r)
       taxa_amt_prev <- taxa_amt
       pig_r_prev    <- pig_r
       rms_prev      <- rms
+      
+      # when the change in RMS is < conv, then breaks
       conv_end      <- abs(rms_chg) < conv
-      
-      
-      
+
       # check print occasionally
       if ((itr %% printitr) == 0 || conv_end || (itr %% maxitr) == 0  ) {
-        pig_res   <- df - taxa_amt %*% pig_r
+        pig_res   <- .df - taxa_amt %*% pig_r
         rms_pig   <- sqrt(sum(pig_res^2) / pig_conc_tot)
         rmsxwt    <- sqrt(sum((pig_res / df_sd)^2 / pig_conc_tot))
-        pig_r_res <- pig_r_init - pig_r
+        pig_r_res <- .pig_r_init - pig_r
         rms_pig_r <- sqrt(sum(pig_r_res^2) / pig_adj_tot)
         rmsbwt    <- sqrt(sum((pig_r_res / pig_r_sd )^2) / pig_adj_tot)
         
         logs <- rbind(logs, cbind(itr,rms_pig,rmsxwt,rms_pig_r,rmsbwt,rms_chg,taxa_amt_chg,pig_r_chg))
         
-        if (printitr <= maxitr) {
+        if (printitr <= maxitr & verbose) {
           # pracma::fprintf('   itr    rms_pig      rmsxwt     rms_pig_r     rmsbwt   drms       da         db\n')
-          pracma::fprintf('%5i%#8.3g%#10.3g%#21.3g%#19.3g%#10.2e%13.2e%#12.2e\n', 
-                          itr,rms_pig,rmsxwt,rms_pig_r,rmsbwt,rms_chg,taxa_amt_chg,pig_r_chg) 
+          # pracma::fprintf('%5i%#8.3g%#10.3g%#21.3g%#19.2f%#10.2e%13.2e%#12.2e\n', 
+          #                 itr,rms_pig,rmsxwt,rms_pig_r,rmsbwt,rms_chg,taxa_amt_chg,pig_r_chg) 
+          cat(sprintf('%5i%#8.3g%#10.3g%#21.3g%#19.2f%#10.2e%13.2e%#12.2e\n', 
+                       itr,rms_pig,rmsxwt,rms_pig_r,rmsbwt,rms_chg,taxa_amt_chg,pig_r_chg) )
+          
         }
       }
-      
-      # for (i  in 1) {
-      #   pracma::fprintf('Iter:   RMS:   Wt RMS:   Pigment Ratio RMS:   Weighted PR RMS:     dRMS:   dTaxa RMS:   dPig RMS:\n')
-      #   pracma::fprintf('%5i%#7.3g%#10.3g%#21.3g%#19.3g%#10.3e%13.3e%#12.3e\n', 
-      #                   itr,rms_pig,rmsxwt,rms_pig_r,rmsbwt,rms_chg,taxa_amt_chg,pig_r_chg)        # pracma::fprintf("%14 i%10.3g", 105, rms_pig)
-      #   # pracma::fprintf("%14i", 2)
-      # }
-      # 
-      
-      # check convergence
+      # pracma::fprintf( "%#19.5f", 12. )
+      # check for convergence
       if (conv_end) {
         break
       }

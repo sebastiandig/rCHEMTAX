@@ -5,6 +5,7 @@ amatfactsd <- function(.df, .df_sd, .pig_r){
 #                                                                              #    
 ################################################################################
 # ---- DESCRIPTION: ------
+# Solves for a
 # brokewest -> chemtaxbrokewest() -> line 57 -> nnmatfactsd -> amatfactsd
 # 
 # ---- INPUTS: -----------
@@ -49,3 +50,4 @@ library("pracma")
   taxa_amt_min
   
 }
+          

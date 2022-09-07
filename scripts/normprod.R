@@ -1,18 +1,23 @@
-normprod <- function(.df,c,f) {
+normprod <- function(.df,.taxa_amt,.pig_r, .col = NULL) {
 ################################################################################
 #                                                                              # 
-#               Normalize matrix product on last row of s & f                  #
+#                Normalize matrix product on select col of s & f               #
 #                                                                              #    
 ################################################################################
 # ---- DESCRIPTION: -------
+# After factor analysis using min||x - a * b||, results are normalized. 
+#  
+# The selected column needs to be the same for the data and the pigment ratio 
+# matrix. If the data does not have the same number of columns, will throw and 
+# error.
 #
 # ---- INPUTS: -----------
 # df = Original product matrix
-# c = Left factor of df
-# f = Right factor of df
+# taxa_amt = Left factor of df
+# pig_r = Right factor of df
 #
 # ---- OUTPUTS: ----------
-# ss = Matrix .df rescaled for one in last column
+# ss = Matrix .df normalized to last column
 # cc = Left factor after scaling
 # ff = Right factor after scaling
 # rms = Root mean square of ss-cc*ff
@@ -24,60 +29,59 @@ normprod <- function(.df,c,f) {
 #
 # ---- AUTHOR(s): --------
 # Sebastian Di Geronimo (Sun Jun 19 14:53:10 2022)
- 
-  # %  2010-03-28  Matlab7  W.Whiten
-  
-  # %  s   Original product matrix
-  # %  c   Left factor of s
-  # %  f   Right factor of s
-  # %
-  # %  ss  Matrix s rescaled for one in last column
-  # %  cc  Left factor after scaling
-  # %  ff  Right factor after scaling
-  # %  rms Root mean square of ss-cc*ff
-  
+
+  # ---- load library ----
   library("pracma")
   
-  # [ns,np]=size(s);
-  # nt=size(f,1);
-  
-  ns <- dim(.df)[1]
-  np <- dim(.df)[2]
-  nt <- dim(f)[1]
-  
-  # s1=1./(s(:,end)+1e-100);
-  # ss=s.*repmat(s1,1,np);
-  
-  s1 <- as.matrix(1 / (.df[,ncol(.df)] + 1e-100))
-  ss <- .df * pracma::repmat(s1, 1, np)
-  
-  # s2=f(:,end);
-  # ff=f.*repmat(1./(s2+1e-100),1,np);
-  
-  s2 <- as.matrix(f[,ncol(f)])
-  ff <- f * pracma::repmat(1/(s2 + 1e-100), 1, np)
-  
-  # t=repmat(s1,1,nt).*c;
-  # cc=t.*repmat(s2',ns,1);
+  # ---- extract dimension information ----
+  df_row <- dim(.df)[1] # row of df
+  df_col <- dim(.df)[2] # col of df
+  pig_r_row <- dim(.pig_r)[1] # row of pigment ratio
+  pig_r_col <- dim(.pig_r)[2] # col of df
+  if (df_col != pig_r_col) {
+    stop(paste(
+      'normprod: matrix size error\nNot the same number of columns\ndf:',
+      df_col,
+      '\npig ratio:',
+      pig_r_col)
+    )
+  }
 
-  t  <- pracma::repmat(s1, 1, nt) * c
-  cc <- t * pracma::repmat(t(s2), ns, 1)
+  # ---- select column to normalize to ----
+  # default = last column
+  if (is.null(.col)) {
+    # default to last col
+    df_sel    <- ncol(.df)
+    pig_r_sel <- ncol(.pig_r)
+  } else {
+    message(paste("Column selected for normalizing:", .col))
+    df_sel    <- .col
+    pig_r_sel <- .col
+  }
   
-  # % get rms
-  # t=ss-cc*ff;
-  # rms=sqrt(sum(t(:).^2)/length(t(:)));
+  # ---- normalize df to inverse of last col ----
+  df_norm_col    <- as.matrix(1 / (.df[,df_sel] + 1e-100))
+  df_norm        <- .df * pracma::repmat(df_norm_col, 1, df_col)
+
+  # ---- normalize pigment ratio to inverse of last col ----
+  pig_r_norm_col <- as.matrix(.pig_r[,pig_r_sel])
+  pig_r_norm     <- .pig_r * pracma::repmat(1 / (pig_r_norm_col + 1e-100), 1, df_col)
   
-  t   <- ss - cc %*% ff 
-  # rms <- sqrt( sum(t^2)  / length(t))
-  rms <- sqrt(mean(t^2))
+  # ---- normalize a * b to last col in df and pig ratio ----
+  taxa_norm      <- .taxa_amt * pracma::repmat(df_norm_col, 1, pig_r_row) 
+  cc             <- taxa_norm * pracma::repmat(t(pig_r_norm_col), df_row, 1)
   
-  # return
-  # end 
+  # ---- calc RMS ----
+  res <- df_norm - cc %*% pig_r_norm  # residuals
+  rms <- sqrt(mean(res^2))
   
-  results <- list(ss = ss,
+  # ---- return final values ----
+  results <- list(
+                  ss = df_norm, 
                   cc = cc,
-                  ff = ff,
-                  rms = rms)
+                  ff = pig_r_norm,
+                  rms = rms
+                  )
   
   return(results)
 }

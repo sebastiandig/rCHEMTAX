@@ -49,8 +49,8 @@ taxa  <- temp$taxa           # name of taxa groups, comes from pigment ratio col
 pigm  <- temp$pigm_sel 
 
 # ---- fit the matrix factors ----
-temp2 <- nnmatfactsd(df = s,df_sd=ssd,pig_r_init=f0,pig_r_sd=fsd,info=NULL)
-c     <- temp2$a
+temp2 <- nnmatfactsd(.df = s,.df_sd=ssd,.pig_r_init=f0,.pig_r_sd=fsd)
+taxa_amt <- temp2$a
 f     <- temp2$b
 info  <- temp2$info
 
@@ -61,24 +61,25 @@ info  <- temp2$info
 # matfactuvw(x=x,u=,v=,b=b0,w=,info)
 # bmatfactsd(x=x, sdx=sdx, a=a (from amatfactsd), b0=f0, sdb=fsd)
 
-# idk what this is used for
+# ---- calculates pigment ratio matrix ----
+# uses df, df_sd, taxa contribution matrix, pigment ratio matrix, and it sd 
 source(paste0(root, "/scripts/bmatfactsd.R"))
-bmatfactsd(
-  x   = s,
-  sdx = ssd,
-  a   = c,
-  b0  = f,
-  sdb = fsd
+test <- bmatfactsd(
+  .df       = s,
+  .df_sd    = ssd,
+  .taxa_amt = taxa_amt,
+  .pig_r    = f,
+  .pig_r_sd = fsd
 )
 
 # ---- scale the factors and original data ----
-temp3 <- normprod(s,c,f)
+temp3 <- normprod(s,taxa_amt,f)
 ss    <- temp3$ss
 cc    <- temp3$cc
 ff    <- temp3$ff
 rms   <- temp3$rms
 
-# write results to file brokewest.csv
+# ---- write results to file brokewest.csv ----
 df.sav = "n"
 if (save == "y") {
   # write results to file brokewest.csv
@@ -117,13 +118,15 @@ if (do == "y") {
   source(paste0(root, "/scripts/bootln.R"))
   source(paste0(root, "/scripts/bootnp.R"))
   
-  # plot showing the effect of regularisation
+  # plot showing the effect of regularization
   # has warning, but seems work
-  regplot(s,ssd,f,fsd)
+  reg_out <- regplot(s,ssd,f,fsd, verbose = T)
   
   # show converges from random starts for c
   # sort of works, graphs are not on log scale
-  randstart(s,ssd,f0,fsd)
+  
+  # rand_out <- 
+    randstart(s,ssd,f0,fsd,verbose = TRUE,.nrep = 2, .info = list(printitr = 5000))
    
   # bootstrap using parametric log normal
   bootln(s,ssd,f0,fsd)
