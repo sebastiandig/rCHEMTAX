@@ -5,148 +5,288 @@ date: "6/2/2022"
 output:
   html_document: default
   pdf_document: default
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
-### Intro: 
+### Intro:
+
 This will serve as my starting point for converting CHEMTAX V2.0 into R.
-#TODO: fix this: [CHEMTAX Document](./Re__CHEMTAX_Update_[SEC=OFFICIAL]/Re__CHEMTAX_Update_[SEC=OFFICIAL]/CHEMTAX 2 Octave version.docx)
+#TODO: fix this: [CHEMTAX
+Document](./Re__CHEMTAX_Update_%5BSEC=OFFICIAL%5D/Re__CHEMTAX_Update_%5BSEC=OFFICIAL%5D/CHEMTAX%202%20Octave%20version.docx)
 
 `r gsub("\\.m$","", list.files(path = "./Re__CHEMTAX_Update_[SEC=OFFICIAL]/MatrixFactorsOctave/", pattern="\\.m$"))`
-# Files that need to be converted
-double tilde ~ will show done
+\# Files that need to be converted double tilde \~ will show done
 
-21 - not all are .m files with functions
-o 0 mostly done
-* 20 finished
-! 0 not started
-x 2 not needed
+## Formulas:
 
-1
-* "adddir"                        ---- *x*
-                                       - I don't think I need this
-2
-* "amatfactsd"                    ---- *finished*
-                                       needs works with creating the two matrices
-3
-* "bmatfactsd"                    ---- *finished* 
-                                       - it works, but I don't know what for
-4
-* "bootln"                        ---- *finished* 
-                                       - connected to `nnmatfactsd`
-5
-* "bootnp"                        ---- *finished*
-                                       - connected to `nnmatfactsd`
-6
-* "brokewest"                     ---- *finished*
-                                       - connected to `chemtaxbrokewest`, 
-                                       `nnmatfactsd`,  `normprod`, `regplot`, 
-                                       `randstart`, `bootln`, `bootnp`
-7
-* "chemtaxbrokewest"              ---- *finished* 
-                                       - connected to `permcalc`, file for `s`  
-                                       and `scol` as `CHEMTAXBROKEWests`, file    
-                                       for `f0`, `taxa` and `fcol` as 
-                                       `pigment_ratios.csv`
-8
-* "CHEMTAXBROKEWestb"             ---- *finished*
-                                       - TODO: create `matfactuvw` and test
-                                       - connected to `matfactuvw`, `permcalc`,
-                                       file for `b` as `b_pigment_ratios.csv`, 
-                                       file for `x` as `CHEMTAXBROKEWestx.csv``
-9
-* "CHEMTAXBROKEWests"             ---- *finished*, as .csv in `data/raw/`  
-10
-* "CHEMTAXBROKEWestx"             ---- *finished*, as .csv in `data/raw/`
-11
-* "dataout"                       ---- *x*
-                                       probably don't need     
-12
-* "Formulas"                      ---- *finished*, doesn't connect to anything and 
-                                       is not a function, not sure what do do with it
-13                                       
-* "initstruct"                    ---- *finished*    
-14
-* "matfactuvw"                    ---- *finished*
-                                       - connected to  `initstruct`
-15
-* "nnmatfactsd"                   ---- *finished*  
-                                       - connected to `amatfactsd`
-                                       - connected to  `initstruct`
-16
-* "normprod"                      ---- *finished* 
-17
-* "permcalc"                      ---- *finished*       
-18
-* "randstart"                     ---- *finished*
-                                       - connect to `nnmatfactsd`
-19
-* "regplot"                       ---- *finished*
-                                       - connected to `nnmatfactsd`
-20
-* "saz"                           ---- *finished*
-                                       - connected to `sazchemtax090210`, 
-                                       `nnmatfactsd`,  `normprod`, `regplot`, 
-                                       `randstart`, `bootln`, `bootnp`
-21
-* "sazchemtax090210"              ----  *finished* 
-                                        - connected to `permcalc`, file for `s`  
-                                        and `scol` as `SAZS_CHEMTAX090210s.csv`, 
-                                        file for `f0`, `taxa` and `fcol` as 
-                                        `saz_pigment_ratios.csv`
-22
-* "SAZS_CHEMTAX090210s"           ---- *finished*, as .csv in `data/raw/`
+a \<- a \* (x %\*% t(b)) / (a \* (b %\*% t(b)) + 1e-100)
 
-## To test `nnmatfactsd` and `amatfactsd` - start with 
+b \<- b \* (t(a) %\*% x + b0) / (t(a) %\*% (a %\*% b) + b + 1e-100)
+
+$$a = \frac {a \times(x \cdot b^T)}{a \times(b \cdot b^T) + 10 \times 10^{-100}} \text{ ;  } b = \frac{b \times (a^T \cdot x + b_0)}{a^T \cdot(a \cdot b) + b + 10 \times 10^{-100}}$$
+
+## List of functions
+
+List of ones to go through again: bootln bootnp CHEMTAXBROKEWestb
+matfactuvw randstart regplot saz sazchemtax090210
+
+21 - not all are .m files with functions o 0 mostly done \* 20 finished
+! 0 not started x 2 not needed
+
++------------+-------+---------------------+------------+------------+
+| Function   | S     | Connections         | Notes      | R          |
+|            | tatus |                     |            | edesigned? |
++============+=======+=====================+============+============+
+| *adddir*   | [**   |                     | I don't    |            |
+|            | NA**] |                     | think I    |            |
+|            | {styl |                     | need this  |            |
+|            | e="co |                     |            |            |
+|            | lor:  |                     |            |            |
+|            | red"} |                     |            |            |
++------------+-------+---------------------+------------+------------+
+| *a         | [*    |                     | solve for  |            |
+| matfactsd* | *Done |                     | a          |            |
+|            | **]{s |                     |            |            |
+|            | tyle= |                     |            |            |
+|            | "colo |                     |            |            |
+|            | r: gr |                     |            |            |
+|            | een"} |                     |            |            |
++------------+-------+---------------------+------------+------------+
+| *b         | [*    |                     | solves for |            |
+| matfactsd* | *Done |                     | b          |            |
+|            | **]{s |                     |            |            |
+|            | tyle= |                     |            |            |
+|            | "colo |                     |            |            |
+|            | r: gr |                     |            |            |
+|            | een"} |                     |            |            |
++------------+-------+---------------------+------------+------------+
+| *bootln*   | [**W  | *nnmatfactsd*       |            |            |
+|            | orks* |                     |            |            |
+|            | *]{st |                     |            |            |
+|            | yle=" |                     |            |            |
+|            | color |                     |            |            |
+|            | : yel |                     |            |            |
+|            | low"} |                     |            |            |
++------------+-------+---------------------+------------+------------+
+| *bootnp*   | [**W  | *nnmatfactsd*       |            |            |
+|            | orks* |                     |            |            |
+|            | *]{st |                     |            |            |
+|            | yle=" |                     |            |            |
+|            | color |                     |            |            |
+|            | : yel |                     |            |            |
+|            | low"} |                     |            |            |
++------------+-------+---------------------+------------+------------+
+| *          | [*    | -                   | **is main  |            |
+| brokewest* | *Done |  *chemtaxbrokewest* | starting   |            |
+|            | **]{s | -   *nnmatfactsd*   | point for  |            |
+|            | tyle= | -   *normprod*      | data and   |            |
+|            | "colo | -   *regplot*       | analysis** |            |
+|            | r: gr | -   *randstart*     |            |            |
+|            | een"} | -   *bootln*        |            |            |
+|            |       | -   *bootnp*        |            |            |
++------------+-------+---------------------+------------+------------+
+| *chemtax   | [*    | -   *permcalc*      |            |            |
+| brokewest* | *Done | -   file for *s*    |            |            |
+|            | **]{s |     and *scol* as   |            |            |
+|            | tyle= |     *               |            |            |
+|            | "colo | CHEMTAXBROKEWests*, |            |            |
+|            | r: gr | -   file for *f0*,  |            |            |
+|            | een"} |     *taxa* and      |            |            |
+|            |       |     *fcol* as       |            |            |
+|            |       |     *               |            |            |
+|            |       | pigment_ratios.csv* |            |            |
++------------+-------+---------------------+------------+------------+
+| *CHEMTAXB  | [**W  | -   *matfactuvw*    | TODO: test |            |
+| ROKEWestb* | orks* | -   *permcalc*      | matfactuvw |            |
+|            | *]{st | -   file for *b* as | with this  |            |
+|            | yle=" |     *b_             |            |            |
+|            | color | pigment_ratios.csv* |            |            |
+|            | : yel | -   file for *x* as |            |            |
+|            | low"} |     *CHE            |            |            |
+|            |       | MTAXBROKEWestx.csv* |            |            |
++------------+-------+---------------------+------------+------------+
+| *CHEMTAXB  |       |                     | as *.csv*  |            |
+| ROKEWests* |       |                     | in         |            |
+|            |       |                     | *          |            |
+|            |       |                     | data/raw/* |            |
++------------+-------+---------------------+------------+------------+
+| *CHEMTAXB  |       |                     | as *.csv*  |            |
+| ROKEWestx* |       |                     | in         |            |
+|            |       |                     | *          |            |
+|            |       |                     | data/raw/* |            |
++------------+-------+---------------------+------------+------------+
+| *dataout*  | [**   |                     | probably   |            |
+|            | NA**] |                     | don't need |            |
+|            | {styl |                     |            |            |
+|            | e="co |                     |            |            |
+|            | lor:  |                     |            |            |
+|            | red"} |                     |            |            |
++------------+-------+---------------------+------------+------------+
+| *Formulas* |       |                     | doesn't    |            |
+|            |       |                     | connect to |            |
+|            |       |                     | anything   |            |
+|            |       |                     | and is not |            |
+|            |       |                     | a          |            |
+|            |       |                     | function,  |            |
+|            |       |                     | not sure   |            |
+|            |       |                     | what do do |            |
+|            |       |                     | with it    |            |
++------------+-------+---------------------+------------+------------+
+| *i         | [*    |                     | creates    |            |
+| nitstruct* | *Done |                     | options    |            |
+|            | **]{s |                     | variable   |            |
+|            | tyle= |                     | for        |            |
+|            | "colo |                     | fac        |            |
+|            | r: gr |                     | torization |            |
+|            | een"} |                     |            |            |
++------------+-------+---------------------+------------+------------+
+| *m         | [**W  | -    *initstruct*   |            |            |
+| atfactuvw* | orks* |                     |            |            |
+|            | *]{st |                     |            |            |
+|            | yle=" |                     |            |            |
+|            | color |                     |            |            |
+|            | : yel |                     |            |            |
+|            | low"} |                     |            |            |
++------------+-------+---------------------+------------+------------+
+| *nn        | [*    | -   *amatfactsd*    | [**MAIN    |            |
+| matfactsd* | *Done | -   *initstruct*    | script for |            |
+|            | **]{s |                     | factor     |            |
+|            | tyle= |                     | ana        |            |
+|            | "colo |                     | lysis**]{s |            |
+|            | r: gr |                     | tyle="colo |            |
+|            | een"} |                     | r: green"} |            |
++------------+-------+---------------------+------------+------------+
+| *normprod* | [*    |                     | normalizes |            |
+|            | *Done |                     | to         |            |
+|            | **]{s |                     | selected   |            |
+|            | tyle= |                     | column     |            |
+|            | "colo |                     |            |            |
+|            | r: gr |                     |            |            |
+|            | een"} |                     |            |            |
++------------+-------+---------------------+------------+------------+
+| *permcalc* | [*    |                     |            |            |
+|            | *Done |                     |            |            |
+|            | **]{s |                     |            |            |
+|            | tyle= |                     |            |            |
+|            | "colo |                     |            |            |
+|            | r: gr |                     |            |            |
+|            | een"} |                     |            |            |
++------------+-------+---------------------+------------+------------+
+| *          | [*    | *nnmatfactsd*       |            |            |
+| randstart* | *Done |                     |            |            |
+|            | **]{s |                     |            |            |
+|            | tyle= |                     |            |            |
+|            | "colo |                     |            |            |
+|            | r: gr |                     |            |            |
+|            | een"} |                     |            |            |
++------------+-------+---------------------+------------+------------+
+| *regplot*  | [*    |                     |            |            |
+|            | *Done |                     |            |            |
+|            | **]{s |                     |            |            |
+|            | tyle= |                     |            |            |
+|            | "colo |                     |            |            |
+|            | r: gr |                     |            |            |
+|            | een"} |                     |            |            |
++------------+-------+---------------------+------------+------------+
+| *saz*      |       | -                   |            |            |
+|            |       |  *sazchemtax090210* |            |            |
+|            |       | -   *nnmatfactsd*   |            |            |
+|            |       | -   *normprod*      |            |            |
+|            |       | -   *regplot*       |            |            |
+|            |       | -   *randstart*     |            |            |
+|            |       | -   *bootln*        |            |            |
+|            |       | -   *bootnp*        |            |            |
++------------+-------+---------------------+------------+------------+
+| *sazchem   |       | -   *permcalc*      |            |            |
+| tax090210* |       | -   file for        |            |            |
+|            |       |                     |            |            |
+|            |       |    *sandscolasSAZS_ |            |            |
+|            |       | CHEMTAX090210s.csv* |            |            |
+|            |       | -   file for *f0*,  |            |            |
+|            |       |     *taxa* and      |            |            |
+|            |       |     *fcol* as       |            |            |
+|            |       |     *saz_           |            |            |
+|            |       | pigment_ratios.csv* |            |            |
++------------+-------+---------------------+------------+------------+
+| *          |       |                     | as *.csv*  |            |
+| SAZS_CHEMT |       |                     | in         |            |
+| AX090210s* |       |                     | *          |            |
+|            |       |                     | data/raw/* |            |
++------------+-------+---------------------+------------+------------+
+
+## To test `nnmatfactsd` and `amatfactsd` - start with
+
     - brokewest.R to line 57, that'll be the inputs to `nnmatfactsd`
 
 # Matlab to R notes:
-* length(x) = largest of the dimensions, so if 100 x 4 = 100, or 4 x 100 = 100
-* `*` is matrix multiply, 
-* `.*` & `./` are matrix element by element multiply & divide operations
-* can use `pracma::rand()` for rand
-* `repmat` is used to replicate a matrix by x * y, ie repmat({matrix 5 x 4}, 2, 4)
-  result would be matrix 2 x 16, so 8 replicates of the original matrix where 
-  stacked twice and multiplied by 4
-* mod(a,m) is same as a %% m in R
-* df(:) puts matrix into 1 column
-* df(end) gets the last digit, bottom right of matrix
 
-## Normalization to Chlor-a 
-I think this is done in `matfactuvw` using `pracma::Diag(1/chlor-a col)` then 
-the dot product with df
+-   `length(x)` = largest of the dimensions, so if 100 x 4 = 100, or 4 x
+    100 = 100
+-   `*` is matrix multiply,
+-   `.*` & `./` are matrix element by element multiply & divide
+    operations
+-   can use `pracma::rand()` for rand
+-   `repmat` is used to replicate a matrix by `x * y`, ie
+    `repmat({matrix 5 x 4}, 2, 4)` result would be matrix 2 x 16, so 8
+    replicates of the original matrix where stacked twice and multiplied
+    by 4
+-   `mod(a,m)` is same as `a %% m` in R
+-   `df(:)` puts matrix into 1 column
+-   `df(end)` gets the last digit, bottom right of matrix
 
+## Normalization to Chlor-a
 
-#TODO: something to include is:
-This would load internal ratios file so that you have a basic pigment ratio var
-pigment_ratio <- system.file("", package = "rCHEMTAX")
+I think this is done in `matfactuvw` using `pracma::Diag(1/chlor-a col)`
+then the dot product with df
 
-Plotting Log function:
-# allow y log style plotting from Matlab in semilogy
-  fancy_scientific <- function(l) {
-    # turn in to character string in scientific notation
-    l <- format(l, scientific = TRUE)
-    # quote the part before the exponent to keep all the digits
-    l <- gsub("^(.*)e", "'\\1'e", l)
-    # turn the 'e+' into plotmath format
-    l <- gsub("e", "%*%10^", l)
-    # return this as an expression
-    parse(text=l)
-  }
-  
-  yticks = outer((1:10),(10^(-5:-1)))
-  xticks = outer((1:10),(10^(0:1)))
-  
-  include either:
-  * semi-logx
-  scale_x_log10(limits = c(1, 100),
-                labels = fancy_scientific,
-                minor_breaks = xticks) +
-  * semi-logy
-  scale_y_log10(limits = c(1e-5, 1),
-                labels = fancy_scientific,
-                minor_breaks = yticks) +
-    
+#TODO: something to include is: This would load internal ratios file so
+that you have a basic pigment ratio var
+`pigment_ratio <- system.file("", package = "rCHEMTAX")`
 
+## Plot in log notation on axes
+
+\# allow y or x log style plotting from Matlab in semilogy, semilogx,
+loglog
+
+$$
+\text{i.e. }x\times10^{n}
+$$
+
+``` R
+fancy_scientific <- function(l) { 
+# turn in to character string in scientific notation 
+
+# quote the part before the exponent to keep all the digits 
+l <- format(l, scientific = TRUE) 
+
+# turn the 'e+' into plotmath format 
+l <- gsub("(.)e", "'\1'e", l) 
+l <- gsub("e", "%%10", l) 
+
+# return this as an expression 
+parse(text=l) }
+
+# also, needs to set tick marks for major/minor; here 10e-5 to 10e10
+yticks = outer((1:10),(10^(-5:-1))) 
+xticks = outer((1:10),(10^(0:1)))
+
+# include:
+semi-logx scale_x_log10(limits = c(1, 100), labels = fancy_scientific, minor_breaks = xticks) + 
+semi-logy scale_y_log10(limits = c(1e-5, 1), labels = fancy_scientific, minor_breaks = yticks) +
+```
+
+# Functions from `pracma`
+
+-   `repmat`
+-   `fprintf`
+-   `ceil` - not anymore, was alias for `base::ceiling`
+-   `rand`
+-   `Diag` - not anymore
+-   `lsqnonneg` - could replace with `limsolve`
+
+## Testing stuff/setup project
 
 ```{r setup, include=FALSE, message=FALSE}
 root <- rprojroot::find_rstudio_root_file()
@@ -157,7 +297,6 @@ library("tidyverse")
 library("dplyr")
 library("lubridate")
 library("vroom")
-
 
 ```
 
@@ -178,15 +317,15 @@ rm(mainDir, subDir)
 ```
 
 # Normalize by last column
-when normalizing by a column, if you take last column and create into square 
-matrix with diagonal being each value in last column and take the inverse, you
-can take the dot product of the diagnoal matrix and the original dataframe to 
-get a normalized matrix by last column
 
-Ex: dataset = 6x12
-Take last column to normalize to
-diag(1 / col 12) %*% dataset
-will results if took last column and divided by each value in the same row
+when normalizing by a column, if you take last column and create into
+square matrix with diagonal being each value in last column and take the
+inverse, you can take the dot product of the diagnoal matrix and the
+original dataframe to get a normalized matrix by last column
+
+Ex: dataset = 6x12 Take last column to normalize to diag(1 / col 12)
+%\*% dataset will results if took last column and divided by each value
+in the same row
 
 ```{r how-to-normalize-by-last-col}
 test_norm <- pracma::rand(6, 12)
@@ -194,7 +333,7 @@ test_norm <- pracma::rand(6, 12)
 # last column should be a 1 because normalized to last column
 # 2 methods:
 # diagonol approach
-pracma::Diag(1/test_norm[,ncol(test_norm)]) %*% test_norm
+diag(1/test_norm[,ncol(test_norm)]) %*% test_norm
 
 # apply method *more confusing
 t(apply(test_norm, 1, function(x) x / x[length(x)]))
@@ -202,7 +341,31 @@ t(apply(test_norm, 1, function(x) x / x[length(x)]))
 
 ```
 
-```{r}
+```{r test-option-settings}
+.info <- NULL
+if (is.null(.info)) {
+    info_init <- list()
+} else {
+    info_init <- .info
+  }
+
+ deflt <- list(
+                    inita    = pracma::rand(500, 500),
+                    maxitr   = 30000,
+                    printitr = 1e12,
+                    conv     = 1e-10
+                  )
+  
+  .info  <- initstruct(info_init, deflt)
+  .info
+      # for (i  in 1) {
+      #   pracma::fprintf('Iter:   RMS:   Wt RMS:   Pigment Ratio RMS:   Weighted PR RMS:     dRMS:   dTaxa RMS:   dPig RMS:\n')
+      #   pracma::fprintf('%5i%#7.3g%#10.3g%#21.3g%#19.3g%#10.3e%13.3e%#12.3e\n', 
+      #                   itr,rms_pig,rmsxwt,rms_pig_r,rmsbwt,rms_chg,taxa_amt_chg,pig_r_chg)        # pracma::fprintf("%14 i%10.3g", 105, rms_pig)
+      #   # pracma::fprintf("%14i", 2)
+      # }
+      # 
+
 # testa <- info$inita  
 # testb <- info$initb
 # 
@@ -210,7 +373,8 @@ t(apply(test_norm, 1, function(x) x / x[length(x)]))
 # dim(testb)
 # 
 # s - (testa %*%  testb)
-
-
 ```
 
+$$
+
+$$
