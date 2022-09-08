@@ -1,14 +1,15 @@
-chemtaxbrokewest <- function(idx = c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1)) {
+chemtaxbrokewest <- function(idx = c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1),
+                             type = "sd") {
 ################################################################################
 #                                                                              # 
 #            ---- Read phytoplankton data for chemtaxbrokewest ----            #
 #                                                                              #    
 ################################################################################
 # ---- DESCRIPTION: ------
-# The chemtaxbrokewest.csv is read that contains the pigment data for all
+# The chemtaxbrokewest.csv or b is read that contains the pigment data for all
 # measured pigments (rows = sample, col = pigment). The
-# brokewest_pigment_ratios.csv is read that contains the initial pigments
-# ratiomatrix (row = taxa ratio, col 1 = species name, others = pigment ratio).
+# brokewest_pigment_ratios.csv or b is read that contains the initial pigments
+# ratio matrix (row = taxa ratio, col 1 = species name, others = pigment ratio).
 # The pigments are selected by an index of 1/0 representing the cols in the
 # pigment ratio matrix that is used. This is pre-selected for testing. A
 # comparison between pigments names from pigment ratio matrix and sample matrix
@@ -16,24 +17,39 @@ chemtaxbrokewest <- function(idx = c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0
 # missing from the sample matrix. Two matrices are created for initial standard
 # deviation using the formula(s):
 #
-# df_sd = df_sd * 0.01 + 0.0003;
-# pig_r_sd  = pig_r_init*0.1; and
-# last col     = 0.05 
+# df_sd      = df_sd * 0.01 + 0.0003;
+# pig_r_sd   = pig_r_init*0.1; and
+# last col   = 0.05 
+# 
+# -or- using normalizing
+# 
+# df_norm    = df / row sum df
+# pig_r_nrom = pig_r / row sum pig_r
 # 
 # for sample matrix and pigment ratio matrix, respectively. The pigment names  
 # and taxa name are exported as their own variable as well.
 #
 # ---- INPUTS: -----------
-# NA
+# idx        = index of selected and deselected pigment from pigment ratio matrix
+# norm       = if want to create sd matrix or normalized matrix; 
+#              options: sd   = standard deviations
+#                       norm = normalized to row sums
 #
 # ---- OUTPUTS: ----------
-# df   = Matrix of samples by pigment readings
-# df_sd   = Standard deviations for df_sd (i.e. df_sd*0.01+0.0003)
+# df         = Matrix of samples by pigment readings
 # pig_r_init = Initial pigment ratio matrix by taxa
-# pig_r_sd     = Standard deviations for f (i.e pig_r_init*0.1 & last col = 0.05)
-# taxa           = Cell array of taxa names
-# pigm_sel       = Cell array of selected pigment names
+# taxa       = Cell array of taxa names
+# pigm_sel   = Cell array of selected pigment names
 #
+# Either:
+# df_sd      = Standard deviations for df_sd (i.e. df_sd*0.01+0.0003)  
+# pig_r_sd   = Standard deviations for f (i.e pig_r_init*0.1 & last col = 0.05)
+#
+# -or- 
+#
+# df_norm    = Normalized df to row sums
+# pig_r_norm = Normalized pigment ratio matrix to row sums
+#  
 # ---- NOTES: ------------
 # Original: 2010-03-21  Matlab7  W.Whiten
 #
@@ -44,25 +60,39 @@ chemtaxbrokewest <- function(idx = c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0
   
   # ---- set directory ----
   root <- rprojroot::find_rstudio_root_file()
-  
+  raw  <- "/data/raw/" 
+  source(paste0(root,"/scripts/permcalc.R"))
   
   # ---- read data ----
-  # pigment concentration in samples
+  # set file paths
   # TODO: should make this a function?
-  sample_filepath <- paste0(root, raw, "CHEMTAXBROKEWests.csv")
-  df              <- as.matrix(read.csv(sample_filepath))
+  sample_filepath      <- switch(
+    type,
+    norm = paste0(root, raw, "CHEMTAXBROKEWestx.csv"),
+    sd   = paste0(root, raw, "CHEMTAXBROKEWests.csv")
+  )
+  
+  pig_ratio_filepath   <- switch(
+    type,
+    norm = paste0(root, "/scripts/brokewest_b_pigment_ratios.csv"),
+    sd   = paste0(root, "/scripts/brokewest_pigment_ratios.csv"),
+  )
+  
+  # pigment concentration in samples
+  df                   <- as.matrix(read.csv(sample_filepath))
   
   # pigment ratio matrix
-  pig_ratio_filepath   <- paste0(root, "/scripts/brokewest_pigment_ratios.csv")
   temp_ratio           <- read.csv(pig_ratio_filepath)
   
   # extract pigment names
-  df_pig       <- colnames(df)
-  colnames(df) <- NULL
- 
-  # extract pigment names
+  df_pig               <- colnames(df)
   pigm_temp <- colnames(temp_ratio)[-1]
   
+  colnames(df)         <- NULL # TODO: decide if it matters or not
+  colnames(temp_ratio) <- NULL # TODO: decide if it matters or not
+  
+  # extract taxa names
+  taxa                 <- temp_ratio[,1]
   
   # ---- TODO: remove later ----
   # idx <- c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1)
@@ -91,38 +121,55 @@ chemtaxbrokewest <- function(idx = c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0
   # ---- read pigment ratios ----
   # initialize ratio matrix by removing taxa and pigment names
   pig_r_init           <- as.matrix(temp_ratio[,-1])[, which(idx == 1)] 
-  colnames(pig_r_init) <- NULL # TODO: decide if it matters or not
   
-  # extract pigment names
-  pigm_sel             <- colnames(temp_ratio)[-1][which(idx == 1)] 
+  # extract selected pigment names
+  pigm_sel             <- pigm_temp[which(idx == 1)]
   
-  # extract taxa names
-  taxa                 <- temp_ratio[,1]
-
   # ---- find columns that match and rearrange ----
-  source(paste0(root,"/scripts/permcalc.R"))
+  
   df_pig_idx <- permcalc(pigm_sel, df_pig)
   
   # filter columns for pigment that match selected pigments
   df  <- df[, df_pig_idx]
   
-  # ---- set standard deviation values ----
-  # TODO: make this part of function
-  df_sd                       <- df * 0.01 + 0.0003
-  pig_r_sd                    <- pig_r_init * 0.1
-  pig_r_sd[, ncol(pig_r_sd )] <- 0.005 # set chlor-a sd to 0.005
-
-  # ---- return list of variables created ----
-  result <-
-    list(
-      df         = df,
-      df_sd      = df_sd,
-      pig_r_init = pig_r_init,
-      pig_r_sd   = pig_r_sd ,
-      taxa       = taxa,
-      pigm_sel   = pigm_sel
-    )
-  
+  if (type != "norm") {
+    # ---- set standard deviation values ----
+    # TODO: make this part of function
+    df_sd                      <- df * 0.01 + 0.0003
+    pig_r_sd                   <- pig_r_init * 0.1
+    pig_r_sd[, ncol(pig_r_sd)] <- 0.005 # set chlor-a sd to 0.005
+    
+    # ---- return list of variables created ----
+    result <-
+      list(
+        df         = df,
+        df_sd      = df_sd,
+        pig_r_init = pig_r_init,
+        pig_r_sd   = pig_r_sd ,
+        taxa       = taxa,
+        pigm_sel   = pigm_sel
+      )
+  } else {
+    # ---- normalize df and pigment ratio to row sums ----
+    df_row_sum    <- as.matrix(apply(df, 1, sum, na.rm = TRUE))
+    pig_r_row_sum <-
+      as.matrix(apply(pig_r_init, 1, sum, na.rm = TRUE))
+    
+    df_norm       <- df / pracma::repmat(df_row_sum, 1, ncol(df))
+    pig_r_norm    <-
+      pig_r_init / pracma::repmat(pig_r_row_sum, 1, ncol(pig_r_init))
+    
+    # ---- return list of variables created ----
+    result <-
+      list(
+        df         = df,
+        df_norm    = df_norm,
+        pig_r_init = pig_r_init,
+        pig_r_norm = pig_r_norm ,
+        taxa       = taxa,
+        pigm_sel   = pigm_sel
+      )
+  }
 }
 
 
