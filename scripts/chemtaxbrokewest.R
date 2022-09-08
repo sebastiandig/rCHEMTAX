@@ -42,8 +42,9 @@ chemtaxbrokewest <- function(idx = c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0
 # ---- AUTHOR(s): --------
 # Sebastian Di Geronimo (Mon Jun 13 18:21:17 2022)
   
+  # ---- set directory ----
   root <- rprojroot::find_rstudio_root_file()
-  raw  <- "/data/raw/"
+  
   
   # ---- read data ----
   # pigment concentration in samples
@@ -52,7 +53,7 @@ chemtaxbrokewest <- function(idx = c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0
   df              <- as.matrix(read.csv(sample_filepath))
   
   # pigment ratio matrix
-  pig_ratio_filepath   <- paste0(root,"/scripts/brokewest_pigment_ratios.csv")
+  pig_ratio_filepath   <- paste0(root, "/scripts/brokewest_pigment_ratios.csv")
   temp_ratio           <- read.csv(pig_ratio_filepath)
   
   # extract pigment names
@@ -62,23 +63,30 @@ chemtaxbrokewest <- function(idx = c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0
   # extract pigment names
   pigm_temp <- colnames(temp_ratio)[-1]
   
+  
+  # ---- TODO: remove later ----
+  # idx <- c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1)
+  
   # ---- index for selected pigments of pigment ratios matrix ----
-  # TODO: make input for this 
-  if (is.null(idx) | !(length(idx) > 0)) {
-    message(paste("Here are the pigment names to choose from\n"))
+  if (is.null(idx) | length(idx) != length(pigm_temp)) {
+    message(paste0("Either an index was not supplied, was 0, or exceeded the number of pigments!\n",
+                   "\nHere are a list of pigment names:\n"))
     message(paste(pigm_temp, "\n"))
+    message(paste0("Give a 1 or a 0 for each name\n",
+                   "(1 = selected; 0 = not selected)\n"))
     idx <- readline(prompt = paste0(
-                    "Give a vector of 1/0 the selected pigment \n",
-                    "Should be the same length. (ex 1 0 1 1 0) ")
-                    )
+      "Should be a length of ", 
+      length(pigm_temp), 
+      " (ex 1 0 1 1 0):\n ")
+    )
     idx <- as.integer(strsplit(idx, " ")[[1]])
     if (length(idx) != length(pigm_temp)) {
       idx <-  NULL
       stop("Input does not match length of pigments") 
     }
+    message(paste0("\nVerify selected pigments are correct:\n"))
+    cat(pigm_temp[which(idx == 1)])
   }
-  
-  # idx <- c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1)
   
   # ---- read pigment ratios ----
   # initialize ratio matrix by removing taxa and pigment names
