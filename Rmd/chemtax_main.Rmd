@@ -86,7 +86,7 @@ $$
     \end{aligned}
     $$
 
-## List of functions
+## List of functions or files
 
 List of ones to go through again: bootln bootnp CHEMTAXBROKEWestb
 matfactuvw randstart regplot saz sazchemtax090210
@@ -146,25 +146,27 @@ matfactuvw randstart regplot saz sazchemtax090210
 |            | een"} | -   *bootln*        |            |            |
 |            |       | -   *bootnp*        |            |            |
 +------------+-------+---------------------+------------+------------+
-| *chemtax   | [*    | -   *permcalc*      |            |            |
-| brokewest* | *Done | -   file for *s*    |            |            |
-|            | **]{s |     and *scol* as   |            |            |
-|            | tyle= |     *               |            |            |
-|            | "colo | CHEMTAXBROKEWests*, |            |            |
-|            | r: gr | -   file for *f0*,  |            |            |
-|            | een"} |     *taxa* and      |            |            |
-|            |       |     *fcol* as       |            |            |
-|            |       |     *               |            |            |
-|            |       | pigment_ratios.csv* |            |            |
+| *chemtax   | [*    | -   *permcalc*      | calls data |            |
+| brokewest* | *Done | -   file for *s*    | and        |            |
+|            | **]{s |     and *scol* as   | pigment    |            |
+|            | tyle= |     *               | ratio      |            |
+|            | "colo | CHEMTAXBROKEWests*, | matrix,    |            |
+|            | r: gr | -   file for *f0*,  | selects    |            |
+|            | een"} |     *taxa* and      | pigments   |            |
+|            |       |     *fcol* as       | for both   |            |
+|            |       |     *               | and        |            |
+|            |       | pigment_ratios.csv* | creates    |            |
+|            |       |                     | std dev    |            |
+|            |       |                     | matrices   |            |
 +------------+-------+---------------------+------------+------------+
-| *CHEMTAXB  | [**W  | -   *matfactuvw*    | TODO: test |            |
-| ROKEWestb* | orks* | -   *permcalc*      | matfactuvw |            |
-|            | *]{st | -   file for *b* as | with this  |            |
-|            | yle=" |     *b_             |            |            |
-|            | color | pigment_ratios.csv* |            |            |
-|            | : yel | -   file for *x* as |            |            |
-|            | low"} |     *CHE            |            |            |
-|            |       | MTAXBROKEWestx.csv* |            |            |
+| *CHEMTAXB  | [**   | -   *matfactuvw*    | TODO: test |            |
+| ROKEWestb* | Needs | -   *permcalc*      | matfactuvw |            |
+|            | wo    | -   file for *b* as | with this  |            |
+|            | rk**] |     *b_             |            |            |
+|            | {styl | pigment_ratios.csv* |            |            |
+|            | e="co | -   file for *x* as |            |            |
+|            | lor:  |     *CHE            |            |            |
+|            | red"} | MTAXBROKEWestx.csv* |            |            |
 +------------+-------+---------------------+------------+------------+
 | *CHEMTAXB  |       |                     | as *.csv*  |            |
 | ROKEWests* |       |                     | in         |            |
@@ -201,13 +203,14 @@ matfactuvw randstart regplot saz sazchemtax090210
 |            | r: gr |                     | torization |            |
 |            | een"} |                     |            |            |
 +------------+-------+---------------------+------------+------------+
-| *m         | [**W  | -    *initstruct*   |            |            |
-| atfactuvw* | orks* |                     |            |            |
-|            | *]{st |                     |            |            |
-|            | yle=" |                     |            |            |
-|            | color |                     |            |            |
-|            | : yel |                     |            |            |
-|            | low"} |                     |            |            |
+| *m         | [**   | -    *initstruct*   |            |            |
+| atfactuvw* | Needs |                     |            |            |
+|            | wo    |                     |            |            |
+|            | rk**] |                     |            |            |
+|            | {styl |                     |            |            |
+|            | e="co |                     |            |            |
+|            | lor:  |                     |            |            |
+|            | red"} |                     |            |            |
 +------------+-------+---------------------+------------+------------+
 | *nn        | [*    | -   *amatfactsd*    | [**MAIN    |            |
 | matfactsd* | *Done | -   *initstruct*    | script for |            |
