@@ -21,11 +21,70 @@ Document](./Re__CHEMTAX_Update_%5BSEC=OFFICIAL%5D/Re__CHEMTAX_Update_%5BSEC=OFFI
 
 ## Formulas:
 
-a \<- a \* (x %\*% t(b)) / (a \* (b %\*% t(b)) + 1e-100)
+Iterations without standard deviations:
 
-b \<- b \* (t(a) %\*% x + b0) / (t(a) %\*% (a %\*% b) + b + 1e-100)
+$$
+a = \frac {a \times(x \cdot b^T)}
+          {a \times(b \cdot b^T) + 10^{-100}} 
+\text{ ;  } 
+b = \frac{b \times (a^T \cdot x + b_0)}
+         {(a^T \cdot(a \cdot b) + b) + 10^{-100}}
+$$
 
-$$a = \frac {a \times(x \cdot b^T)}{a \times(b \cdot b^T) + 10 \times 10^{-100}} \text{ ;  } b = \frac{b \times (a^T \cdot x + b_0)}{a^T \cdot(a \cdot b) + b + 10 \times 10^{-100}}$$
+Iterations with standard deviations:
+
+$$
+\begin{aligned}
+& a_{new} = \frac {a \times(x_{w} \cdot b^T)}
+                {((a \cdot b ) \times x_{sd^2}^{-1}) \cdot b^T + 10^{-100}} 
+\text{ ; }
+b_{new} = \frac {b \times (a^T \cdot x_w) + b_{0w}} 
+                {a^T \cdot ((a \cdot b) \times x_{sd^2}^{-1}) + b \times b_{sd^2}^{-1} + 10^{-100}} \\\\
+& \text {where; } \\
+& x = \text{pigment concentations for each sample}; \\
+& x_{sd^2}^{-1} = \frac {1}{x_{sd}^2} = \text{inverse sqaured standard deviation of x}; \\ 
+& x_w = x \times x_{sd^2}^{-1} = \text{weighted } x \text{; } \\
+& a = \text{taxa contribution}; \\
+& b = \text{pigment ratio matrix};\\ 
+& b_{sd^2}^{-1} = \frac {1}{b_{0sd}^2}= \text{inverse sqaured standard deviation of initial b}; \\ 
+& b_{0w} = b_0 \times b_{sd^2}^{-1}  = \text{weighted initial b} \\
+\end{aligned}
+$$
+
+Non-negative Least Squares:
+
+-   Minimize $a$ matrix
+
+$$
+\begin{aligned}
+& min||x_i - \hat{a_i} \cdot b_i|| \\
+& i = \text{sample row}; \\
+& x_i = (\frac {x_i} {x_{sd_i}})^2; \\
+& b_i = \frac {b^T} {x_{sd_i}}; \\
+& \hat{a_i} = \text{estimated taxa contribution per sample}\\
+\end{aligned}
+$$
+
+-   Minimize $b$ matrix
+
+    $$
+    \begin{aligned}
+    & min||x_{j} - a_{ij} \cdot \hat{b_{ij}}|| \\
+    & j = \text{pigment}; \\
+    & i = \text{taxa with pigment } j; \\
+    & x_{j} = 
+    \begin{pmatrix} 
+            \frac {x_{j}} {x_{sd_{j}}} \\
+            \frac {b_{ij}} {b_{sd_{ij}}}
+    \end{pmatrix} ;\\
+    & a_{ij} = 
+    \begin{pmatrix}  
+            \frac {a_{ij}} {x_{sd_{j}}} \\
+            diag( b_{sd_{ij}}^{-1} )
+    \end{pmatrix} ;\\
+    & \hat {b_{ij}} = \text {estimated pigment ratio matrix} \\
+    \end{aligned}
+    $$
 
 ## List of functions
 
