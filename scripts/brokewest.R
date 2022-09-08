@@ -49,7 +49,7 @@ taxa  <- temp$taxa           # name of taxa groups, comes from pigment ratio col
 pigm  <- temp$pigm_sel 
 
 # ---- fit the matrix factors ----
-temp2 <- nnmatfactsd(.df = s,.df_sd=ssd,.pig_r_init=f0,.pig_r_sd=fsd)
+temp2 <- nnmatfactsd(.df = s,.df_sd = ssd,.pig_r_init = f0,.pig_r_sd = fsd)
 taxa_amt <- temp2$a
 f     <- temp2$b
 info  <- temp2$info
