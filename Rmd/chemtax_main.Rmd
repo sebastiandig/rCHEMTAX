@@ -16,6 +16,16 @@ This will serve as my starting point for converting CHEMTAX V2.0 into R.
 #TODO: fix this: [CHEMTAX
 Document](./Re__CHEMTAX_Update_%5BSEC=OFFICIAL%5D/Re__CHEMTAX_Update_%5BSEC=OFFICIAL%5D/CHEMTAX%202%20Octave%20version.docx)
 
+$$
+\text {where}; \\
+ x = \text{pigment concentations for each sample}; \\
+ x_{\sigma^2}^{-1} = \frac {1}{x_{\sigma}^2} = \text{inverse-variance weighting of }\ x; \\ 
+ x_w = x \times x_{\sigma^2}^{-1} = \text{weighted } x \text{; } \\
+ a = \text{taxa contribution}; \\
+ b = \text{pigment ratio matrix};\\ 
+ b_{0w} = b_0 \times b_{\sigma^2}^{-1}  = \text{weighted initial}\ b \\
+$$
+
 `r gsub("\\.m$","", list.files(path = "./Re__CHEMTAX_Update_[SEC=OFFICIAL]/MatrixFactorsOctave/", pattern="\\.m$"))`
 \# Files that need to be converted double tilde \~ will show done
 
@@ -26,7 +36,7 @@ Iterations without standard deviations:
 $$
 a = \frac {a \times(x \cdot b^T)}
           {a \times(b \cdot b^T) + 10^{-100}} 
-\text{ ;  } 
+\ ; \ 
 b = \frac{b \times (a^T \cdot x + b_0)}
          {(a^T \cdot(a \cdot b) + b) + 10^{-100}}
 $$
@@ -36,18 +46,18 @@ Iterations with standard deviations:
 $$
 \begin{aligned}
 & a_{new} = \frac {a \times(x_{w} \cdot b^T)}
-                {((a \cdot b ) \times x_{sd^2}^{-1}) \cdot b^T + 10^{-100}} 
-\text{ ; }
+                {((a \cdot b ) \times x_{\sigma^2}^{-1}) \cdot b^T + 10^{-100}} 
+\ ; \ 
 b_{new} = \frac {b \times (a^T \cdot x_w) + b_{0w}} 
-                {a^T \cdot ((a \cdot b) \times x_{sd^2}^{-1}) + b \times b_{sd^2}^{-1} + 10^{-100}} \\\\
-& \text {where; } \\
+                {a^T \cdot ((a \cdot b) \times x_{\sigma^2}^{-1}) + b \times b_{\sigma^2}^{-1} + 10^{-100}} \\\\
+& \text {where}; \\
 & x = \text{pigment concentations for each sample}; \\
-& x_{sd^2}^{-1} = \frac {1}{x_{sd}^2} = \text{inverse sqaured standard deviation of x}; \\ 
-& x_w = x \times x_{sd^2}^{-1} = \text{weighted } x \text{; } \\
+& x_{\sigma^2}^{-1} = \frac {1}{x_{\sigma}^2} = \text{inverse-variance weighting of }\ x; \\ 
+& x_w = x \times x_{\sigma^2}^{-1} = \text{weighted } x \text{; } \\
 & a = \text{taxa contribution}; \\
 & b = \text{pigment ratio matrix};\\ 
-& b_{sd^2}^{-1} = \frac {1}{b_{0sd}^2}= \text{inverse sqaured standard deviation of initial b}; \\ 
-& b_{0w} = b_0 \times b_{sd^2}^{-1}  = \text{weighted initial b} \\
+& b_{\sigma^2}^{-1} = \frac {1}{b_{0\sigma}^2} = \text{inverse-variance weighting of initial}\ b; \\ 
+& b_{0w} = b_0 \times b_{\sigma^2}^{-1}  = \text{weighted initial}\ b \\
 \end{aligned}
 $$
 
@@ -59,8 +69,8 @@ $$
 \begin{aligned}
 & min||x_i - \hat{a_i} \cdot b_i|| \\
 & i = \text{sample row}; \\
-& x_i = (\frac {x_i} {x_{sd_i}})^2; \\
-& b_i = \frac {b^T} {x_{sd_i}}; \\
+& x_i = (\frac {x_i} {x_{\sigma_i}})^2; \\
+& b_i = \frac {b^T} {x_{\sigma_i}}; \\
 & \hat{a_i} = \text{estimated taxa contribution per sample}\\
 \end{aligned}
 $$
@@ -69,20 +79,23 @@ $$
 
     $$
     \begin{aligned}
-    & min||x_{j} - a_{ij} \cdot \hat{b_{ij}}|| \\
-    & j = \text{pigment}; \\
-    & i = \text{taxa with pigment } j; \\
+    & min||x_{ij} - a_{ik} \cdot \hat{b_{jk}}|| \\
+    & i = \text{sample};\
+    j = \text{pigment};\
+    k = \text{taxa}; \\
+    & k,j \in \Phi; \ 
+    \Phi = \text{set of}\ k,j\ \text{non zero elements in pigment ratio matrix} \\
     & x_{j} = 
     \begin{pmatrix} 
-            \frac {x_{j}} {x_{sd_{j}}} \\
-            \frac {b_{ij}} {b_{sd_{ij}}}
+            \frac {x_{ij}} {x_{\sigma_{ij}}} \\
+            \frac {b_{jk}} {b_{\sigma_{jk}}}
     \end{pmatrix} ;\\
-    & a_{ij} = 
+    & a_{kj} = 
     \begin{pmatrix}  
-            \frac {a_{ij}} {x_{sd_{j}}} \\
-            diag( b_{sd_{ij}}^{-1} )
+            \frac {a_{ijk}} {x_{\sigma_{ij}}} \\
+            diag( b_{\sigma_{kj}}^{-1} )
     \end{pmatrix} ;\\
-    & \hat {b_{ij}} = \text {estimated pigment ratio matrix} \\
+    & \hat {b_{jk}} = \text {estimated pigment ratio matrix} \\
     \end{aligned}
     $$
 
@@ -94,189 +107,195 @@ matfactuvw randstart regplot saz sazchemtax090210
 21 - not all are .m files with functions o 0 mostly done \* 20 finished
 ! 0 not started x 2 not needed
 
-+------------+-------+---------------------+------------+------------+
-| Function   | S     | Connections         | Notes      | R          |
-|            | tatus |                     |            | edesigned? |
-+============+=======+=====================+============+============+
-| *adddir*   | [**   |                     | I don't    |            |
-|            | NA**] |                     | think I    |            |
-|            | {styl |                     | need this  |            |
-|            | e="co |                     |            |            |
-|            | lor:  |                     |            |            |
-|            | red"} |                     |            |            |
-+------------+-------+---------------------+------------+------------+
-| *a         | [*    |                     | solve for  |            |
-| matfactsd* | *Done |                     | a          |            |
-|            | **]{s |                     |            |            |
-|            | tyle= |                     |            |            |
-|            | "colo |                     |            |            |
-|            | r: gr |                     |            |            |
-|            | een"} |                     |            |            |
-+------------+-------+---------------------+------------+------------+
-| *b         | [*    |                     | solves for |            |
-| matfactsd* | *Done |                     | b          |            |
-|            | **]{s |                     |            |            |
-|            | tyle= |                     |            |            |
-|            | "colo |                     |            |            |
-|            | r: gr |                     |            |            |
-|            | een"} |                     |            |            |
-+------------+-------+---------------------+------------+------------+
-| *bootln*   | [**W  | *nnmatfactsd*       |            |            |
-|            | orks* |                     |            |            |
-|            | *]{st |                     |            |            |
-|            | yle=" |                     |            |            |
-|            | color |                     |            |            |
-|            | : yel |                     |            |            |
-|            | low"} |                     |            |            |
-+------------+-------+---------------------+------------+------------+
-| *bootnp*   | [**W  | *nnmatfactsd*       |            |            |
-|            | orks* |                     |            |            |
-|            | *]{st |                     |            |            |
-|            | yle=" |                     |            |            |
-|            | color |                     |            |            |
-|            | : yel |                     |            |            |
-|            | low"} |                     |            |            |
-+------------+-------+---------------------+------------+------------+
-| *          | [*    | -                   | **is main  |            |
-| brokewest* | *Done |  *chemtaxbrokewest* | starting   |            |
-|            | **]{s | -   *nnmatfactsd*   | point for  |            |
-|            | tyle= | -   *normprod*      | data and   |            |
-|            | "colo | -   *regplot*       | analysis** |            |
-|            | r: gr | -   *randstart*     |            |            |
-|            | een"} | -   *bootln*        |            |            |
-|            |       | -   *bootnp*        |            |            |
-+------------+-------+---------------------+------------+------------+
-| *chemtax   | [*    | -   *permcalc*      | calls data |            |
-| brokewest* | *Done | -   file for *s*    | and        |            |
-|            | **]{s |     and *scol* as   | pigment    |            |
-|            | tyle= |     *               | ratio      |            |
-|            | "colo | CHEMTAXBROKEWests*, | matrix,    |            |
-|            | r: gr | -   file for *f0*,  | selects    |            |
-|            | een"} |     *taxa* and      | pigments   |            |
-|            |       |     *fcol* as       | for both   |            |
-|            |       |     *               | and        |            |
-|            |       | pigment_ratios.csv* | creates    |            |
-|            |       |                     | std dev    |            |
-|            |       |                     | matrices   |            |
-+------------+-------+---------------------+------------+------------+
-| *CHEMTAXB  | [**   | -   *matfactuvw*    | TODO: test |            |
-| ROKEWestb* | Needs | -   *permcalc*      | matfactuvw |            |
-|            | wo    | -   file for *b* as | with this  |            |
-|            | rk**] |     *b_             |            |            |
-|            | {styl | pigment_ratios.csv* |            |            |
-|            | e="co | -   file for *x* as |            |            |
-|            | lor:  |     *CHE            |            |            |
-|            | red"} | MTAXBROKEWestx.csv* |            |            |
-+------------+-------+---------------------+------------+------------+
-| *CHEMTAXB  |       |                     | as *.csv*  |            |
-| ROKEWests* |       |                     | in         |            |
-|            |       |                     | *          |            |
-|            |       |                     | data/raw/* |            |
-+------------+-------+---------------------+------------+------------+
-| *CHEMTAXB  |       |                     | as *.csv*  |            |
-| ROKEWestx* |       |                     | in         |            |
-|            |       |                     | *          |            |
-|            |       |                     | data/raw/* |            |
-+------------+-------+---------------------+------------+------------+
-| *dataout*  | [**   |                     | probably   |            |
-|            | NA**] |                     | don't need |            |
-|            | {styl |                     |            |            |
-|            | e="co |                     |            |            |
-|            | lor:  |                     |            |            |
-|            | red"} |                     |            |            |
-+------------+-------+---------------------+------------+------------+
-| *Formulas* |       |                     | doesn't    |            |
-|            |       |                     | connect to |            |
-|            |       |                     | anything   |            |
-|            |       |                     | and is not |            |
-|            |       |                     | a          |            |
-|            |       |                     | function,  |            |
-|            |       |                     | not sure   |            |
-|            |       |                     | what do do |            |
-|            |       |                     | with it    |            |
-+------------+-------+---------------------+------------+------------+
-| *i         | [*    |                     | creates    |            |
-| nitstruct* | *Done |                     | options    |            |
-|            | **]{s |                     | variable   |            |
-|            | tyle= |                     | for        |            |
-|            | "colo |                     | fac        |            |
-|            | r: gr |                     | torization |            |
-|            | een"} |                     |            |            |
-+------------+-------+---------------------+------------+------------+
-| *m         | [**   | -    *initstruct*   |            |            |
-| atfactuvw* | Needs |                     |            |            |
-|            | wo    |                     |            |            |
-|            | rk**] |                     |            |            |
-|            | {styl |                     |            |            |
-|            | e="co |                     |            |            |
-|            | lor:  |                     |            |            |
-|            | red"} |                     |            |            |
-+------------+-------+---------------------+------------+------------+
-| *nn        | [*    | -   *amatfactsd*    | [**MAIN    |            |
-| matfactsd* | *Done | -   *initstruct*    | script for |            |
-|            | **]{s |                     | factor     |            |
-|            | tyle= |                     | ana        |            |
-|            | "colo |                     | lysis**]{s |            |
-|            | r: gr |                     | tyle="colo |            |
-|            | een"} |                     | r: green"} |            |
-+------------+-------+---------------------+------------+------------+
-| *normprod* | [*    |                     | normalizes |            |
-|            | *Done |                     | to         |            |
-|            | **]{s |                     | selected   |            |
-|            | tyle= |                     | column     |            |
-|            | "colo |                     |            |            |
-|            | r: gr |                     |            |            |
-|            | een"} |                     |            |            |
-+------------+-------+---------------------+------------+------------+
-| *permcalc* | [*    |                     |            |            |
-|            | *Done |                     |            |            |
-|            | **]{s |                     |            |            |
-|            | tyle= |                     |            |            |
-|            | "colo |                     |            |            |
-|            | r: gr |                     |            |            |
-|            | een"} |                     |            |            |
-+------------+-------+---------------------+------------+------------+
-| *          | [*    | *nnmatfactsd*       |            |            |
-| randstart* | *Done |                     |            |            |
-|            | **]{s |                     |            |            |
-|            | tyle= |                     |            |            |
-|            | "colo |                     |            |            |
-|            | r: gr |                     |            |            |
-|            | een"} |                     |            |            |
-+------------+-------+---------------------+------------+------------+
-| *regplot*  | [*    |                     |            |            |
-|            | *Done |                     |            |            |
-|            | **]{s |                     |            |            |
-|            | tyle= |                     |            |            |
-|            | "colo |                     |            |            |
-|            | r: gr |                     |            |            |
-|            | een"} |                     |            |            |
-+------------+-------+---------------------+------------+------------+
-| *saz*      |       | -                   |            |            |
-|            |       |  *sazchemtax090210* |            |            |
-|            |       | -   *nnmatfactsd*   |            |            |
-|            |       | -   *normprod*      |            |            |
-|            |       | -   *regplot*       |            |            |
-|            |       | -   *randstart*     |            |            |
-|            |       | -   *bootln*        |            |            |
-|            |       | -   *bootnp*        |            |            |
-+------------+-------+---------------------+------------+------------+
-| *sazchem   |       | -   *permcalc*      |            |            |
-| tax090210* |       | -   file for        |            |            |
-|            |       |                     |            |            |
-|            |       |    *sandscolasSAZS_ |            |            |
-|            |       | CHEMTAX090210s.csv* |            |            |
-|            |       | -   file for *f0*,  |            |            |
-|            |       |     *taxa* and      |            |            |
-|            |       |     *fcol* as       |            |            |
-|            |       |     *saz_           |            |            |
-|            |       | pigment_ratios.csv* |            |            |
-+------------+-------+---------------------+------------+------------+
-| *          |       |                     | as *.csv*  |            |
-| SAZS_CHEMT |       |                     | in         |            |
-| AX090210s* |       |                     | *          |            |
-|            |       |                     | data/raw/* |            |
-+------------+-------+---------------------+------------+------------+
++-----------+-----------+---------------+-----------+-----------+
+| Function  | S tatus   | Connections   | Notes     | R         |
+|           |           |               |           | e         |
+|           |           |               |           | designed? |
++===========+===========+===============+===========+===========+
+| *adddir*  | [ **NA**] |               | I don't   |           |
+|           | {styl     |               | think I   |           |
+|           | e="co     |               | need this |           |
+|           | lor:      |               |           |           |
+|           | red"}     |               |           |           |
++-----------+-----------+---------------+-----------+-----------+
+| *a        | [Done     |               | solve for |           |
+| m         | \*\*]{s   |               | a         |           |
+| atfactsd* | tyle=     |               |           |           |
+|           | "colo r:  |               |           |           |
+|           | gr een"}  |               |           |           |
++-----------+-----------+---------------+-----------+-----------+
+| *b        | [Done     |               | solves    |           |
+| m         | \*\*]{s   |               | for b     |           |
+| atfactsd* | tyle=     |               |           |           |
+|           | "colo r:  |               |           |           |
+|           | gr een"}  |               |           |           |
++-----------+-----------+---------------+-----------+-----------+
+| *bootln*  | [\*\*W    | *nnmatfactsd* |           |           |
+|           | orks]{st  |               |           |           |
+|           | yle="     |               |           |           |
+|           | color :   |               |           |           |
+|           | yel low"} |               |           |           |
++-----------+-----------+---------------+-----------+-----------+
+| *bootnp*  | [\*\*W    | *nnmatfactsd* |           |           |
+|           | orks]{st  |               |           |           |
+|           | yle="     |               |           |           |
+|           | color :   |               |           |           |
+|           | yel low"} |               |           |           |
++-----------+-----------+---------------+-----------+-----------+
+| -   br    | [Done     | -   *chem     | **is main |           |
+| okewest\* | \*\*]{s   | taxbrokewest* | starting  |           |
+|           | tyle=     | -             | point for |           |
+|           | "colo r:  | *nnmatfactsd* | data and  |           |
+|           | gr een"}  | -             | a         |           |
+|           |           |    *normprod* | nalysis** |           |
+|           |           | -   *regplot* |           |           |
+|           |           | -             |           |           |
+|           |           |   *randstart* |           |           |
+|           |           | -   *bootln*  |           |           |
+|           |           | -   *bootnp*  |           |           |
++-----------+-----------+---------------+-----------+-----------+
+| *chemtax  | [Done     | -             | calls     |           |
+| b         | \*\*]{s   |    *permcalc* | data and  |           |
+| rokewest* | tyle=     | -   file for  | pigment   |           |
+|           | "colo r:  |     *s* and   | ratio     |           |
+|           | gr een"}  |     *scol* as | matrix,   |           |
+|           |           |               | selects   |           |
+|           |           |   -   CHEMTAX | pigments  |           |
+|           |           | BROKEWests\*, | for both  |           |
+|           |           | -   file for  | and       |           |
+|           |           |     *f0*,     | creates   |           |
+|           |           |     *taxa*    | std dev   |           |
+|           |           |     and       | matrices  |           |
+|           |           |     *fcol* as |           |           |
+|           |           |               |           |           |
+|           |           |   -   pigment |           |           |
+|           |           | _ratios.csv\* |           |           |
++-----------+-----------+---------------+-----------+-----------+
+| *CHEMTAXB | [ **Needs | -             | TODO:     |           |
+| R         | wo rk**]  |  *matfactuvw* | test      |           |
+| OKEWestb* | {styl     | -             | m         |           |
+|           | e="co     |    *permcalc* | atfactuvw |           |
+|           | lor:      | -   file for  | with this |           |
+|           | red"}     |     *b* as    |           |           |
+|           |           |     *b\_      |           |           |
+|           |           |     pigmen    |           |           |
+|           |           | t_ratios.csv* |           |           |
+|           |           | -   file for  |           |           |
+|           |           |     *x* as    |           |           |
+|           |           |     *CHE      |           |           |
+|           |           |     MTAXBR    |           |           |
+|           |           | OKEWestx.csv* |           |           |
++-----------+-----------+---------------+-----------+-----------+
+| *CHEMTAXB |           |               | as *.csv* |           |
+| R         |           |               | in        |           |
+| OKEWests* |           |               | *d        |           |
+|           |           |               | ata/raw/* |           |
++-----------+-----------+---------------+-----------+-----------+
+| *CHEMTAXB |           |               | as *.csv* |           |
+| R         |           |               | in        |           |
+| OKEWestx* |           |               | *d        |           |
+|           |           |               | ata/raw/* |           |
++-----------+-----------+---------------+-----------+-----------+
+| *dataout* | [ **NA**] |               | probably  |           |
+|           | {styl     |               | don't     |           |
+|           | e="co     |               | need      |           |
+|           | lor:      |               |           |           |
+|           | red"}     |               |           |           |
++-----------+-----------+---------------+-----------+-----------+
+| *         |           |               | doesn't   |           |
+| Formulas* |           |               | connect   |           |
+|           |           |               | to        |           |
+|           |           |               | anything  |           |
+|           |           |               | and is    |           |
+|           |           |               | not a     |           |
+|           |           |               | function, |           |
+|           |           |               | not sure  |           |
+|           |           |               | what do   |           |
+|           |           |               | do with   |           |
+|           |           |               | it        |           |
++-----------+-----------+---------------+-----------+-----------+
+| *i        | [Done     |               | creates   |           |
+| n         | \*\*]{s   |               | options   |           |
+| itstruct* | tyle=     |               | variable  |           |
+|           | "colo r:  |               | for fac   |           |
+|           | gr een"}  |               | t         |           |
+|           |           |               | orization |           |
++-----------+-----------+---------------+-----------+-----------+
+| *m        | [ **Needs | -             |           |           |
+| a         | wo rk**]  |  *initstruct* |           |           |
+| tfactuvw* | {styl     |               |           |           |
+|           | e="co     |               |           |           |
+|           | lor:      |               |           |           |
+|           | red"}     |               |           |           |
++-----------+-----------+---------------+-----------+-----------+
+| *nn       | [Done     | -             | [**MAIN   |           |
+| m         | \*\*]{s   |  *amatfactsd* | script    |           |
+| atfactsd* | tyle=     | -             | for       |           |
+|           | "colo r:  |  *initstruct* | factor    |           |
+|           | gr een"}  |               | ana       |           |
+|           |           |               | l         |           |
+|           |           |               | ysis**]{s |           |
+|           |           |               | t         |           |
+|           |           |               | yle="colo |           |
+|           |           |               | r:        |           |
+|           |           |               | green"}   |           |
++-----------+-----------+---------------+-----------+-----------+
+| *         | [Done     |               | n         |           |
+| normprod* | \*\*]{s   |               | ormalizes |           |
+|           | tyle=     |               | to        |           |
+|           | "colo r:  |               | selected  |           |
+|           | gr een"}  |               | column    |           |
++-----------+-----------+---------------+-----------+-----------+
+| *         | [Done     |               |           |           |
+| permcalc* | \*\*]{s   |               |           |           |
+|           | tyle=     |               |           |           |
+|           | "colo r:  |               |           |           |
+|           | gr een"}  |               |           |           |
++-----------+-----------+---------------+-----------+-----------+
+| -   ra    | [Done     | *nnmatfactsd* |           |           |
+| ndstart\* | \*\*]{s   |               |           |           |
+|           | tyle=     |               |           |           |
+|           | "colo r:  |               |           |           |
+|           | gr een"}  |               |           |           |
++-----------+-----------+---------------+-----------+-----------+
+| *regplot* | [Done     |               |           |           |
+|           | \*\*]{s   |               |           |           |
+|           | tyle=     |               |           |           |
+|           | "colo r:  |               |           |           |
+|           | gr een"}  |               |           |           |
++-----------+-----------+---------------+-----------+-----------+
+| *saz*     |           | -   *sazc     |           |           |
+|           |           | hemtax090210* |           |           |
+|           |           | -             |           |           |
+|           |           | *nnmatfactsd* |           |           |
+|           |           | -             |           |           |
+|           |           |    *normprod* |           |           |
+|           |           | -   *regplot* |           |           |
+|           |           | -             |           |           |
+|           |           |   *randstart* |           |           |
+|           |           | -   *bootln*  |           |           |
+|           |           | -   *bootnp*  |           |           |
++-----------+-----------+---------------+-----------+-----------+
+| *sazchem  |           | -             |           |           |
+| t         |           |    *permcalc* |           |           |
+| ax090210* |           | -   file for  |           |           |
+|           |           |               |           |           |
+|           |           | *san          |           |           |
+|           |           | dscolasSAZS\_ |           |           |
+|           |           | CHEMTAX0      |           |           |
+|           |           | 90210s.csv* - |           |           |
+|           |           | file for      |           |           |
+|           |           | *f0*, *taxa*  |           |           |
+|           |           | and *fcol* as |           |           |
+|           |           | *saz\_        |           |           |
+|           |           | pigmen        |           |           |
+|           |           | t_ratios.csv* |           |           |
++-----------+-----------+---------------+-----------+-----------+
+| -   S     |           |               | as *.csv* |           |
+| AZS_CHEMT |           |               | in        |           |
+|     AX    |           |               | *d        |           |
+| 090210s\* |           |               | ata/raw/* |           |
++-----------+-----------+---------------+-----------+-----------+
 
 ## To test `nnmatfactsd` and `amatfactsd` - start with
 
@@ -316,7 +335,7 @@ $$
 \text{i.e. }x\times10^{n}
 $$
 
-``` R
+``` r
 fancy_scientific <- function(l) { 
 # turn in to character string in scientific notation 
 
@@ -437,6 +456,6 @@ if (is.null(.info)) {
 # s - (testa %*%  testb)
 ```
 
-$$
+\$\$
 
-$$
+\$\$
