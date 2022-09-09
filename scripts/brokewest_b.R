@@ -1,4 +1,5 @@
-# ---- Everything up to here works as expected ----
+
+library("ggplot2")
 
 # ---- set directory for saving  ----
 root <- rprojroot::find_rstudio_root_file()
@@ -29,7 +30,7 @@ pigm   <- temp$pigm_sel
 
 
 tictoc::tic()
-temp <- matfactuvw(x = s_norm, b = f_norm, 1, info =list(maxitr = 2000))
+temp <- matfactuvw(.df = s_norm, .pig_r = f_norm, wb = 1, .info = list(maxitr = 20000))
 aaa  <- temp$a
 bbb  <- temp$b
 info <- temp$info
@@ -39,33 +40,26 @@ tictoc::toc()
 # t=x1(:,end)<0.3;
 # x3=x2(t,:);
 
-t  <- x1[,ncol(x1)] < 0.3
-x3 <- x2[t,]
+# ---- Everything up to here works as expected ----
+s_last_col  <- s[,ncol(s)] < 0.3
+x3 <- s_norm[s_last_col,]
 
 # semilogy(x1(:,end))
 # title('CHEMTAXBROKEWest  Ch_a')
 # xlabel('Sample number')
 # ylabel('Chl-a')
 
-x1.name <- colnames(x1)[ncol(x1)]
+x1.name <- pigm
 
-# allow y log style plotting from Matlab in semilogy
-fancy_scientific <- function(l) {
-  # turn in to character string in scientific notation
-  l <- format(l, scientific = TRUE)
-  # quote the part before the exponent to keep all the digits
-  l <- gsub("^(.*)e", "'\\1'e", l)
-  # turn the 'e+' into plotmath format
-  l <- gsub("e", "%*%10^", l)
-  # return this as an expression
-  parse(text=l)
-}
+  # ---- initialize plot info ----
+  source(paste0(root,"/scripts/fancy_scientific.R"))
+  yticks = outer(1:10, 10^(-5:-1))
+  xticks_minor = outer(1:10, 10^(0:1))
 
-yticks = outer((1:10),(10^(-5:-1)))
-xticks = outer((1:10),(10^(0:1)))
-
-
-ggplot(x1, aes(y = !!sym(x1.name), x = seq(1, nrow(x1)))) +
+  
+  
+  
+ggplot(s, aes(y = {{ x1.name }}, x = seq(1, nrow(s)))) +
   geom_point() +
   labs(title = 'CHEMTAXBROKEWest  Ch_a',
        x = 'Sample number',
