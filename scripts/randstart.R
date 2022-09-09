@@ -48,7 +48,7 @@ randstart <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info = NULL,.nrep = 10, verb
   pig_rep   <- matrix(0, .nrep, n_pig) 
   taxa_amt_rep <- matrix(0, .nrep, df_row*pig_r_col)
   
-  # initialize list for logs
+  # ---- initialize list for logs ----
   logs <- list() 
   
   if (is.null(.info)) {
