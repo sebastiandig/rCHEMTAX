@@ -16,16 +16,6 @@ This will serve as my starting point for converting CHEMTAX V2.0 into R.
 #TODO: fix this: [CHEMTAX
 Document](./Re__CHEMTAX_Update_%5BSEC=OFFICIAL%5D/Re__CHEMTAX_Update_%5BSEC=OFFICIAL%5D/CHEMTAX%202%20Octave%20version.docx)
 
-$$
-\text {where}; \\
- x = \text{pigment concentations for each sample}; \\
- x_{\sigma^2}^{-1} = \frac {1}{x_{\sigma}^2} = \text{inverse-variance weighting of }\ x; \\ 
- x_w = x \times x_{\sigma^2}^{-1} = \text{weighted } x \text{; } \\
- a = \text{taxa contribution}; \\
- b = \text{pigment ratio matrix};\\ 
- b_{0w} = b_0 \times b_{\sigma^2}^{-1}  = \text{weighted initial}\ b \\
-$$
-
 `r gsub("\\.m$","", list.files(path = "./Re__CHEMTAX_Update_[SEC=OFFICIAL]/MatrixFactorsOctave/", pattern="\\.m$"))`
 \# Files that need to be converted double tilde \~ will show done
 
