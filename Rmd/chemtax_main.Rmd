@@ -21,6 +21,10 @@ Document](./Re__CHEMTAX_Update_%5BSEC=OFFICIAL%5D/Re__CHEMTAX_Update_%5BSEC=OFFI
 
 ## Formulas:
 
+$$
+a = \frac {1 \times 5^{-0.5}}{x_{ij}^5}
+$$
+
 Iterations without standard deviations:
 
 $$
@@ -104,8 +108,7 @@ matfactuvw randstart regplot saz sazchemtax090210
 +===========+===========+===============+===========+===========+
 | *adddir*  | [ **NA**] |               | I don't   |           |
 |           | {styl     |               | think I   |           |
-|           | e="co     |               | need this |           |
-|           | lor:      |               |           |           |
+|           | e="color: |               | need this |           |
 |           | red"}     |               |           |           |
 +-----------+-----------+---------------+-----------+-----------+
 | *a        | [Done     |               | solve for |           |
