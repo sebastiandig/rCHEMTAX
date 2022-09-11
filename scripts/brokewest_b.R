@@ -49,22 +49,27 @@ x3 <- s_norm[s_last_col,]
 # xlabel('Sample number')
 # ylabel('Chl-a')
 
-x1.name <- pigm
-
   # ---- initialize plot info ----
   source(paste0(root,"/scripts/fancy_scientific.R"))
   yticks = outer(1:10, 10^(-5:-1))
   xticks_minor = outer(1:10, 10^(0:1))
 
   
+  s <- as.data.frame(s + 1)
+  names(s) <-  pigm
   
+for (i in seq(pigm)) {
+  plt <- ggplot(s, aes_string(y = pigm[i], x = "seq(1, nrow(s))")) +
+    
+    geom_point() +
+    labs(title = paste0('CHEMTAXBROKEWest (pigment = ', pigm[i],")"),
+         x = 'Sample number',
+         y =  bquote(ln(.(noquote(pigm[i]))~+~1))
+         ) +
+    scale_y_log10(limits = c(min(s[,i]), max(s[,i])),
+                  labels = fancy_scientific,
+                  minor_breaks = yticks) +
+    theme_bw()
+  print(plt)
+}
   
-ggplot(s, aes(y = {{ x1.name }}, x = seq(1, nrow(s)))) +
-  geom_point() +
-  labs(title = 'CHEMTAXBROKEWest  Ch_a',
-       x = 'Sample number',
-       y ='Chl-a') +
-  scale_y_log10(limits = c(1e-5, 1),
-                labels = fancy_scientific,
-                minor_breaks = yticks) +
-  theme_bw()
