@@ -182,8 +182,11 @@ nnmatfactsd <- function(.df,.df_sd,.pig_r_init,.pig_r_sd,.info=NULL, verbose = T
   
   # ---- print heading & initial values ----
   if (printitr <= maxitr & verbose) { 
-    cat(sprintf('\nIter:    RMS:   Wt RMS:   Pigment Ratio RMS:   Weighted PR RMS:     dRMS:   dTaxa RMS:   dPig RMS:\n'))
-    cat(sprintf("%5i%#8.3g%#10.3g%#21.4g%#19.3g\n", 0,rms_df,rmsxwt,rms_pig_r,rmsbwt))
+    # cat(sprintf('\nIter:    RMS:   Wt RMS:   Pigment Ratio RMS:   Weighted PR RMS:     dRMS:   dTaxa RMS:   dPig RMS:\n'))
+    cat('\nIter:    RMS:   Wt RMS:   Pigment Ratio RMS:   Weighted PR RMS:    ',
+        'dRMS:   dTaxa RMS:   dPig RMS:\n')
+    cat(sprintf("%5i%#8.3g%#10.3g%#21.4g%#19.3g\n", 
+                0,rms_df,rmsxwt,rms_pig_r,rmsbwt))
   }
   
   # ---- initialize factorization ----
@@ -250,8 +253,7 @@ nnmatfactsd <- function(.df,.df_sd,.pig_r_init,.pig_r_sd,.info=NULL, verbose = T
         
         if (printitr <= maxitr & verbose) {
           cat(sprintf('%5i%#8.3g%#10.3g%#21.4g%#19.2f%#10.2e%13.2e%#12.2e\n', 
-                       itr,rms_df,rmsxwt,rms_pig_r,rmsbwt,rms_chg,taxa_amt_chg,pig_r_chg) )
-          cat(sprintf("%5i%#8.3g%#10.3g%#21.4g%#19.3g\n", 0,rms_df,rmsxwt,rms_pig_r,rmsbwt))
+                       itr,rms_df,rmsxwt,rms_pig_r,rmsbwt,rms_chg,taxa_amt_chg,pig_r_chg))
         }
       }
       # pracma::fprintf( "%#19.5f", 12. )
