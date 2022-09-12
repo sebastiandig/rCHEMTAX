@@ -129,8 +129,8 @@ if (do == "y") {
     randstart(s,ssd,f0,fsd,verbose = TRUE,.nrep = 2, .info = list(printitr = 5000))
    
   # bootstrap using parametric log normal
-  bootln(s,ssd,f0,fsd)
-   
+  bootln(s,ssd,f0,fsd, .nrep = 2, .pigm = pigm, .taxa = taxa, .info = list(printitr = 1000))
+
   # bootstrap non parametric on s
   bootnp(s,ssd,f0,fsd)
 }
