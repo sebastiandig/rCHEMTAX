@@ -94,9 +94,6 @@ chemtaxbrokewest <- function(idx = c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0
   # extract taxa names
   taxa                 <- temp_ratio[,1]
   
-  # ---- TODO: remove later ----
-  # idx <- c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1)
-  
   # ---- index for selected pigments of pigment ratios matrix ----
   if (is.null(idx) | length(idx) != length(pigm_temp)) {
     message(paste0("Either an index was not supplied, was 0, or exceeded the number of pigments!\n",
