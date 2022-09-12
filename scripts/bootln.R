@@ -12,9 +12,10 @@ bootln <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, .nrep = 10,
 # df_sd    = Matrix of standard deviations for x
 # pig_r    = Stabilizing value for b, non zero locations, & initial value
 # pig_r_sd = Matrix of standard deviations for b   
-#         
+# TODO: need to update         
+#
 # ---- OUTPUTS: ----------
-# Currently none as only plots
+# TODO: need to update
 #
 # ---- NOTES: ------------
 # Original: 2010-02-27  Matlab7  W.Whiten
@@ -24,25 +25,6 @@ bootln <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, .nrep = 10,
 # ---- AUTHOR(s): --------
 # Sebastian Di Geronimo (Thu Jun 09 16:18:57 2022)
  
-  # function bootln(s,ssd,f,fsd)
-  # % bootln  Plot the effect of log normal perturbation of s
-  # %  2010-02-27  Matlab7  W.Whiten
-  # %
-  # %  bootln(s,sds,f,fsd)
-  # %  s    Matrix to be factored as a*b (best if a larger than b)
-  # %  ssd  Matrix of standard deviations for x
-  # %  f    Stabilising value for b, non zero locations, & initial value
-  # %  fsd  Matrix of standard deviations for b
-
-  
-  # ---- TODO: remove after testing ----
-  # .df       = s
-  # .df_sd    = ssd
-  # .pig_r    = f0
-  # .pig_r_sd = fsd
-  # .nrep = 5
-  # .info = NULL
-  # verbose = T
   # ---- load library ----
   library("tictoc")
   library("pracma")
@@ -64,56 +46,34 @@ bootln <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, .nrep = 10,
   
   indx         <- which(.pig_r > 0)  # index of non-zero pigments
   n_pig        <- length(indx)       # number of non-zero pigments
-  # ni         <- prod(dim(indx))
   pig_r_rep    <- matrix(0, .nrep, n_pig)
   taxa_amt_rep <- matrix(0, .nrep, df_row*pig_r_row)
 
   # initialize empty matrix
   pig_r_avg    <- matrix(0, pig_r_row, pig_r_col)
   pig_r_avg_sd <- matrix(0, pig_r_row, pig_r_col)
-  taxa_amt_avg <- matrix(0, df_row, df_col)
-  taxa_amt_sd  <- matrix(0, df_row, df_col)
+  # taxa_amt_avg <- matrix(0, df_row, pig_r_row)
+  # taxa_amt_sd  <- matrix(0, df_row, pig_r_row)
   
   # ---- parameters for log normal distribution ----
-  
-  # s1=max(s,ssd/2);
-  # sd1=log(1+(ssd./s1).^2);
-  # s1=log(s1)-sd1/2;
-  # sd1=sqrt(sd1);
-  df_mx     <- pmax(.df, .df_sd / 2)
-  df_sd     <- log(1 + (.df_sd / df_mx)^2)
-  df_log    <- log(df_mx) - df_sd / 2
-  df_sd_log <- sqrt(df_sd)
+  df_mx        <- pmax(.df, .df_sd / 2)
+  df_sd        <- log(1 + (.df_sd / df_mx)^2)
+  df_log       <- log(df_mx) - df_sd / 2
+  df_sd_log    <- sqrt(df_sd)
   
   # ---- options ----
   # create open list if no defaults are given for `info`  
-  if (is.null(.info)) {
-    .info <- list()
-  }
+  if (is.null(.info)) .info  <- list()
   
   # set defaults options
-  deflt <- list(
-    printitr = 1e6
-  )
+  deflt    <- list(printitr = 1e6)
   
   # add/replace default options if not set
-  info  <- initstruct(.info, deflt)
-  
-  maxitr <- info$maxitr
-  printitr <- info$printitr
-  # convitr <- info$conitr
+  info     <- initstruct(.info, deflt)
   
   # ---- initialize list for logs ----
   logs <- list() 
-  
 
-  # ss=exp(randn(size(s1)).*sd1+s1);
-  # [cc,ff,info]=nnmatfactsd(ss,ssd,f,fsd,struct('printitr',1e6));
-  # tf(i,:)=ff(indx)';
-  # tc(i,:)=cc(:)';
-  # disp([toc,info.rmsx,info.rmsxwt,info.itr/1000,info.conv*1e6])
-
-  
   # ---- start loop ----
   tictoc::tic.clearlog()
   start <- tictoc::tic()
@@ -122,16 +82,12 @@ bootln <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, .nrep = 10,
     tictoc::tic()
     
     cat(sprintf('\nRandom Start Number: %02d of %02d\n', i, .nrep))
-    
-    # runif over rnorm because rnorm makes negative numbers
-    # matrix(runif(length(s1)),nrow(s1)) * sd1 + s1 # could be ncol, dont know 
-    # the expected dimensions
+  
     ss <- exp(
       as.matrix(pracma::rand(df_row, pig_r_col)) * df_sd_log + df_log # better implementation
     )
 
-    temp          <- nnmatfactsd(ss, .df_sd, .pig_r, .pig_r_sd, 
-                                 .info = info)
+    temp          <- nnmatfactsd(ss, .df_sd, .pig_r, .pig_r_sd, .info = info)
     taxa_amt_temp <- temp$a
     pig_r_temp    <- temp$b
     info          <- temp$info
@@ -148,10 +104,9 @@ bootln <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, .nrep = 10,
 
     # when printitr is above maxitr, will only print last iterations
     if (!(info$printitr <= info$maxitr) & verbose) {
-      # cat(sprintf('\nIter:    RMS:   Wt RMS:   Pigment Ratio RMS:   Weighted PR RMS:     dRMS:   dTaxa RMS:   dPig RMS:\n'))
       cat('\nIter:    RMS:   Wt RMS:   Pigment Ratio RMS:   Weighted PR RMS:    ',
-          'dRMS:   dTaxa RMS:   dPig RMS:\n')
-      cat(sprintf('%5i%#8.3g%#10.3g%#21.3g%#19.3g%#10.2e%13.2e%#12.2e\n',
+          'dRMS:   dTaxa RMS:   dPig RMS:',
+          sprintf('\n%5i%#8.3g%#10.3g%#21.3g%#19.3g%#10.2e%13.2e%#12.2e\n',
                   info$itr,info$rms_pig,info$rmsxwt,info$rms_pig_r,info$rmsbwt,
                   info$logs$rms_chg[2],info$logs$taxa_amt_chg[2],
                   info$logs$pig_r_chg[2]))
@@ -165,18 +120,12 @@ bootln <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, .nrep = 10,
     
   }
 
-  # disp(' ')
-  # disp('Range of variation in tf and tc')
-  # tf1=tf-repmat(mean(tf),nrep,1);
-  # disp([min(min(tf1)),max(max(tf1))])
-  # tc1=tc-repmat(mean(tc),nrep,1);
-  # disp([min(min(tc1)),max(max(tc1))])
-  
   # ---- display range of values for each pigment and taxa contributions ----
   pig_rep_range    <- 
     pig_r_rep - pracma::repmat(apply(pig_r_rep, 2, mean, na.rm = T),.nrep,1)
-  df_pig_rep_range <- 
+  taxa_amt_rep_range <- 
     taxa_amt_rep - pracma::repmat(apply(taxa_amt_rep, 2, mean, na.rm = T),.nrep,1)
+  
   if (verbose) {
     
     cat('\nRange of variation in Pigment Ratios and Taxa Contribution:
@@ -185,8 +134,8 @@ bootln <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, .nrep = 10,
               "Max:", min(pig_rep_range, na.rm = T), 
               "Min:", max(pig_rep_range, na.rm = T)),
       sprintf('\nTaxa Contributon:\n%14s%7.3f\n%14s%7.3f\n',
-              "Max:", min(df_pig_rep_range, na.rm = T), 
-              "Min:", max(df_pig_rep_range, na.rm = T)),
+              "Max:", min(taxa_amt_rep_range, na.rm = T), 
+              "Min:", max(taxa_amt_rep_range, na.rm = T)),
       '\n-----------------------------\n')
 
   }
@@ -223,9 +172,6 @@ bootln <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, .nrep = 10,
                           taxa = rep(.taxa, df_row))
   }
   
-  
-
-  
   # ---- initialize plot info ----
   yticks_minor = outer(1:10, 10^(-5:-1))
   xticks_minor = outer(1:10, 10^(0:1))
@@ -253,7 +199,7 @@ bootln <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, .nrep = 10,
   
 
   # taxa_amt_rep
-  # plt_taxa <- 
+  plt_taxa <-
     ggplot() +
     # original had bubble dots - shape?
       {
@@ -310,6 +256,9 @@ bootln <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, .nrep = 10,
   results$a_sd       <- taxa_amt_sd
   results$plots      <- plots
   results$logs       <- logs
+  results$ranges     <- list(pigment_range      = pig_rep_range, 
+                             taxa_amount_ranges = taxa_amt_rep_range)
   
   return(results)
+  # ---- end ----
 }
