@@ -1,4 +1,4 @@
-randstart <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info = NULL,.nrep = 10, verbose = TRUE) {
+randstart <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info = NULL, .nrep = 10, verbose = TRUE) {
 ################################################################################
 #                                                                              # 
 #   Plot the effect of random starts for s% effect of random start locations   #
@@ -22,9 +22,6 @@ randstart <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info = NULL,.nrep = 10, verb
 #
 # ---- AUTHOR(s): --------
 # Sebastian Di Geronimo (Sun Jun 19 14:01:35 2022)  
-
-  # ---- remove after testing! ----
-  # .nrep <- 10
   
   # ---- load library ----
   library("tictoc")
@@ -34,19 +31,19 @@ randstart <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info = NULL,.nrep = 10, verb
   # set directory for saving 
   root <- rprojroot::find_rstudio_root_file()
   
-  # references another function
+  # source functions
   source(paste0(root,"/scripts/nnmatfactsd.R"))
   source(paste0(root,"/scripts/initstruct.R"))
  
   # ---- initialize matrices for random starting points ----
   df_row    <- dim(.df)[1]             # row # .df
-  pig_r_col <- dim(.pig_r)[1]          # row # .pig_r 
+  pig_r_row <- dim(.pig_r)[1]          # row # .pig_r 
   indx      <- which(.pig_r > 0)       # index of non-zero pigments
   n_pig     <- length(indx)            # number of pigments
   
   # initialize pigment ratio and taxa contributions matrix for each random start
-  pig_rep   <- matrix(0, .nrep, n_pig) 
-  taxa_amt_rep <- matrix(0, .nrep, df_row*pig_r_col)
+  pig_rep      <- matrix(0, .nrep, n_pig) 
+  taxa_amt_rep <- matrix(0, .nrep, df_row*pig_r_row)
   
   # ---- initialize list for logs ----
   logs <- list() 
@@ -66,9 +63,8 @@ randstart <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info = NULL,.nrep = 10, verb
     tictoc::tic()
     
     # ---- initialize options ----
-    # TODO: make sure original settings do not get overwritten with each iteration
     deflt <- list(
-                    inita    = pracma::rand(df_row, pig_r_col),
+                    inita    = pracma::rand(df_row, pig_r_row),
                     maxitr   = 30000,
                     printitr = 1e12,
                     conv     = 1e-10
@@ -93,19 +89,21 @@ randstart <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info = NULL,.nrep = 10, verb
     pig_r_temp    <- temp$b
     info          <- temp$info
 
-    # log each run
-    rep_num          <- paste0("rep_num_", i)
-    logs[[rep_num]]  <- temp
-
     # log taxa contribution and pigment ratio out
     pig_rep[i,]      <- t(pig_r_temp[indx])
     taxa_amt_rep[i,] <- t(taxa_amt_temp)
 
+    # log each run
+    rep_num          <- paste0("rep_num_", i)
+    logs[[rep_num]]  <- temp
+    
     end <- (tictoc::toc(quiet = T))$toc - start
 
     # when printitr is above maxitr, will only print last iterations
     if (!(info$printitr <= info$maxitr) & verbose) {
-      cat(sprintf('\nIter:    RMS:   Wt RMS:   Pigment Ratio RMS:   Weighted PR RMS:     dRMS:   dTaxa RMS:   dPig RMS:\n'))
+      # cat(sprintf('\nIter:    RMS:   Wt RMS:   Pigment Ratio RMS:   Weighted PR RMS:     dRMS:   dTaxa RMS:   dPig RMS:\n'))
+      cat('\nIter:    RMS:   Wt RMS:   Pigment Ratio RMS:   Weighted PR RMS:    ',
+          'dRMS:   dTaxa RMS:   dPig RMS:\n')
       cat(sprintf('%5i%#8.3g%#10.3g%#21.3g%#19.3g%#10.2e%13.2e%#12.2e\n',
                   info$itr,info$rms_pig,info$rmsxwt,info$rms_pig_r,info$rmsbwt,
                   info$logs$rms_chg[2],info$logs$taxa_amt_chg[2],info$logs$pig_r_chg[2]))
@@ -116,15 +114,15 @@ randstart <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info = NULL,.nrep = 10, verb
       #                 info$logs$rms_chg[2],info$logs$taxa_amt_chg[2],info$logs$pig_r_chg[2])
     }
     
-    cat(sprintf('\n-----------------------------\n'))
-    cat(sprintf('\nTime Elapsed: %.2f (s)\nConverged at: %.4e\n',
-                end, info$conv))
-    cat(sprintf('\n-----------------------------\n'))
-    # pracma::fprintf('\n-----------------------------\n')
-    # pracma::fprintf('\nTime Elapsed: %.2f (s)\nConverged at: %.4e\n',
-    #                 end, info$conv)
-    # pracma::fprintf('\n-----------------------------\n')
-    
+    cat(sprintf('\n-----------------------------
+      \nTime Elapsed: %.2f (s)\nConverged at: %.4e
+      \n-----------------------------\n',
+      end, info$conv)
+    )
+    # cat(sprintf('\n-----------------------------\n'))
+    # cat(sprintf('\nTime Elapsed: %.2f (s)\nConverged at: %.4e\n',
+    #             end, info$conv))
+    # cat(sprintf('\n-----------------------------\n'))
   }
   
   # ---- display range of values for each pigment and taxa contributions ----
@@ -135,13 +133,15 @@ randstart <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info = NULL,.nrep = 10, verb
     taxa_amt_rep - pracma::repmat(apply(taxa_amt_rep, 2, mean, na.rm = T), .nrep, 1)
   
   if (verbose) {
-    cat(sprintf('\nRange of variation in Pigment Ratios and Taxa Contribution:\n'))
-    cat(sprintf('\n-----------------------------\n'))
-    cat(sprintf('\nPigment Ratio:\n%14s%7.3g\n%14s%7.3g\n',
-                "Max:",min(pig_rep_range, na.rm = T), "Min:", max(pig_rep_range, na.rm = T)))
-    cat(sprintf('\nTaxa Contributon:\n%14s%7.3g\n%14s%7.3g\n',
-                "Max:",min(df_pig_rep_range, na.rm = T), "Min:",max(df_pig_rep_range, na.rm = T)))
-    cat(sprintf('\n-----------------------------\n'))
+    cat('\nRange of variation in Pigment Ratios and Taxa Contribution:
+      \n-----------------------------\n',
+      sprintf('\nPigment Ratio:\n%14s%7.3g\n%14s%7.3g\n',
+              "Max:",min(pig_rep_range, na.rm = T), 
+              "Min:", max(pig_rep_range, na.rm = T)),
+      sprintf('\nTaxa Contributon:\n%14s%7.3g\n%14s%7.3g\n',
+              "Max:",min(df_pig_rep_range, na.rm = T), 
+              "Min:",max(df_pig_rep_range, na.rm = T)),
+      '\n-----------------------------\n')
     
     # pracma::fprintf('\nRange of variation in Pigment Ratios and Taxa Contribution:\n')
     # pracma::fprintf('\n-----------------------------\n')
