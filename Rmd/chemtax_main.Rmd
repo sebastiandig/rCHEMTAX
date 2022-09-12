@@ -118,13 +118,13 @@ matfactuvw randstart regplot saz sazchemtax090210
 |            | style="col |                      |                   |
 |            | or:green"} |                      |                   |
 +------------+------------+----------------------+-------------------+
-| *bootln*   | [**        | *nnmatfactsd*        |                   |
-|            | Works**]{s |                      |                   |
+| *bootln*   | [**        | *nnmatfactsd*        | close to          |
+|            | Works**]{s |                      | finishing         |
 |            | tyle="colo |                      |                   |
 |            | r:yellow"} |                      |                   |
 +------------+------------+----------------------+-------------------+
-| *bootnp*   | [**        | *nnmatfactsd*        |                   |
-|            | Works**]{s |                      |                   |
+| *bootnp*   | [**        | *nnmatfactsd*        | close to          |
+|            | Works**]{s |                      | finishing         |
 |            | tyle="colo |                      |                   |
 |            | r:yellow"} |                      |                   |
 +------------+------------+----------------------+-------------------+
@@ -164,20 +164,24 @@ matfactuvw randstart regplot saz sazchemtax090210
 |            |            | *CH                  |                   |
 |            |            | EMTAXBROKEWestx.csv* |                   |
 +------------+------------+----------------------+-------------------+
-| *CHEMTAXB  |            |                      | as *.csv* in      |
-| ROKEWests* |            |                      | *data/raw/*       |
+| *CHEMTAXB  | [          |                      | as *.csv* in      |
+| ROKEWests* | **Done**]{ |                      | *data/raw/*       |
+|            | style="col |                      |                   |
+|            | or:green"} |                      |                   |
 +------------+------------+----------------------+-------------------+
-| *CHEMTAXB  |            |                      | as *.csv* in      |
-| ROKEWestx* |            |                      | *data/raw/*       |
+| *CHEMTAXB  | [          |                      | as *.csv* in      |
+| ROKEWestx* | **Done**]{ |                      | *data/raw/*       |
+|            | style="col |                      |                   |
+|            | or:green"} |                      |                   |
 +------------+------------+----------------------+-------------------+
 | *dataout*  | [**NA**    |                      | probably don't    |
 |            | ]{style="c |                      | need              |
 |            | olor:red"} |                      |                   |
 +------------+------------+----------------------+-------------------+
-| Formulas\* |            |                      | doesn't connect   |
-|            |            |                      | to anything and   |
-|            |            |                      | is not a          |
-|            |            |                      | function, not     |
+| Formulas   | [          |                      | doesn't connect   |
+|            | **Done**]{ |                      | to anything and   |
+|            | style="col |                      | is not a          |
+|            | or:green"} |                      | function, not     |
 |            |            |                      | sure what do do   |
 |            |            |                      | with it           |
 +------------+------------+----------------------+-------------------+
@@ -196,27 +200,27 @@ matfactuvw randstart regplot saz sazchemtax090210
 |            | style="col | *initstruct*         | analysis**]{sty   |
 |            | or:green"} |                      | le="color:green"} |
 +------------+------------+----------------------+-------------------+
-| **         | [          |                      | normalizes to     |
-| normprod** | **Done**]{ |                      | selected column   |
+| *normprod* | [          |                      | normalizes to     |
+|            | **Done**]{ |                      | selected column   |
 |            | style="col |                      |                   |
 |            | or:green"} |                      |                   |
 +------------+------------+----------------------+-------------------+
-| **         | [          |                      |                   |
-| permcalc** | **Done**]{ |                      |                   |
+| *permcalc* | [          |                      |                   |
+|            | **Done**]{ |                      |                   |
 |            | style="col |                      |                   |
 |            | or:green"} |                      |                   |
 +------------+------------+----------------------+-------------------+
-| **r        | [          | *nnmatfactsd*        |                   |
-| andstart** | **Done**]{ |                      |                   |
+| *          | [          | *nnmatfactsd*        |                   |
+| randstart* | **Done**]{ |                      |                   |
 |            | style="col |                      |                   |
 |            | or:green"} |                      |                   |
 +------------+------------+----------------------+-------------------+
-| ***        | [          |                      |                   |
-| regplot*** | **Done**]{ |                      |                   |
+| *regplot*  | [          |                      |                   |
+|            | **Done**]{ |                      |                   |
 |            | style="col |                      |                   |
 |            | or:green"} |                      |                   |
 +------------+------------+----------------------+-------------------+
-| ***saz***  |            | *sazchemtax090210*   |                   |
+| saz        |            | *sazchemtax090210*   |                   |
 |            |            |                      |                   |
 |            |            | *nnmatfactsd*        |                   |
 |            |            |                      |                   |
