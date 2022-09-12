@@ -40,19 +40,6 @@ matfactuvw <- function(.df, u = NULL, v = NULL, .pig_r, w = NULL, wb = 1, .info 
 # ---- AUTHOR(s): --------
 # Sebastian Di Geronimo (Mon Jun 20 21:26:19 2022)
   
-  # ---- TODO: remove after testing ----
-  # x = s_norm
-  # u = NULL
-  # v = NULL
-  # b = f_norm
-  # w = NULL
-  # wb = 1
-  # .info = NULL
-  # verbose = T
-  # 
-  # .df = s_norm
-  # .pig_r = f_norm
-  # 
   # ---- set directory ----
   root <- rprojroot::find_rstudio_root_file()
   source(paste0(root,"/scripts/initstruct.R"))
@@ -148,10 +135,9 @@ matfactuvw <- function(.df, u = NULL, v = NULL, .pig_r, w = NULL, wb = 1, .info 
 
   # ---- print heading & initial values ----
   if (info$printitr < 1e6 & verbose) {
-    # cat(sprintf('   itr    rmsx      rmsxwt     rmsb     drms       daa       dbb\n'))
-    # cat(sprintf('%6i%#11.3g%#11.3g%#11.3g\n',0,rms_df,rms_df_uv,rms_pig_r))
-    
-    cat(sprintf('\nIter:    RMS:   Wt RMS:   Pigment Ratio RMS:      dRMS:   dTaxa RMS:   dPig RMS:\n'))
+    # cat(sprintf('\nIter:    RMS:   Wt RMS:   Pigment Ratio RMS:      dRMS:   dTaxa RMS:   dPig RMS:\n'))
+    cat('\nIter:    RMS:   Wt RMS:   Pigment Ratio RMS:      dRMS:  ',
+        'dTaxa RMS:   dPig RMS:\n')
     cat(sprintf("%5i%#8.3g%#10.4g%#21.4g\n", 0,rms_df,rms_df_uv,rms_pig_r))
     }
   
@@ -233,11 +219,11 @@ matfactuvw <- function(.df, u = NULL, v = NULL, .pig_r, w = NULL, wb = 1, .info 
   }
   
   # ---- return final values ----
-  taxa_final <- taxa_amt * pracma::repmat(u, 1, pig_r_init_row)
-  pig_r_fin <- pig_r * pracma::repmat(t(v), pig_r_init_row, 1)
-  chlor_norm <- matrix(pig_r_fin[, ncol(pig_r_fin)])
-  pig_r_fin <- pig_r_fin / pracma::repmat(chlor_norm, 1, df_col)
-  taxa_norm <- taxa_final *  pracma::repmat(t(chlor_norm), df_row, 1)
+  taxa_final     <- taxa_amt * pracma::repmat(u, 1, pig_r_init_row)
+  pig_r_fin      <- pig_r * pracma::repmat(t(v), pig_r_init_row, 1)
+  chlor_norm     <- matrix(pig_r_fin[, ncol(pig_r_fin)])
+  pig_r_fin      <- pig_r_fin / pracma::repmat(chlor_norm, 1, df_col)
+  taxa_norm      <- taxa_final *  pracma::repmat(t(chlor_norm), df_row, 1)
   
   info$itr       <- itr
   info$conva     <- taxa_amt_chg
@@ -249,7 +235,14 @@ matfactuvw <- function(.df, u = NULL, v = NULL, .pig_r, w = NULL, wb = 1, .info 
   info$rms_pig_r <- rms_pig_r
 
   
-  results <- list(a = taxa_norm, b = .pig_r, chlor_norm = chlor_norm, info, logs = logs)     
+  results <-
+    list(
+      a          = taxa_norm,
+      b          = pig_r_fin,
+      chlor_norm = chlor_norm,
+      info       = info,
+      logs       = logs
+    )
   
   return(results)    
   # ---- end ----
