@@ -27,17 +27,17 @@ bootnp <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info =NULL,.nrep = 10,
 # Sebastian Di Geronimo (Fri Jun 10 12:01:31 2022)
   
   # ---- TODO: remove after testing ----
-  # TODO: graphing part and figure out cc1
-  .df = s
-  .df_sd = ssd
-  .pig_r = f0
-  .pig_r = fsd
-  .info = NULL
-  .info = list(printitr = 1000)
-  .nrep = 2
-  verbose = T
-  .pigm = NULL
-  .taxa = NULL
+  # TODO: graphing part
+  # .df = s
+  # .df_sd = ssd
+  # .pig_r = f0
+  # .pig_r_sd = fsd
+  # .info = NULL
+  # .info = list(printitr = 1000)
+  # .nrep = 2
+  # verbose = T
+  # .pigm = NULL
+  # .taxa = NULL
   
   # ---- load library ----
   library("tictoc")
@@ -64,9 +64,9 @@ bootnp <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info =NULL,.nrep = 10,
   taxa_amt_rep <- matrix(0, .nrep, df_row*pig_r_row)
 
   # initialize empty matrix
-  # cc1=zeros(df_row,pig_r_row); ????
-  cc1  <- matrix(0,df_row,pig_r_row) 
-
+  taxa_filt          <- matrix(0, df_row, pig_r_row) 
+  pig_r_avg    <- matrix(0, pig_r_row, pig_r_col)
+  pig_r_avg_sd <- matrix(0, pig_r_row, pig_r_col)
   # ---- options ----
   # create open list if no defaults are given for `info`  
   if (is.null(.info)) .info  <- list()
@@ -87,23 +87,27 @@ bootnp <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info =NULL,.nrep = 10,
   for (i in seq(.nrep)) {
     tictoc::tic()
     
-    cat(sprintf('\nRandom Start Number: %02d of %02d\n', i, .nrep))
+    cat(sprintf('\nNon-parametric Start Number: %02d of %02d\n', i, .nrep))
     
-    # select subset of data
-    ind <- ceiling(pracma::rand(df_row,1) * df_row)
-
-    temp   <-
-      nnmatfactsd(.df[ind, ], .df_sd[ind, ], .pig_r, .pig_r_sd, .info = info)
+    # select subset of data with replacement
+    ind    <- sample.int(df_row, replace = TRUE)
+    
+    temp   <- nnmatfactsd(.df[ind,], 
+                          .df_sd[ind,], 
+                          .pig_r, 
+                          .pig_r_sd, 
+                          .info = info)
     taxa_amt_temp <- temp$a
     pig_r_temp    <- temp$b
     info          <- temp$info
-    # only weirdness is cc1
-    cc1[,] <- NA
-    cc1[ind,] <- taxa_amt_temp
+    
+    # filter taxa by index
+    taxa_filt[,] <- NA
+    taxa_filt[ind,] <- taxa_amt_temp
     
     # log taxa contribution and pigment ratio out
     pig_r_rep[i,]    <- t(pig_r_temp[indx])
-    taxa_amt_rep[i,] <- t(cc1)
+    taxa_amt_rep[i,] <- t(taxa_filt)
     # taxa_amt_rep[i,] <- t(taxa_amt_temp)
     
     # log each run
@@ -150,7 +154,6 @@ bootnp <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info =NULL,.nrep = 10,
   }
   
   # ---- calc avg and sd for final matrices ----
-  # pig_r_rep
   pig_r_fin <- 
     data.frame(
       x      = apply(pig_r_rep, 2, mean, na.rm = TRUE),
@@ -159,64 +162,74 @@ bootnp <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info =NULL,.nrep = 10,
                      sd(x, na.rm = TRUE)/mean(x, na.rm = TRUE))
   )
   
-  
-  # I don't think I need this chunk, but maybe
-  # mtc=zeros(ns*nt,1);
-  # stc=zeros(ns*nt,1);
-  # for i=1:ns*nt
-  #   t=tc(~isnan(tc(:,i)),i);
-  #   mtc(i)=mean(t);
-  #   stc(i)=std(t);
-  # end
-  
   taxa_amt_fin <- 
     data.frame(
       x       = apply(taxa_amt_rep, 2, mean, na.rm = TRUE),
       std_dev = apply(taxa_amt_rep, 2, sd, na.rm = TRUE),
-      y       = apply(df, 2, function(x)
-                      sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE))
-  )
+      y       = apply(taxa_amt_rep, 2, function(x)
+        sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE))
+    ) 
   
-  # figure
-  # loglog(mean(tf),std(tf)./mean(tf),'o')
-  # title('Non parametric bootstrap: Variation in f coefficients')
-  # xlabel('Mean coefficient value')
-  # ylabel('standard deviation/mean')
+  taxa_amt_fin[is.na(taxa_amt_fin)] <- 0 # replace NA with 0
+  
+  # add pigment and/or taxa name to plots if supplied
+  if (!is.null(.pigm)) {
+    pig_r_fin <- cbind(pig_r_fin,
+                       pigm = rep(.pigm, each = pig_r_row)[indx])
+  }
+
+  if (!is.null(.taxa)) {
+    taxa_amt_fin <- cbind(taxa_amt_fin,
+                          taxa = rep(.taxa, df_row))
+  }
   
   # ---- initialize plot info ----
   yticks_minor = outer(1:10, 10^(-5:-1))
   xticks_minor = outer(1:10, 10^(0:1))
 
+  # pigment ratio
+  pig_r_fin_xmin <- floor(log10(min(pig_r_fin$x)))
+  pig_r_fin_ymin <- floor(log10(min(pig_r_fin$y)))
   
+  # taxa contribution
+  taxa_amt_fin_xmin <- floor(log10(min(taxa_amt_fin$x[taxa_amt_fin$x != 0])))
+  taxa_amt_fin_xmax <- ceiling(log10(max(taxa_amt_fin$x[taxa_amt_fin$x != 0])))
+  taxa_amt_fin_ymin <- floor(log10(min(taxa_amt_fin$y[taxa_amt_fin$y != 0])))
   
-  plt_pig_r <- ggplot() +
-    # original had bubble dots - shape?
-    geom_point(data = pig_r_fin,
-               aes(x = x,
-                   y = y),
-               colour = "red") +
-    # scale_x_log10(limits = c(1, 100),
+  plt_pig_r <-
+    ggplot() +
+      {
+        if (!is.null(.pigm)) {
+          geom_point(data = pig_r_fin,
+                     aes(x = x,
+                         y = y,
+                         color = pigm),
+                     alpha = 0.7)
+        } else {
+          geom_point(data = pig_r_fin,
+                     aes(x = x,
+                         y = y),
+                     alpha = 0.7,
+                     colour = "red")
+        }
+      } +
+      scale_y_continuous(expand = c(0,0)) +
+      scale_x_continuous(expand = c(0,0)) +
+    # scale_x_log10(limits = c(1, 2),
     #               labels = fancy_scientific,
-    #               minor_breaks = xticks) +
+    #               minor_breaks = xticks_minor) +
     # scale_y_log10(limits = c(1e-5, 1),
     #               labels = fancy_scientific,
-    #               minor_breaks = yticks) +
+    #               minor_breaks = yticks_minor) +
     labs(
       title = paste("Non Parametric Bootstrap:",
                     "Variation in Pigment Ratio coefficients"),
       x     = "Mean coefficient value",
-      y     = "Coefficient of Variation"
+      y     = "Coefficient of Variation",
+      color = "Pigment"
     ) +
     theme_bw()
 
-# figure
-# %loglog(mtc',stc,'.')
-# loglog(mtc,stc./mtc,'.')
-# title('Non parametric bootstrap: Variation in c coefficients')
-# xlabel('Mean coefficient value')
-# ylabel('standard deviation/mean')
-
-  # taxa_amt_rep
   plt_taxa <-
   ggplot() +
     # original had bubble dots - shape?
@@ -235,17 +248,20 @@ bootnp <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info =NULL,.nrep = 10,
                    colour = "red")
       }
     } +
-    # scale_x_log10(limits = c(1, 100),
-    #               labels = fancy_scientific,
-    #               minor_breaks = xticks) +
+    scale_x_log10(limits = c(10^(taxa_amt_fin_xmin), 1),
+                  labels = fancy_scientific,
+                  minor_breaks = xticks_minor) +
+    scale_y_continuous(expand = c(0,0)) +
+    # scale_x_continuous(expand = c(0,0)) +
     # scale_y_log10(limits = c(1e-5, 1),
     #               labels = fancy_scientific,
-    #               minor_breaks = yticks) +
+    #               minor_breaks = yticks_minor) +
     labs(
       title = paste("Non Parametric Bootstrap:",
                     "Variation in Taxa coefficients"),
       x     = "Mean coefficient value",
-      y     = "Coefficient of Variation"
+      y     = "Coefficient of Variation",
+      color = "Taxa"
     ) +
     theme_bw()
   
@@ -268,16 +284,19 @@ bootnp <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info =NULL,.nrep = 10,
   # ---- results ----
   results            <- list()
   results$replicates <- .nrep
-  results$b          <- pig_r_avg
-  results$b_sd       <- pig_r_avg_sd
-  results$a          <- taxa_amt_avg
-  results$a_sd       <- taxa_amt_sd
+  results$rep_df     <- list(pig_r_rep    = pig_r_rep, 
+                             taxa_amt_rep = taxa_amt_rep)
+  results$avgs       <- list(pig_r_avg    = pig_r_avg, 
+                             pig_r_avg_sd = pig_r_avg_sd, 
+                             taxa_amt_avg = taxa_amt_avg, 
+                             taxa_amt_sd  = taxa_amt_sd)
   results$plots      <- plots
   results$logs       <- logs
   results$ranges     <- list(pigment_range      = pig_rep_range, 
                              taxa_amount_ranges = taxa_amt_rep_range)
   
   return(results)
+  
   # ---- end ----
 }
 

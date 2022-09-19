@@ -52,8 +52,6 @@ bootln <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, .nrep = 10,
   # initialize empty matrix
   pig_r_avg    <- matrix(0, pig_r_row, pig_r_col)
   pig_r_avg_sd <- matrix(0, pig_r_row, pig_r_col)
-  # taxa_amt_avg <- matrix(0, df_row, pig_r_row)
-  # taxa_amt_sd  <- matrix(0, df_row, pig_r_row)
   
   # ---- parameters for log normal distribution ----
   df_mx        <- pmax(.df, .df_sd / 2)
@@ -84,7 +82,7 @@ bootln <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, .nrep = 10,
     cat(sprintf('\nRandom Start Number: %02d of %02d\n', i, .nrep))
   
     ss <- exp(
-      as.matrix(pracma::rand(df_row, pig_r_col)) * df_sd_log + df_log # better implementation
+      as.matrix(pracma::rand(df_row, pig_r_col)) * df_sd_log + df_log
     )
 
     temp          <- nnmatfactsd(ss, .df_sd, .pig_r, .pig_r_sd, .info = info)
@@ -145,27 +143,25 @@ bootln <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, .nrep = 10,
   pig_r_fin <-
     data.frame(
       x       = apply(pig_r_rep, 2, mean, na.rm = TRUE),
-      std_dev = apply(pig_r_rep, 2, sd, na.rm = TRUE),
       y       = apply(pig_r_rep, 2, function(x)
-                sd(x , na.rm = TRUE) / mean(x, na.rm = TRUE))
+                sd(x , na.rm = TRUE) / mean(x, na.rm = TRUE)),
+      std_dev = apply(pig_r_rep, 2, sd, na.rm = TRUE)
     )
-  # TODO: work on getting names on graph
-  # .pigm = pigm
-  # 
-  # if (!is.null(.taxa)) {
-  #   pig_r_fin <- cbind(pig_r_fin,
-  #                         pigm = rep(.pigm, pig_r_col)[indx])
-  # }
-  
   
   # taxa contribution
   taxa_amt_fin <- 
     data.frame(
       x       = apply(taxa_amt_rep, 2, mean, na.rm = TRUE),
-      std_dev = apply(taxa_amt_rep, 2, sd, na.rm = TRUE),
       y       = apply(taxa_amt_rep, 2, function(x)
-                      sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE))
+                      sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE)),
+      std_dev = apply(taxa_amt_rep, 2, sd, na.rm = TRUE)
   )
+  
+  # add pigment and or taxa name to plots if supplied
+  if (!is.null(.pigm)) {
+    pig_r_fin <- cbind(pig_r_fin,
+                       pigm = rep(.pigm, each = pig_r_row)[indx])
+  }
   
   if (!is.null(.taxa)) {
     taxa_amt_fin <- cbind(taxa_amt_fin,
@@ -176,47 +172,70 @@ bootln <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, .nrep = 10,
   yticks_minor = outer(1:10, 10^(-5:-1))
   xticks_minor = outer(1:10, 10^(0:1))
   
-  plt_pig_r <- ggplot() +
-    # original had bubble dots - shape?
-    geom_point(data = pig_r_fin,
-               aes(x = x,
-                   y = y),
-               colour = "red") +
-    
-    
-    
+  # pigment ratio
+  pig_r_fin_xmin <- floor(log10(min(pig_r_fin$x)))
+  pig_r_fin_ymin <- floor(log10(min(pig_r_fin$y)))
+  
+  # taxa contribution
+  taxa_amt_fin_xmin <- floor(log10(min(taxa_amt_fin$x[taxa_amt_fin$x != 0])))
+  # taxa_amt_fin_xmax <- ceiling(log10(max(taxa_amt_fin$x[taxa_amt_fin$x != 0])))
+  taxa_amt_fin_ymin <- floor(log10(min(taxa_amt_fin$y[taxa_amt_fin$y != 0])))
+  
+  plt_pig_r <-
+    ggplot() +
+    {
+      if (!is.null(.pigm)) {
+        geom_point(data = pig_r_fin,
+                   aes(x = x,
+                       y = y,
+                       color = pigm),
+                   alpha = 0.7)
+      } else {
+        geom_point(data = pig_r_fin,
+                   aes(x = x,
+                       y = y),
+                   alpha = 0.7,
+                   colour = "red")
+      }
+    } +
+    scale_x_continuous(expand = c(0,0)) +
+    scale_y_continuous(expand = c(0,0)) +
     # scale_x_log10(limits = c(1, 100),
     #               labels = fancy_scientific,
-    #               minor_breaks = xticks) +
+    #               minor_breaks = xticks_minor) +
     # scale_y_log10(limits = c(1e-5, 1),
     #               labels = fancy_scientific,
     #               minor_breaks = yticks_minor) +
     labs(title = paste("Parametric Bootstrap, log normal:",
                        "Variation in Pigment Ratio coefficients"),
          x     = "Mean coefficient value",
-         y     = "Coefficient of Variation") +
+         y     = "Coefficient of Variation",
+         color = "Pigment"
+         ) +
     theme_bw()
   
 
   # taxa_amt_rep
   plt_taxa <-
     ggplot() +
-    # original had bubble dots - shape?
       {
         if (!is.null(.taxa)) {
           geom_point(data = taxa_amt_fin,
                      aes(x = x,
                          y = y,
                          color = taxa),
-                         alpha = 0.5)
+                         alpha = 0.7) 
         } else {
           geom_point(data = taxa_amt_fin,
                      aes(x = x,
                          y = y),
-                         alpha = 0.5,
                      colour = "red")
         }
       } +
+    scale_y_continuous(expand = c(0,0)) +
+    scale_x_log10(limits = c(10^(taxa_amt_fin_xmin), 1),
+                  labels = fancy_scientific,
+                  minor_breaks = xticks_minor) +
     # scale_x_log10(limits = c(1, 100),
     #               labels = fancy_scientific,
     #               minor_breaks = xticks) +
@@ -226,8 +245,9 @@ bootln <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, .nrep = 10,
     labs(
       title = paste("Parametric Bootstrap, log normal:",
                     "Variation in Taxa coefficients"),
-      x = "Mean coefficient value",
-      y = "Coefficient of Variation"
+      x     = "Mean coefficient value",
+      y     = "Coefficient of Variation",
+      color = "Taxa"
     ) +
     theme_bw()
   
@@ -250,10 +270,12 @@ bootln <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, .nrep = 10,
   # ---- results ----
   results            <- list()
   results$replicates <- .nrep
-  results$b          <- pig_r_avg
-  results$b_sd       <- pig_r_avg_sd
-  results$a          <- taxa_amt_avg
-  results$a_sd       <- taxa_amt_sd
+  results$rep_df     <- list(pig_r_rep    = pig_r_rep, 
+                             taxa_amt_rep = taxa_amt_rep)
+  results$avgs       <- list(pig_r_avg    = pig_r_avg, 
+                             pig_r_avg_sd = pig_r_avg_sd, 
+                             taxa_amt_avg = taxa_amt_avg, 
+                             taxa_amt_sd  = taxa_amt_sd)
   results$plots      <- plots
   results$logs       <- logs
   results$ranges     <- list(pigment_range      = pig_rep_range, 

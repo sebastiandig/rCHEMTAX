@@ -72,8 +72,8 @@ normprod <- function(.df,.taxa_amt,.pig_r, .col = NULL) {
   cc             <- taxa_norm * pracma::repmat(t(pig_r_norm_col), df_row, 1)
   
   # ---- calc RMS ----
-  res <- df_norm - cc %*% pig_r_norm  # residuals
-  rms <- sqrt(mean(res^2))
+  res            <- df_norm - cc %*% pig_r_norm  # residuals
+  rms            <- sqrt(mean(res^2))
   
   # ---- return final values ----
   results <- list(
