@@ -80,7 +80,6 @@ ff    <- temp3$ff
 rms   <- temp3$rms
 
 # ---- write results to file brokewest.csv ----
-df.sav = "n"
 if (save == "y") {
   # write results to file brokewest.csv
   # TODO: check results of functions to be input to df1 and df2 
@@ -105,8 +104,6 @@ if (save == "y") {
   # Close the sink
   sink()
   rm(df.sav)
-} else {
-  rm(df.sav)
 }
 
 
@@ -125,14 +122,18 @@ if (do == "y") {
   # show converges from random starts for c
   # sort of works, graphs are not on log scale
   
-  # rand_out <- 
-    randstart(s,ssd,f0,fsd,verbose = TRUE,.nrep = 2, .info = list(printitr = 5000))
+  rand_out <- 
+    randstart(s,ssd,f0,fsd,
+              verbose = TRUE,.nrep = 2, .pigm = pigm, .taxa = taxa, 
+              .info = list(printitr = 1000, maxitr = 1000))
    
   # bootstrap using parametric log normal
-  bootln(s,ssd,f0,fsd, .nrep = 2, .pigm = pigm, .taxa = taxa, .info = list(printitr = 1000))
+  ln_out <- bootln(s,ssd,f0,fsd, .nrep = 2, .pigm = pigm, .taxa = taxa, 
+         .info = list(printitr = 1000, maxitr = 1000))
 
   # bootstrap non parametric on s
-  bootnp(s,ssd,f0,fsd)
+  np_out <- bootnp(s,ssd,f0,fsd, .nrep = 2, .pigm = pigm, .taxa = taxa, 
+         .info = list(printitr = 1000, maxitr = 1000))
 }
 
 # examples of how to create similar brokewest
