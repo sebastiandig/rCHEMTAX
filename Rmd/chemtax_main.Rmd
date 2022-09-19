@@ -3,7 +3,9 @@ title: "CHEMTAX Main"
 author: "Sebastian DiGeronimo"
 date: "6/2/2022"
 output:
-  html_document: default
+  github_document: 
+    keep_md: yes
+    html_preview: false
   pdf_document: default
 editor_options: 
   markdown: 
@@ -13,6 +15,7 @@ editor_options:
 ### Intro:
 
 This will serve as my starting point for converting CHEMTAX V2.0 into R.
+
 #TODO: fix this: [CHEMTAX
 Document](./Re__CHEMTAX_Update_%5BSEC=OFFICIAL%5D/Re__CHEMTAX_Update_%5BSEC=OFFICIAL%5D/CHEMTAX%202%20Octave%20version.docx)
 
@@ -101,155 +104,30 @@ matfactuvw randstart regplot saz sazchemtax090210
 21 - not all are .m files with functions o 0 mostly done \* 20 finished
 ! 0 not started x 2 not needed
 
-+------------+------------+----------------------+-------------------+
-| Function   | Status     | Connections          | Notes             |
-+:==========:+============+======================+===================+
-| *adddir*   | [**NA**    |                      | I don't think I   |
-|            | ]{style="c |                      | need this         |
-|            | olor:red"} |                      |                   |
-+------------+------------+----------------------+-------------------+
-| *a         | [          |                      | solve for a       |
-| matfactsd* | **Done**]{ |                      |                   |
-|            | style="col |                      |                   |
-|            | or:green"} |                      |                   |
-+------------+------------+----------------------+-------------------+
-| *b         | [          |                      | solves for b      |
-| matfactsd* | **Done**]{ |                      |                   |
-|            | style="col |                      |                   |
-|            | or:green"} |                      |                   |
-+------------+------------+----------------------+-------------------+
-| *bootln*   | [**        | *nnmatfactsd*        | close to          |
-|            | Works**]{s |                      | finishing         |
-|            | tyle="colo |                      |                   |
-|            | r:yellow"} |                      |                   |
-+------------+------------+----------------------+-------------------+
-| *bootnp*   | [**        | *nnmatfactsd*        | close to          |
-|            | Works**]{s |                      | finishing         |
-|            | tyle="colo |                      |                   |
-|            | r:yellow"} |                      |                   |
-+------------+------------+----------------------+-------------------+
-| *          | [          | -                    |                   |
-| brokewest* | **Done**]{ |   *chemtaxbrokewest* |                   |
-|            | style="col | -   *nnmatfactsd*    |                   |
-|            | or:green"} | -   *normprod*       |                   |
-|            |            | -   *regplot*        |                   |
-|            |            | -   *randstart*      |                   |
-|            |            | -   *bootln*         |                   |
-|            |            | -   *bootnp*         |                   |
-+------------+------------+----------------------+-------------------+
-| *chemtax   | [          | -   *permcalc*       | calls data and    |
-| brokewest* | **Done**]{ |                      | pigment ratio     |
-|            | style="col | -   file for *s* and | matrix, selects   |
-|            | or:green"} |     *scol* as        | pigments for both |
-|            |            |                      | and creates std   |
-|            |            | -   CHEMTAX BR       | dev matrices      |
-|            |            |     OKEWests\*,      |                   |
-|            |            |                      |                   |
-|            |            | -   file for *f0*,   |                   |
-|            |            |     *taxa* and       |                   |
-|            |            |     *fcol* as        |                   |
-|            |            |                      |                   |
-|            |            | -   pigment \_r      |                   |
-|            |            |     atios.csv\*      |                   |
-+------------+------------+----------------------+-------------------+
-| *CHEMTAXB  | [          | *matfactuvw*         | TODO: understand  |
-| ROKEWestb* | **Done**]{ |                      | output            |
-|            | style="col | *permcalc*           |                   |
-|            | or:green"} |                      |                   |
-|            |            | file for *b* as      |                   |
-|            |            | *b                   |                   |
-|            |            | _pigment_ratios.csv* |                   |
-|            |            |                      |                   |
-|            |            | file for *x* as      |                   |
-|            |            | *CH                  |                   |
-|            |            | EMTAXBROKEWestx.csv* |                   |
-+------------+------------+----------------------+-------------------+
-| *CHEMTAXB  | [          |                      | as *.csv* in      |
-| ROKEWests* | **Done**]{ |                      | *data/raw/*       |
-|            | style="col |                      |                   |
-|            | or:green"} |                      |                   |
-+------------+------------+----------------------+-------------------+
-| *CHEMTAXB  | [          |                      | as *.csv* in      |
-| ROKEWestx* | **Done**]{ |                      | *data/raw/*       |
-|            | style="col |                      |                   |
-|            | or:green"} |                      |                   |
-+------------+------------+----------------------+-------------------+
-| *dataout*  | [**NA**    |                      | probably don't    |
-|            | ]{style="c |                      | need              |
-|            | olor:red"} |                      |                   |
-+------------+------------+----------------------+-------------------+
-| Formulas   | [          |                      | doesn't connect   |
-|            | **Done**]{ |                      | to anything and   |
-|            | style="col |                      | is not a          |
-|            | or:green"} |                      | function, not     |
-|            |            |                      | sure what do do   |
-|            |            |                      | with it           |
-+------------+------------+----------------------+-------------------+
-| *i         | [          |                      | creates options   |
-| nitstruct* | **Done**]{ |                      | variable for      |
-|            | style="col |                      | factorization     |
-|            | or:green"} |                      |                   |
-+------------+------------+----------------------+-------------------+
-| *m         | [          | *initstruct*         |                   |
-| atfactuvw* | **Done**]{ |                      |                   |
-|            | style="col |                      |                   |
-|            | or:green"} |                      |                   |
-+------------+------------+----------------------+-------------------+
-| *nn        | [          | *amatfactsd*         | [**MAIN script    |
-| matfactsd* | **Done**]{ |                      | for factor        |
-|            | style="col | *initstruct*         | analysis**]{sty   |
-|            | or:green"} |                      | le="color:green"} |
-+------------+------------+----------------------+-------------------+
-| *normprod* | [          |                      | normalizes to     |
-|            | **Done**]{ |                      | selected column   |
-|            | style="col |                      |                   |
-|            | or:green"} |                      |                   |
-+------------+------------+----------------------+-------------------+
-| *permcalc* | [          |                      |                   |
-|            | **Done**]{ |                      |                   |
-|            | style="col |                      |                   |
-|            | or:green"} |                      |                   |
-+------------+------------+----------------------+-------------------+
-| *          | [          | *nnmatfactsd*        |                   |
-| randstart* | **Done**]{ |                      |                   |
-|            | style="col |                      |                   |
-|            | or:green"} |                      |                   |
-+------------+------------+----------------------+-------------------+
-| *regplot*  | [          |                      |                   |
-|            | **Done**]{ |                      |                   |
-|            | style="col |                      |                   |
-|            | or:green"} |                      |                   |
-+------------+------------+----------------------+-------------------+
-| saz        |            | *sazchemtax090210*   |                   |
-|            |            |                      |                   |
-|            |            | *nnmatfactsd*        |                   |
-|            |            |                      |                   |
-|            |            | *normprod*           |                   |
-|            |            |                      |                   |
-|            |            | *regplot*            |                   |
-|            |            |                      |                   |
-|            |            | *randstart*          |                   |
-|            |            |                      |                   |
-|            |            | *bootln*             |                   |
-|            |            |                      |                   |
-|            |            | *bootnp*             |                   |
-+------------+------------+----------------------+-------------------+
-| *sazchem   |            | *permcalc*           |                   |
-| tax090210* |            |                      |                   |
-|            |            | file for *s and scol |                   |
-|            |            | as                   |                   |
-|            |            | SAZS                 |                   |
-|            |            | _CHEMTAX090210s.csv* |                   |
-|            |            |                      |                   |
-|            |            | file for *f0*,       |                   |
-|            |            | *taxa* and *fcol* as |                   |
-|            |            | *saz                 |                   |
-|            |            | _pigment_ratios.csv* |                   |
-+------------+------------+----------------------+-------------------+
-| *          |            |                      | as *.csv* in      |
-| SAZS_CHEMT |            |                      | *data/raw/*       |
-| AX090210s* |            |                      |                   |
-+------------+------------+----------------------+-------------------+
+|              Function               | Status                               | Connections                                                                                 | Notes                                                                          |
+|:-----------------------------------:|--------------------------------------|---------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+|              *adddir*               | [ **NA**]{style ="c olor:red"}       |                                                                                             | I don't think I need this                                                      |
+|            *a matfactsd*            | [**D o ne**]{style=" col or:green"}  |                                                                                             | solve for a                                                                    |
+|            *b matfactsd*            | [**D o ne**]{style=" col or:green"}  |                                                                                             | solves for b                                                                   |
+|              *bootln*               | [ **Works**]{s tyle="colo r:yellow"} | *nnmatfactsd*                                                                               | close to finishing                                                             |
+|              *bootnp*               | [ **Works**]{s tyle="colo r:yellow"} | *nnmatfactsd*                                                                               | close to finishing                                                             |
+| [**D o ne**]{style=" col or:green"} |                                      |                                                                                             |                                                                                |
+|         *chemtax brokewest*         | [**D o ne**]{style=" col or:green"}  | calls data and pigment ratio matrix, selects pigments for both and creates std dev matrices |                                                                                |
+|        *CHEMTAXB ROKEWestb*         | [**D o ne**]{style=" col or:green"}  | TODO: understand output                                                                     |                                                                                |
+|        *CHEMTAXB ROKEWests*         | [**D o ne**]{style=" col or:green"}  |                                                                                             | as *.csv* in *data/raw/*                                                       |
+|        *CHEMTAXB ROKEWestx*         | [**D o ne**]{style=" col or:green"}  |                                                                                             | as *.csv* in *data/raw/*                                                       |
+|              *dataout*              | [ **NA**]{style ="c olor:red"}       |                                                                                             | probably don't need                                                            |
+|              Formulas               | [**D o ne**]{style=" col or:green"}  |                                                                                             | doesn't connect to anything and is not a function, not sure what do do with it |
+|            *i nitstruct*            | [**D o ne**]{style=" col or:green"}  |                                                                                             | creates options variable for factorization                                     |
+|            *m atfactuvw*            | [**D o ne**]{style=" col or:green"}  | *initstruct*                                                                                |                                                                                |
+|           *nn matfactsd*            | [**D o ne**]{style=" col or:green"}  | [**MAIN script for factor a n alysis**]{sty le= " color:green"}                             |                                                                                |
+|             *normprod*              | [**D o ne**]{style=" col or:green"}  |                                                                                             | normalizes to selected column                                                  |
+|             *permcalc*              | [**D o ne**]{style=" col or:green"}  |                                                                                             |                                                                                |
+| [**D o ne**]{style=" col or:green"} | *nnmatfactsd*                        |                                                                                             |                                                                                |
+|              *regplot*              | [**D o ne**]{style=" col or:green"}  |                                                                                             |                                                                                |
+|                 saz                 |                                      |                                                                                             |                                                                                |
+|         *sazchem tax090210*         |                                      |                                                                                             |                                                                                |
+|                                     |                                      | as *.csv* in *data/raw/*                                                                    |                                                                                |
 
 ## To test `nnmatfactsd` and `amatfactsd` - start with
 
