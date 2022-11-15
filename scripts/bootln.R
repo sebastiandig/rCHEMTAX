@@ -82,7 +82,7 @@ bootln <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, .nrep = 10,
     cat(sprintf('\nRandom Start Number: %02d of %02d\n', i, .nrep))
   
     ss <- exp(
-      as.matrix(pracma::rand(df_row, pig_r_col)) * df_sd_log + df_log
+      as.matrix(pracma::randn(df_row, pig_r_col)) * df_sd_log + df_log
     )
 
     temp          <- nnmatfactsd(ss, .df_sd, .pig_r, .pig_r_sd, .info = info)
