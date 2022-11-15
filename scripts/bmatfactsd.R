@@ -29,6 +29,14 @@ bmatfactsd <- function(.df, .df_sd, .taxa_amt, .pig_r, .pig_r_sd) {
   # ---- AUTHOR(s): --------
   # Sebastian Di Geronimo (Thu Jun 02 19:54:42 2022)
   
+  # ---- remove after testing ----
+  # .df       = s
+  # .df_sd    = ssd
+  # .taxa_amt = taxa_amt
+  # .pig_r    = f
+  # .pig_r_sd = fsd
+  
+  
   # ---- load library ----
   library("pracma")
   
@@ -44,12 +52,19 @@ bmatfactsd <- function(.df, .df_sd, .taxa_amt, .pig_r, .pig_r_sd) {
   
   # ---- iterate through each row in pigment ratio then calc b ----
   for (j in seq(.pig_r_col)) {
+  # for (j in 1:2) {
     idx <- indx[,j]
     
     # ---- setup variables for lsqnonneg  ----
     # take columns in taxa_j where has the pigment in df_sd[,j], divide by sd
     taxa_by_df_sd <- .taxa_amt[,idx] / pracma::repmat(as.matrix(.df_sd[,j]),1, sum(idx))
-    pig_r_sd_diag <- diag(1 / .pig_r_sd[idx,j])
+    # pig_r_sd_diag <- diag(1 / .pig_r_sd[idx,j])
+    
+    if (length(.pig_r_sd[idx,j]) == 1) {
+      pig_r_sd_diag <- diag(1 / .pig_r_sd[idx,j], nrow = length(1))
+    } else {
+      pig_r_sd_diag <- diag(1 / .pig_r_sd[idx,j])
+    }
     
     # vars pigment column j and divide by its sd
     df_by_sd      <- .df[,j] / .df_sd[,j]
