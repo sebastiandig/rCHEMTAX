@@ -95,9 +95,9 @@ regplot <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, verbose = TRUE
 
   # ---- initialize plot info ----
   yticks_minor <- outer(1:10, 10^(-5:-1))
-  xticks_minor <- outer(1:10, 10^(0:1))
+  xticks_minor <- outer(1:10, 10^(-4:1))
   
-  df      <- data.frame(fact_sd = fact_sd,rmsxwt = rmsxwt)
+  df      <- data.frame(fact_sd = fact_sd, rmsxwt = rmsxwt)
   
   df_xmin <-  floor(log10(min(df$fact_sd)))
   
