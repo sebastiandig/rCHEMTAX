@@ -48,6 +48,42 @@ fsd   <- temp$pig_r_sd   # init_pig_ratio * 0.1 w/ last col = 0.005
 taxa  <- temp$taxa           # name of taxa groups, comes from pigment ratio col 1
 pigm  <- temp$pigm_sel 
 
+# ---- load using input files as arguements ----
+source("./scripts/load_pigment_data.R")
+root <- rprojroot::find_rstudio_root_file()
+raw  <- "/data/raw/" 
+
+# Brokewest
+.file     = paste0(root, raw, "CHEMTAXBROKEWests.csv")
+.pig_file = paste0(root, "/scripts/brokewest_pigment_ratios.csv")
+idx       = c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1)
+
+# SAZ
+.file      = paste0(root, raw, "SAZS_CHEMTAX090210s.csv")
+.pig_file  = paste0(root, "/scripts/saz_pigment_ratios.csv")
+idx        =  c(1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+
+# .file_sd   = NULL
+# .pig_r_sd  = NULL
+# .clust_col = NULL
+# verbose    = TRUE
+# type = "sd"
+
+
+temp <- load_data(
+  .file,
+  .pig_file,
+  idx,
+  type = "sd" # change to either sd or norm
+)
+
+s     <- temp$df      # pigment data
+ssd   <- temp$df_sd   # df_matrix * 0.01 + 0.0003
+f0    <- temp$pig_r_init # init_pig_ratio = ratio matrix
+fsd   <- temp$pig_r_sd   # init_pig_ratio * 0.1 w/ last col = 0.005
+taxa  <- temp$taxa           # name of taxa groups, comes from pigment ratio col 1
+pigm  <- temp$pigm_sel 
+
 # ---- fit the matrix factors ----
 temp2 <- nnmatfactsd(.df = s,.df_sd = ssd,.pig_r_init = f0,.pig_r_sd = fsd)
 taxa_amt <- temp2$a
@@ -64,13 +100,14 @@ info  <- temp2$info
 # ---- calculates pigment ratio matrix ----
 # uses df, df_sd, taxa contribution matrix, pigment ratio matrix, and it sd 
 source(paste0(root, "/scripts/bmatfactsd.R"))
-test <- bmatfactsd(
+pig_from_df_taxa <- bmatfactsd(
   .df       = s,
   .df_sd    = ssd,
   .taxa_amt = taxa_amt,
   .pig_r    = f,
   .pig_r_sd = fsd
 )
+
 
 # ---- scale the factors and original data ----
 temp3 <- normprod(s,taxa_amt,f)
@@ -80,7 +117,7 @@ ff    <- temp3$ff
 rms   <- temp3$rms
 
 # ---- write results to file brokewest.csv ----
-if (save == "y") {
+if (T) {
   # write results to file brokewest.csv
   # TODO: check results of functions to be input to df1 and df2 
   df1 <-  ff
@@ -91,7 +128,7 @@ if (save == "y") {
   colnames(df2) <- taxa
   
   # Start a sink file with a CSV extension
-  sink(paste0(root, dir, 'brokewest_test.csv'))
+  sink(paste0(root, dir, 'saz_test.csv'))
   
   # Write the first dataframe, with a title and final line separator
   cat('chemtaxbrokewest\n\n')
@@ -103,7 +140,7 @@ if (save == "y") {
   
   # Close the sink
   sink()
-  rm(df.sav)
+
 }
 
 
@@ -117,24 +154,34 @@ if (do == "y") {
   
   # plot showing the effect of regularization
   # has warning, but seems work
-  reg_out <- regplot(s,ssd,f,fsd, verbose = T)
+  reg_out <- regplot(s,ssd,f,f, verbose = T)
   
   # show converges from random starts for c
   # sort of works, graphs are not on log scale
   
   rand_out <- 
-    randstart(s,ssd,f0,fsd,
-              verbose = TRUE,.nrep = 2, .pigm = pigm, .taxa = taxa, 
-              .info = list(printitr = 1000, maxitr = 1000))
+    randstart(
+      s,ssd,f0,fsd,
+      .nrep = 10, .pigm = pigm, .taxa = taxa, 
+      verbose = TRUE, .info = list(printitr = 5000)
+              )
    
   # bootstrap using parametric log normal
-  ln_out <- bootln(s,ssd,f0,fsd, .nrep = 2, .pigm = pigm, .taxa = taxa, 
-         .info = list(printitr = 1000, maxitr = 1000))
+  ln_out <- bootln(
+    s,ssd,f0,fsd, 
+    .nrep = 10, .pigm = pigm, .taxa = taxa, 
+    verbose = TRUE, .info = list(printitr = 5000)
+    )
 
   # bootstrap non parametric on s
-  np_out <- bootnp(s,ssd,f0,fsd, .nrep = 2, .pigm = pigm, .taxa = taxa, 
-         .info = list(printitr = 1000, maxitr = 1000))
+  np_out <- bootnp(
+    s,ssd,f0,fsd, 
+    .nrep = 10, .pigm = pigm, .taxa = taxa, 
+    verbose = TRUE, .info = list(printitr = 5000)
+    )
 }
+
+
 
 # examples of how to create similar brokewest
 # pigm <- c("chlc3", "chlc1", "per", "fuc", "neox", "prx", "violax", "hex", "alx", "lut", "chl_b", "chl_a")
