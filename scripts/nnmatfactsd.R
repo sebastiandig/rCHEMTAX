@@ -69,7 +69,7 @@ nnmatfactsd <- function(.df,.df_sd,.pig_r_init,.pig_r_sd,
   }
   
   # set defaults options
-  deflt <-
+  deflt         <-
     list(
       maxitr   = 20000,
       convitr  = 500,
@@ -80,7 +80,7 @@ nnmatfactsd <- function(.df,.df_sd,.pig_r_init,.pig_r_sd,
     )
   
   # add/replace default options if not set
-  info  <- initstruct(.info, deflt)
+  info          <- initstruct(.info, deflt)
   
   # ensure iteration counts nest & convitr<=printitr<=maxitr
   convitr       <- info$convitr
@@ -163,7 +163,7 @@ nnmatfactsd <- function(.df,.df_sd,.pig_r_init,.pig_r_sd,
   # ---- initial rms of a and b estimates ----
   # initial pigments minus predicted pigments based on b (the pig ratio) and a
   # (amount of pigment)
-  df_res   <- .df - taxa_amt %*% pig_r 
+  df_res    <- .df - taxa_amt %*% pig_r 
   pig_r_res <- .pig_r_init - pig_r
   
   # error for a and b, from initial divided by std dev
