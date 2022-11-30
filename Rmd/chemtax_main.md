@@ -16,39 +16,17 @@ Document](./Re__CHEMTAX_Update_%5BSEC=OFFICIAL%5D/Re__CHEMTAX_Update_%5BSEC=OFFI
 
 Iterations without standard deviations:
 
-![
-a = \\frac {a \\times(x \\cdot b^T)}
-          {a \\cdot(b \\cdot b^T) + 10^{-100}} 
-\\ ; \\ 
-b = \\frac{b \\times (a^T \\cdot x + b_0)}
-         {(a^T \\cdot(a \\cdot b) + b) + 10^{-100}}
-](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%0Aa%20%3D%20%5Cfrac%20%7Ba%20%5Ctimes%28x%20%5Ccdot%20b%5ET%29%7D%0A%20%20%20%20%20%20%20%20%20%20%7Ba%20%5Ctimes%28b%20%5Ccdot%20b%5ET%29%20%2B%2010%5E%7B-100%7D%7D%20%0A%5C%20%3B%20%5C%20%0Ab%20%3D%20%5Cfrac%7Bb%20%5Ctimes%20%28a%5ET%20%5Ccdot%20x%20%2B%20b_0%29%7D%0A%20%20%20%20%20%20%20%20%20%7B%28a%5ET%20%5Ccdot%28a%20%5Ccdot%20b%29%20%2B%20b%29%20%2B%2010%5E%7B-100%7D%7D%0A "
+$$
 a = \frac {a \times(x \cdot b^T)}
-          {a \times(b \cdot b^T) + 10^{-100}} 
+          {a \cdot(b \cdot b^T) + 10^{-100}} 
 \ ; \ 
 b = \frac{b \times (a^T \cdot x + b_0)}
          {(a^T \cdot(a \cdot b) + b) + 10^{-100}}
-")
+$$
 
 Iterations with standard deviations:
 
-![
-\\begin{aligned}
-& a\_{new} = \\frac {a \\times(x\_{w} \\cdot b^T)}
-                {((a \\cdot b ) \\times x\_{\\sigma^2}^{-1}) \\cdot b^T + 10^{-100}} 
-\\ ; \\ 
-b\_{new} = \\frac {b \\times (a^T \\cdot x_w) + b\_{0w}} 
-                {a^T \\cdot ((a \\cdot b) \\times x\_{\\sigma^2}^{-1}) + b \\times b\_{\\sigma^2}^{-1} + 10^{-100}} \\\\\\\\
-& \\text {where}; \\\\
-& x = \\text{pigment concentations for each sample}; \\\\
-& x\_{\\sigma^2}^{-1} = \\frac {1}{x\_{\\sigma}^2} = \\text{inverse-variance weighting of }\\ x; \\\\ 
-& x_w = x \\times x\_{\\sigma^2}^{-1} = \\text{weighted } x \\text{; } \\\\
-& a = \\text{taxa contribution}; \\\\
-& b = \\text{pigment ratio matrix};\\\\ 
-& b\_{\\sigma^2}^{-1} = \\frac {1}{b\_{0\\sigma}^2} = \\text{inverse-variance weighting of initial}\\ b; \\\\ 
-& b\_{0w} = b_0 \\times b\_{\\sigma^2}^{-1}  = \\text{weighted initial}\\ b \\\\
-\\end{aligned}
-](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%0A%5Cbegin%7Baligned%7D%0A%26%20a_%7Bnew%7D%20%3D%20%5Cfrac%20%7Ba%20%5Ctimes%28x_%7Bw%7D%20%5Ccdot%20b%5ET%29%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7B%28%28a%20%5Ccdot%20b%20%29%20%5Ctimes%20x_%7B%5Csigma%5E2%7D%5E%7B-1%7D%29%20%5Ccdot%20b%5ET%20%2B%2010%5E%7B-100%7D%7D%20%0A%5C%20%3B%20%5C%20%0Ab_%7Bnew%7D%20%3D%20%5Cfrac%20%7Bb%20%5Ctimes%20%28a%5ET%20%5Ccdot%20x_w%29%20%2B%20b_%7B0w%7D%7D%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7Ba%5ET%20%5Ccdot%20%28%28a%20%5Ccdot%20b%29%20%5Ctimes%20x_%7B%5Csigma%5E2%7D%5E%7B-1%7D%29%20%2B%20b%20%5Ctimes%20b_%7B%5Csigma%5E2%7D%5E%7B-1%7D%20%2B%2010%5E%7B-100%7D%7D%20%5C%5C%5C%5C%0A%26%20%5Ctext%20%7Bwhere%7D%3B%20%5C%5C%0A%26%20x%20%3D%20%5Ctext%7Bpigment%20concentations%20for%20each%20sample%7D%3B%20%5C%5C%0A%26%20x_%7B%5Csigma%5E2%7D%5E%7B-1%7D%20%3D%20%5Cfrac%20%7B1%7D%7Bx_%7B%5Csigma%7D%5E2%7D%20%3D%20%5Ctext%7Binverse-variance%20weighting%20of%20%7D%5C%20x%3B%20%5C%5C%20%0A%26%20x_w%20%3D%20x%20%5Ctimes%20x_%7B%5Csigma%5E2%7D%5E%7B-1%7D%20%3D%20%5Ctext%7Bweighted%20%7D%20x%20%5Ctext%7B%3B%20%7D%20%5C%5C%0A%26%20a%20%3D%20%5Ctext%7Btaxa%20contribution%7D%3B%20%5C%5C%0A%26%20b%20%3D%20%5Ctext%7Bpigment%20ratio%20matrix%7D%3B%5C%5C%20%0A%26%20b_%7B%5Csigma%5E2%7D%5E%7B-1%7D%20%3D%20%5Cfrac%20%7B1%7D%7Bb_%7B0%5Csigma%7D%5E2%7D%20%3D%20%5Ctext%7Binverse-variance%20weighting%20of%20initial%7D%5C%20b%3B%20%5C%5C%20%0A%26%20b_%7B0w%7D%20%3D%20b_0%20%5Ctimes%20b_%7B%5Csigma%5E2%7D%5E%7B-1%7D%20%20%3D%20%5Ctext%7Bweighted%20initial%7D%5C%20b%20%5C%5C%0A%5Cend%7Baligned%7D%0A "
+$$
 \begin{aligned}
 & a_{new} = \frac {a \times(x_{w} \cdot b^T)}
                 {((a \cdot b ) \times x_{\sigma^2}^{-1}) \cdot b^T + 10^{-100}} 
@@ -64,23 +42,13 @@ b_{new} = \frac {b \times (a^T \cdot x_w) + b_{0w}}
 & b_{\sigma^2}^{-1} = \frac {1}{b_{0\sigma}^2} = \text{inverse-variance weighting of initial}\ b; \\ 
 & b_{0w} = b_0 \times b_{\sigma^2}^{-1}  = \text{weighted initial}\ b \\
 \end{aligned}
-")
+$$
 
 Non-negative Least Squares:
 
--   Minimize
-    ![a](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;a "a")
-    matrix
+- Minimize $a$ matrix
 
-![
-\\begin{aligned}
-& min\|\|x_i - \\hat{a_i} \\cdot b_i\|\| \\\\
-& i = \\text{sample row}; \\\\
-& x_i = (\\frac {x_i} {x\_{\\sigma_i}})^2; \\\\
-& b_i = \\frac {b^T} {x\_{\\sigma_i}}; \\\\
-& \\hat{a_i} = \\text{estimated taxa contribution per sample}\\\\
-\\end{aligned}
-](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%0A%5Cbegin%7Baligned%7D%0A%26%20min%7C%7Cx_i%20-%20%5Chat%7Ba_i%7D%20%5Ccdot%20b_i%7C%7C%20%5C%5C%0A%26%20i%20%3D%20%5Ctext%7Bsample%20row%7D%3B%20%5C%5C%0A%26%20x_i%20%3D%20%28%5Cfrac%20%7Bx_i%7D%20%7Bx_%7B%5Csigma_i%7D%7D%29%5E2%3B%20%5C%5C%0A%26%20b_i%20%3D%20%5Cfrac%20%7Bb%5ET%7D%20%7Bx_%7B%5Csigma_i%7D%7D%3B%20%5C%5C%0A%26%20%5Chat%7Ba_i%7D%20%3D%20%5Ctext%7Bestimated%20taxa%20contribution%20per%20sample%7D%5C%5C%0A%5Cend%7Baligned%7D%0A "
+$$
 \begin{aligned}
 & min||x_i - \hat{a_i} \cdot b_i|| \\
 & i = \text{sample row}; \\
@@ -88,53 +56,31 @@ Non-negative Least Squares:
 & b_i = \frac {b^T} {x_{\sigma_i}}; \\
 & \hat{a_i} = \text{estimated taxa contribution per sample}\\
 \end{aligned}
-")
+$$
 
--   Minimize
-    ![b](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;b "b")
-    matrix
+- Minimize $b$ matrix
 
-    ![
-    \\begin{aligned}
-    & min\|\|x\_{ij} - a\_{ik} \\cdot \\hat{b\_{jk}}\|\| \\\\
-    & i = \\text{sample};\\
-    j = \\text{pigment};\\
-    k = \\text{taxa}; \\\\
-    & k,j \\in \\Phi; \\ 
-    \\Phi = \\text{set of}\\ k,j\\ \\text{non zero elements in pigment ratio matrix} \\\\
-    & x\_{j} = 
-    \\begin{pmatrix} 
-            \\frac {x\_{ij}} {x\_{\\sigma\_{ij}}} \\\\
-            \\frac {b\_{jk}} {b\_{\\sigma\_{jk}}}
-    \\end{pmatrix} ;\\\\
-    & a\_{kj} = 
-    \\begin{pmatrix}  
-            \\frac {a\_{ijk}} {x\_{\\sigma\_{ij}}} \\\\
-            diag( b\_{\\sigma\_{kj}}^{-1} )
-    \\end{pmatrix} ;\\\\
-    & \\hat {b\_{jk}} = \\text {estimated pigment ratio matrix} \\\\
-    \\end{aligned}
-    ](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%0A%5Cbegin%7Baligned%7D%0A%26%20min%7C%7Cx_%7Bij%7D%20-%20a_%7Bik%7D%20%5Ccdot%20%5Chat%7Bb_%7Bjk%7D%7D%7C%7C%20%5C%5C%0A%26%20i%20%3D%20%5Ctext%7Bsample%7D%3B%5C%0Aj%20%3D%20%5Ctext%7Bpigment%7D%3B%5C%0Ak%20%3D%20%5Ctext%7Btaxa%7D%3B%20%5C%5C%0A%26%20k%2Cj%20%5Cin%20%5CPhi%3B%20%5C%20%0A%5CPhi%20%3D%20%5Ctext%7Bset%20of%7D%5C%20k%2Cj%5C%20%5Ctext%7Bnon%20zero%20elements%20in%20pigment%20ratio%20matrix%7D%20%5C%5C%0A%26%20x_%7Bj%7D%20%3D%20%0A%5Cbegin%7Bpmatrix%7D%20%0A%20%20%20%20%20%20%20%20%5Cfrac%20%7Bx_%7Bij%7D%7D%20%7Bx_%7B%5Csigma_%7Bij%7D%7D%7D%20%5C%5C%0A%20%20%20%20%20%20%20%20%5Cfrac%20%7Bb_%7Bjk%7D%7D%20%7Bb_%7B%5Csigma_%7Bjk%7D%7D%7D%0A%5Cend%7Bpmatrix%7D%20%3B%5C%5C%0A%26%20a_%7Bkj%7D%20%3D%20%0A%5Cbegin%7Bpmatrix%7D%20%20%0A%20%20%20%20%20%20%20%20%5Cfrac%20%7Ba_%7Bijk%7D%7D%20%7Bx_%7B%5Csigma_%7Bij%7D%7D%7D%20%5C%5C%0A%20%20%20%20%20%20%20%20diag%28%20b_%7B%5Csigma_%7Bkj%7D%7D%5E%7B-1%7D%20%29%0A%5Cend%7Bpmatrix%7D%20%3B%5C%5C%0A%26%20%5Chat%20%7Bb_%7Bjk%7D%7D%20%3D%20%5Ctext%20%7Bestimated%20pigment%20ratio%20matrix%7D%20%5C%5C%0A%5Cend%7Baligned%7D%0A "
-    \begin{aligned}
-    & min||x_{ij} - a_{ik} \cdot \hat{b_{jk}}|| \\
-    & i = \text{sample};\
-    j = \text{pigment};\
-    k = \text{taxa}; \\
-    & k,j \in \Phi; \ 
-    \Phi = \text{set of}\ k,j\ \text{non zero elements in pigment ratio matrix} \\
-    & x_{j} = 
-    \begin{pmatrix} 
-            \frac {x_{ij}} {x_{\sigma_{ij}}} \\
-            \frac {b_{jk}} {b_{\sigma_{jk}}}
-    \end{pmatrix} ;\\
-    & a_{kj} = 
-    \begin{pmatrix}  
-            \frac {a_{ijk}} {x_{\sigma_{ij}}} \\
-            diag( b_{\sigma_{kj}}^{-1} )
-    \end{pmatrix} ;\\
-    & \hat {b_{jk}} = \text {estimated pigment ratio matrix} \\
-    \end{aligned}
-    ")
+  $$
+  \begin{aligned}
+  & min||x_{ij} - a_{ik} \cdot \hat{b_{jk}}|| \\
+  & i = \text{sample};\
+  j = \text{pigment};\
+  k = \text{taxa}; \\
+  & k,j \in \Phi; \ 
+  \Phi = \text{set of}\ k,j\ \text{non zero elements in pigment ratio matrix} \\
+  & x_{j} = 
+  \begin{pmatrix} 
+          \frac {x_{ij}} {x_{\sigma_{ij}}} \\
+          \frac {b_{jk}} {b_{\sigma_{jk}}}
+  \end{pmatrix} ;\\
+  & a_{kj} = 
+  \begin{pmatrix}  
+          \frac {a_{ijk}} {x_{\sigma_{ij}}} \\
+          diag( b_{\sigma_{kj}}^{-1} )
+  \end{pmatrix} ;\\
+  & \hat {b_{jk}} = \text {estimated pigment ratio matrix} \\
+  \end{aligned}
+  $$
 
 ## List of functions or files
 
@@ -175,19 +121,18 @@ matfactuvw randstart regplot saz sazchemtax090210
 
 # Matlab to R notes:
 
--   `length(x)` = largest of the dimensions, so if 100 x 4 = 100, or 4 x
-    100 = 100
--   `*` is matrix multiply,
--   `.*` & `./` are matrix element by element multiply & divide
-    operations
--   can use `pracma::rand()` for rand
--   `repmat` is used to replicate a matrix by `x * y`, ie
-    `repmat({matrix 5 x 4}, 2, 4)` result would be matrix 2 x 16, so 8
-    replicates of the original matrix where stacked twice and multiplied
-    by 4
--   `mod(a,m)` is same as `a %% m` in R
--   `df(:)` puts matrix into 1 column
--   `df(end)` gets the last digit, bottom right of matrix
+- `length(x)` = largest of the dimensions, so if 100 x 4 = 100, or 4 x
+  100 = 100
+- `*` is matrix multiply,
+- `.*` & `./` are matrix element by element multiply & divide operations
+- can use `pracma::rand()` for rand
+- `repmat` is used to replicate a matrix by `x * y`, ie
+  `repmat({matrix 5 x 4}, 2, 4)` result would be matrix 2 x 16, so 8
+  replicates of the original matrix where stacked twice and multiplied
+  by 4
+- `mod(a,m)` is same as `a %% m` in R
+- `df(:)` puts matrix into 1 column
+- `df(end)` gets the last digit, bottom right of matrix
 
 ## Normalization to Chlor-a
 
@@ -203,11 +148,9 @@ that you have a basic pigment ratio var
 \# allow y or x log style plotting from Matlab in semilogy, semilogx,
 loglog
 
-![
-\\text{i.e. }x\\times10^{n}
-](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%0A%5Ctext%7Bi.e.%20%7Dx%5Ctimes10%5E%7Bn%7D%0A "
+$$
 \text{i.e. }x\times10^{n}
-")
+$$
 
 ``` r
 fancy_scientific <- function(l) { 
@@ -234,12 +177,12 @@ semi-logy scale_y_log10(limits = c(1e-5, 1), labels = fancy_scientific, minor_br
 
 # Functions from `pracma`
 
--   `repmat`
--   `fprintf`
--   `ceil` - not anymore, was alias for `base::ceiling`
--   `rand`
--   `Diag` - not anymore
--   `lsqnonneg` - could replace with `limsolve`
+- `repmat`
+- `fprintf`
+- `ceil` - not anymore, was alias for `base::ceiling`
+- `rand`
+- `Diag` - not anymore
+- `lsqnonneg` - could replace with `limsolve`
 
 ## Testing stuff/setup project
 
@@ -279,40 +222,40 @@ test_norm <- pracma::rand(6, 12)
 diag(1/test_norm[,ncol(test_norm)]) %*% test_norm
 ```
 
-    ##           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
-    ## [1,] 0.2571389 0.9806986 0.7195641 0.1371409 0.7144976 0.7137136 0.6168906
-    ## [2,] 0.2229049 0.1436677 1.5336944 0.1106050 0.6688343 1.8588924 1.7933113
-    ## [3,] 0.5855983 2.1998345 2.3833450 1.4809635 0.3884695 2.4787525 1.5631827
-    ## [4,] 0.7439398 1.4553259 1.6961080 0.1891135 0.4789913 0.7586944 0.3695204
-    ## [5,] 0.5017947 1.7463629 4.8506696 2.3446969 3.4920936 1.8773109 4.2311748
-    ## [6,] 1.9021084 2.6892627 3.4833697 1.5772124 1.8363765 2.7513222 1.4575227
-    ##           [,8]       [,9]     [,10]      [,11] [,12]
-    ## [1,] 0.3555101 0.02602217 0.5337614 1.22371100     1
-    ## [2,] 1.0942676 0.27885945 0.5369586 0.11412349     1
-    ## [3,] 0.1362293 1.01472824 2.2746197 0.92638869     1
-    ## [4,] 0.3850744 1.21898753 1.4966944 0.05756243     1
-    ## [5,] 2.0081428 2.04126945 3.0444069 0.03012610     1
-    ## [6,] 3.2899316 2.83728970 0.7367987 1.54661710     1
+    ##           [,1]      [,2]     [,3]      [,4]     [,5]      [,6]      [,7]
+    ## [1,] 1.3509715 0.6427029 0.099324 0.4372269 0.474389 1.1037331 0.5238595
+    ## [2,] 2.6069082 0.6543306 3.560185 3.1979000 1.524747 0.5186843 3.1476803
+    ## [3,] 7.1320460 3.0969873 1.339884 5.9831552 5.742415 3.5512205 5.0871473
+    ## [4,] 0.5572088 1.6275385 1.698656 0.1816916 1.550892 1.2916801 1.4549099
+    ## [5,] 2.0082564 2.9530885 3.551854 1.0089437 3.294445 1.2265588 2.4998624
+    ## [6,] 1.0478676 0.1059490 1.116854 0.8101214 0.694529 1.0466708 0.3551375
+    ##          [,8]      [,9]     [,10]     [,11] [,12]
+    ## [1,] 1.087794 0.8277188 1.0779756 0.5651250     1
+    ## [2,] 1.072401 0.7409449 0.4494975 2.8441674     1
+    ## [3,] 4.888614 0.2226610 6.6084202 4.6273951     1
+    ## [4,] 1.060282 0.1368132 0.1094236 1.1665615     1
+    ## [5,] 1.644214 2.2686004 2.8051097 1.9136866     1
+    ## [6,] 1.056410 0.3154483 0.7324739 0.5862605     1
 
 ``` r
 # apply method *more confusing
 t(apply(test_norm, 1, function(x) x / x[length(x)]))
 ```
 
-    ##           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
-    ## [1,] 0.2571389 0.9806986 0.7195641 0.1371409 0.7144976 0.7137136 0.6168906
-    ## [2,] 0.2229049 0.1436677 1.5336944 0.1106050 0.6688343 1.8588924 1.7933113
-    ## [3,] 0.5855983 2.1998345 2.3833450 1.4809635 0.3884695 2.4787525 1.5631827
-    ## [4,] 0.7439398 1.4553259 1.6961080 0.1891135 0.4789913 0.7586944 0.3695204
-    ## [5,] 0.5017947 1.7463629 4.8506696 2.3446969 3.4920936 1.8773109 4.2311748
-    ## [6,] 1.9021084 2.6892627 3.4833697 1.5772124 1.8363765 2.7513222 1.4575227
-    ##           [,8]       [,9]     [,10]      [,11] [,12]
-    ## [1,] 0.3555101 0.02602217 0.5337614 1.22371100     1
-    ## [2,] 1.0942676 0.27885945 0.5369586 0.11412349     1
-    ## [3,] 0.1362293 1.01472824 2.2746197 0.92638869     1
-    ## [4,] 0.3850744 1.21898753 1.4966944 0.05756243     1
-    ## [5,] 2.0081428 2.04126945 3.0444069 0.03012610     1
-    ## [6,] 3.2899316 2.83728970 0.7367987 1.54661710     1
+    ##           [,1]      [,2]     [,3]      [,4]     [,5]      [,6]      [,7]
+    ## [1,] 1.3509715 0.6427029 0.099324 0.4372269 0.474389 1.1037331 0.5238595
+    ## [2,] 2.6069082 0.6543306 3.560185 3.1979000 1.524747 0.5186843 3.1476803
+    ## [3,] 7.1320460 3.0969873 1.339884 5.9831552 5.742415 3.5512205 5.0871473
+    ## [4,] 0.5572088 1.6275385 1.698656 0.1816916 1.550892 1.2916801 1.4549099
+    ## [5,] 2.0082564 2.9530885 3.551854 1.0089437 3.294445 1.2265588 2.4998624
+    ## [6,] 1.0478676 0.1059490 1.116854 0.8101214 0.694529 1.0466708 0.3551375
+    ##          [,8]      [,9]     [,10]     [,11] [,12]
+    ## [1,] 1.087794 0.8277188 1.0779756 0.5651250     1
+    ## [2,] 1.072401 0.7409449 0.4494975 2.8441674     1
+    ## [3,] 4.888614 0.2226610 6.6084202 4.6273951     1
+    ## [4,] 1.060282 0.1368132 0.1094236 1.1665615     1
+    ## [5,] 1.644214 2.2686004 2.8051097 1.9136866     1
+    ## [6,] 1.056410 0.3154483 0.7324739 0.5862605     1
 
 ``` r
 .info <- NULL
@@ -347,7 +290,3 @@ if (is.null(.info)) {
 # 
 # s - (testa %*%  testb)
 ```
-
-$$
-
-$$
