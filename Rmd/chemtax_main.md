@@ -18,7 +18,7 @@ Iterations without standard deviations:
 
 ![
 a = \\frac {a \\times(x \\cdot b^T)}
-          {a \\times(b \\cdot b^T) + 10^{-100}} 
+          {a \\cdot(b \\cdot b^T) + 10^{-100}} 
 \\ ; \\ 
 b = \\frac{b \\times (a^T \\cdot x + b_0)}
          {(a^T \\cdot(a \\cdot b) + b) + 10^{-100}}
