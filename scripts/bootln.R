@@ -54,9 +54,16 @@ bootln <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, .nrep = 10,
   pig_r_avg_sd <- matrix(0, pig_r_row, pig_r_col)
   
   # ---- parameters for log normal distribution ----
-  df_mx        <- pmax(.df, .df_sd / 2)
+  # chooses max value for each pair of pigments and it's variation
+  df_mx        <- pmax(.df, .df_sd / 2) 
+  
+  # new sd is log(1 + (df/sd)^2)
   df_sd        <- log(1 + (.df_sd / df_mx)^2)
+  
+  # log of df is log(max(df, sd/2)) - sd/2
   df_log       <- log(df_mx) - df_sd / 2
+  
+  # new sd^1/2
   df_sd_log    <- sqrt(df_sd)
   
   # ---- options ----
@@ -72,7 +79,11 @@ bootln <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, .nrep = 10,
   # ---- initialize list for logs ----
   logs <- list() 
 
-  # ---- start loop ----
+  # ========================================================================== #
+  # ---- start optimization ----
+  # ========================================================================== #  
+  
+  # change sample s by e^(normal distribution(mu = 0, sd = 1) * log(sd) + log(df))
   tictoc::tic.clearlog()
   start <- tictoc::tic()
 
@@ -84,7 +95,8 @@ bootln <- function(.df, .df_sd, .pig_r, .pig_r_sd, .info = NULL, .nrep = 10,
     ss <- exp(
       as.matrix(pracma::randn(df_row, pig_r_col)) * df_sd_log + df_log
     )
-
+    
+    # ---- optimize using non-negative factorization ----
     temp          <- nnmatfactsd(ss, .df_sd, .pig_r, .pig_r_sd, .info = info)
     taxa_amt_temp <- temp$a
     pig_r_temp    <- temp$b
