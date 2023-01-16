@@ -1,5 +1,6 @@
-nnmatfactsd <- function(.df,.df_sd,.pig_r_init,.pig_r_sd,
-                        .info=NULL, verbose = TRUE){
+nnmatfactsd <- function(.df, .df_sd, .pig_r_init, .pig_r_sd,
+                        .info=NULL, verbose = TRUE,
+                        captures = FALSE) {
 ################################################################################
 #                                                                              # 
 #            Non negative matrix factors x=a*b with prior b0 & sd              #
@@ -208,7 +209,15 @@ nnmatfactsd <- function(.df,.df_sd,.pig_r_init,.pig_r_sd,
       pig_r_chg    = NA
     )
 
-  # ---- main factorization loop ----
+  
+  if (captures) {
+    capt <- matrix(0, nrow = maxitr, ncol = ncol(.pig_r_init)*nrow(.pig_r_init))
+    capt[1,] <- c(.pig_r_init)
+  }
+  
+  # ============================================================================ #
+  # ---- main factorization loop  ----
+  # ============================================================================ #  
   for (itr in seq(maxitr)) {
     # update a & b
     taxa_amt <- 
@@ -217,6 +226,11 @@ nnmatfactsd <- function(.df,.df_sd,.pig_r_init,.pig_r_sd,
     pig_r    <-
       pig_r * ((t(taxa_amt) %*% xw) + b0w) / 
       ( t(taxa_amt) %*% ( (taxa_amt %*% pig_r) * w2x) + pig_r * w2b + 1e-100)
+    
+    if (isTRUE(captures)) {
+      capt[itr,] <- c(pig_r)
+    }
+    
     
     # check convergence occasionally
     if (itr %% convitr == 0) {
@@ -270,6 +284,10 @@ nnmatfactsd <- function(.df,.df_sd,.pig_r_init,.pig_r_sd,
     }
   }
   
+  if (isTRUE(captures)) {
+    capt <- capt[1:itr,]
+    return(capt)
+  }
   # ---- return final values ----
   info$itr       <- itr       # final iteration
   info$conv      <- rms_chg   # convergence value
