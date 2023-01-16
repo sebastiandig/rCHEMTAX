@@ -63,10 +63,11 @@ bootnp <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info =NULL,.nrep = 10,
   pig_r_rep    <- matrix(0, .nrep, n_pig)
   taxa_amt_rep <- matrix(0, .nrep, df_row*pig_r_row)
 
-  # initialize empty matrix
-  taxa_filt          <- matrix(0, df_row, pig_r_row) 
+  # initialize empty matrices
+  taxa_filt    <- matrix(0, df_row, pig_r_row) 
   pig_r_avg    <- matrix(0, pig_r_row, pig_r_col)
   pig_r_avg_sd <- matrix(0, pig_r_row, pig_r_col)
+  
   # ---- options ----
   # create open list if no defaults are given for `info`  
   if (is.null(.info)) .info  <- list()
@@ -80,7 +81,9 @@ bootnp <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info =NULL,.nrep = 10,
   # ---- initialize list for logs ----
   logs <- list() 
   
+  # ========================================================================== #
   # ---- start loop ----
+  # ========================================================================== #  
   tictoc::tic.clearlog()
   start <- tictoc::tic()
   
@@ -92,6 +95,7 @@ bootnp <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info =NULL,.nrep = 10,
     # select subset of data with replacement
     ind    <- sample.int(df_row, replace = TRUE)
     
+    # optimzation using non-negative factorization
     temp   <- nnmatfactsd(.df[ind,], 
                           .df_sd[ind,], 
                           .pig_r, 
@@ -102,7 +106,7 @@ bootnp <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info =NULL,.nrep = 10,
     info          <- temp$info
     
     # filter taxa by index
-    taxa_filt[,] <- NA
+    taxa_filt[,]    <- NA
     taxa_filt[ind,] <- taxa_amt_temp
     
     # log taxa contribution and pigment ratio out
@@ -133,7 +137,9 @@ bootnp <- function(.df,.df_sd,.pig_r,.pig_r_sd, .info =NULL,.nrep = 10,
     )
   }
 
-  # ---- display range of values for each pigment and taxa contributions ----
+  # ========================================================================== #
+  # ----  display range of values for each pigment and taxa contributions ----
+  # ========================================================================== #  
   pig_rep_range <-
     pig_r_rep - pracma::repmat(apply(pig_r_rep, 2, mean, na.rm = T), .nrep, 1)
   taxa_amt_rep_range <-
