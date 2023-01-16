@@ -1,4 +1,4 @@
-randstart <- function(.df,.df_sd,.pig_r,.pig_r_sd, 
+randstart <- function(.df, .df_sd, .pig_r, .pig_r_sd, rand_fac = 0.7,
                       .info = NULL, .nrep = 10, verbose = TRUE, 
                       .pigm = NULL, .taxa = NULL) {
 ################################################################################
@@ -77,15 +77,38 @@ randstart <- function(.df,.df_sd,.pig_r,.pig_r_sd,
   for (i in seq(.nrep)) {
     tictoc::tic()
     
-    # random initial a matrix
-    info$inita  <-  pracma::rand(df_row, pig_r_row)
+    # for now comment out
+    # random initial `a` matrix
+    # info$inita  <-  pracma::rand(df_row, pig_r_row) # maybe put back in
+    
+    
+    # 1+RandFact*(RAND()-0.5)
+    # 1 + rand_fac * (pracma::rand(df_row, pig_r_row) - 0.5)
+    # TODO: add this into GUI and as part of function
+    # this is not the right matrix to apply to, this should be to initb
+    # info$inita  <-  (pracma::rand(df_row, pig_r_row) + 0.5) * 0.7 # original method
+    # info$inita  <-  (pracma::rand(df_row, pig_r_row) + 0.5) * 0.4 # original method after first run
+    
+    # fix to above something like 
+    # .pig_r_new <-  .pig_r * (1 + rand_fac * (pracma::rand(pig_r_row, pig_r_col) - 0.5))
+    # .pig_r_new[, pig_r_col] <-  1 
+    .pig_r_new <-
+      .pig_r * (1 + rand_fac * (pracma::rand(pig_r_row, pig_r_col) - 0.5))
+    .pig_r_new[, pig_r_col] <-  1 
+     
+     
+    
+    # info$inita <- function(x, na.rm = FALSE){
+    #   round(runif(n=1, x*0.1,x*2),4)}
+    
     
     # ---- run factor analysis ----
     cat(sprintf('\nRandom Start Number: %02d of %02d\n', i, .nrep))
 
     temp          <- nnmatfactsd(.df,
                                  .df_sd,
-                                 .pig_r,
+                                 # .pig_r,
+                                 .pig_r_new, # instead of .pig_r
                                  .pig_r_sd,
                                  .info   = info,
                                  verbose = verbose
