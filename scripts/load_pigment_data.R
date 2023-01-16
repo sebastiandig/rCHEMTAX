@@ -42,7 +42,10 @@ load_data <- function(.file = NULL, .pig_file = NULL, idx = NULL,
   
   # assertthat::is.string(.file)
   
+  
+  # ========================================================================== #
   # ---- check and load files ----
+  # ========================================================================== #  
   stopifnot("Data filepath was not given." = !is.null(.file))
   stopifnot("Pigment ratio filepath was not given." = !is.null(.pig_file))
   
@@ -64,7 +67,10 @@ load_data <- function(.file = NULL, .pig_file = NULL, idx = NULL,
 
   # TODO: add switches for sd of pigment and samples
   
+  # ========================================================================== #
   # ---- extract clusters info ----
+  # ========================================================================== #  
+  
   # .clust_col can either be number or name of column with clusters info
   if (!is.null(.clust_col)) {
     clusters <- subset(df, select = .clust_col)
@@ -80,7 +86,10 @@ load_data <- function(.file = NULL, .pig_file = NULL, idx = NULL,
     
   }
   
+  # ========================================================================== #
   # ---- extract names ----
+  # ========================================================================== #  
+  
   # taxa names
   stopifnot("First column in pigment ratio matrix needs to be a string of taxa!" 
             = is.character(temp_ratio[,1]))
@@ -93,7 +102,11 @@ load_data <- function(.file = NULL, .pig_file = NULL, idx = NULL,
   colnames(df)         <- NULL # TODO: decide if it matters or not
   colnames(temp_ratio) <- NULL # TODO: decide if it matters or not
   
+  
+  # ========================================================================== #
   # ---- index for selected pigments of pigment ratios matrix ----
+  # ========================================================================== #  
+  
   if (is.null(idx) | length(idx) != length(pigm_temp)) {
     message(paste0("Either an index was not supplied, was 0, or exceeded the number of pigments!\n",
                    "\nHere are a list of pigment names:\n"))
@@ -114,7 +127,9 @@ load_data <- function(.file = NULL, .pig_file = NULL, idx = NULL,
     cat(pigm_temp[which(idx == 1)])
   }
   
+  # ========================================================================== #
   # ---- read pigment ratios ----
+  # ========================================================================== #  
   # initialize ratio matrix by removing taxa and pigment names
   pig_r_init           <- as.matrix(temp_ratio[,-1])[, which(idx == 1)] 
   
@@ -128,8 +143,14 @@ load_data <- function(.file = NULL, .pig_file = NULL, idx = NULL,
   # filter columns for pigment that match selected pigments
   df  <- as.matrix(df[, df_pig_idx])
   
-  # ---- set variations in df and pig_r ----
+  # ========================================================================== #
+  # ---- set standard deviations in df and pig_r ----
+  # ========================================================================== #  
+  
   # df
+  # sd   = x * 0.01 + 0.0003: 1% error plus 0.0003 for LoD
+  # norm = normalize to row sum (i.e. normalize sample to total pigment)
+  
   if (is.null(.file_sd) & type != "norm") {
     # ---- standard deviation ----
     df_sd         <- df * 0.01 + 0.0003
@@ -143,21 +164,26 @@ load_data <- function(.file = NULL, .pig_file = NULL, idx = NULL,
     df_sd         <-  .file_sd
   }
   
+  
   # pig_r
-  if (is.null(.pig_r_sd) & type != "norm") {
+  # norm = x * 0.1 and 0.005 for chlor: 10% variation for pigments, 0.5% for chlor
+  # sd   = normalize to row sum (i.e. normalize pigment ratio for taxa)
+  if (is.null(.pig_r_sd) & type == "sd") {
+  
     # ---- standard deviation ----
+  
     pig_r_sd                   <- pig_r_init * 0.1
     pig_r_sd[, ncol(pig_r_sd)] <- 0.005 # set chlor-a sd to 0.005
     
   } else if (is.null(.pig_r_sd)) {
+  
     # ---- normalize df and pigment ratio to row sums ----
-    pig_r_row_sum              <-
-      as.matrix(apply(pig_r_init, 1, sum, na.rm = TRUE))
-    pig_r_sd                   <-
-      pig_r_init / pracma::repmat(pig_r_row_sum, 1, ncol(pig_r_init))
+    pig_r_row_sum <- as.matrix(apply(pig_r_init, 1, sum, na.rm = TRUE))
+    pig_r_sd      <- pig_r_init / 
+                     pracma::repmat(pig_r_row_sum, 1, ncol(pig_r_init))
     
   } else {
-    pig_r_sd                   <-  .pig_r_sd
+    pig_r_sd      <-  .pig_r_sd
   }
 
   # ---- return list of variables created ----
