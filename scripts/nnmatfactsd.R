@@ -215,9 +215,9 @@ nnmatfactsd <- function(.df, .df_sd, .pig_r_init, .pig_r_sd,
     capt[1,] <- c(.pig_r_init)
   }
   
-  # ============================================================================ #
+  # ========================================================================== #
   # ---- main factorization loop  ----
-  # ============================================================================ #  
+  # ========================================================================== #  
   for (itr in seq(maxitr)) {
     # update a & b
     taxa_amt <- 
@@ -263,6 +263,7 @@ nnmatfactsd <- function(.df, .df_sd, .pig_r_init, .pig_r_sd,
       if ((itr %% printitr) == 0 || conv_end || (itr %% maxitr) == 0  ) {
         df_res    <- .df - taxa_amt %*% pig_r
         rms_df    <- sqrt(sum(df_res^2) / pig_conc_tot)
+        # apply(df_res, 1, function(x) sqrt(sum(x^2, na.rm = TRUE)))
         rmsxwt    <- sqrt(sum((df_res / df_sd)^2 / pig_conc_tot))
         pig_r_res <- .pig_r_init - pig_r
         rms_pig_r <- sqrt(sum(pig_r_res^2) / pig_adj_tot)
@@ -284,6 +285,8 @@ nnmatfactsd <- function(.df, .df_sd, .pig_r_init, .pig_r_sd,
     }
   }
   
+  
+  
   if (isTRUE(captures)) {
     capt <- capt[1:itr,]
     return(capt)
@@ -296,6 +299,8 @@ nnmatfactsd <- function(.df, .df_sd, .pig_r_init, .pig_r_sd,
   info$rmsxwt    <- rmsxwt 
   info$rms_pig_r <- rms_pig_r # pigment ratio rmc
   info$rmsbwt    <- rmsbwt
+  
+  info$rms_test <- apply(df_res, 2, function(x) sqrt(sum(x^2, na.rm = TRUE)))
   
   info$logs <- logs
   # TODO: make option for plots
