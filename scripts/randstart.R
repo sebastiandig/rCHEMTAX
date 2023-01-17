@@ -1,6 +1,6 @@
 randstart <- function(.df, .df_sd, .pig_r, .pig_r_sd, rand_fac = 0.7,
                       .info = NULL, .nrep = 10, verbose = TRUE, 
-                      .pigm = NULL, .taxa = NULL) {
+                      .pigm = NULL, .taxa = NULL, rand_type = "b") {
 ################################################################################
 #                                                                              # 
 #   Plot the effect of random starts for s% effect of random start locations   #
@@ -29,6 +29,11 @@ randstart <- function(.df, .df_sd, .pig_r, .pig_r_sd, rand_fac = 0.7,
   library("tictoc")
   library("pracma")
   library("ggplot2")
+  
+  
+  if (!str_detect(rand_type, "^(ab|a|b)$")) {
+    rlang::abort(cli::cli_abort("{.var rand_type} needs to be 'a', 'b' or ab"))
+  }
   
   # set directory for saving 
   root <- rprojroot::find_rstudio_root_file()
@@ -79,7 +84,10 @@ randstart <- function(.df, .df_sd, .pig_r, .pig_r_sd, rand_fac = 0.7,
     
     # for now comment out
     # random initial `a` matrix
-    # info$inita  <-  pracma::rand(df_row, pig_r_row) # maybe put back in
+    if (str_detect(rand_type, "(?i)ab|(?i)a")) {
+      cli::cli_alert_info("Randomizing the {.strong {cli::col_red('A')}} matrix")
+      info$inita  <-  pracma::rand(df_row, pig_r_row) # maybe put back in
+    }
     
     
     # 1+RandFact*(RAND()-0.5)
@@ -90,13 +98,14 @@ randstart <- function(.df, .df_sd, .pig_r, .pig_r_sd, rand_fac = 0.7,
     # info$inita  <-  (pracma::rand(df_row, pig_r_row) + 0.5) * 0.4 # original method after first run
     
     # fix to above something like 
-    # .pig_r_new <-  .pig_r * (1 + rand_fac * (pracma::rand(pig_r_row, pig_r_col) - 0.5))
-    # .pig_r_new[, pig_r_col] <-  1 
-    .pig_r_new <-
-      .pig_r * (1 + rand_fac * (pracma::rand(pig_r_row, pig_r_col) - 0.5))
-    .pig_r_new[, pig_r_col] <-  1 
-     
-     
+    if (str_detect(rand_type, "(?i)ab|(?i)b")) {
+      cli::cli_alert_info("Randomizing the {.strong {cli::col_green('B')}} matrix")
+      .pig_r_new <-
+        .pig_r * (1 + rand_fac * (pracma::rand(pig_r_row, pig_r_col) - 0.5))
+      .pig_r_new[, pig_r_col] <- 1 
+    } else {
+      .pig_r_new <- .pig_r
+    }
     
     # info$inita <- function(x, na.rm = FALSE){
     #   round(runif(n=1, x*0.1,x*2),4)}
