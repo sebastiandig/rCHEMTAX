@@ -1,6 +1,6 @@
 ################################################################################
 #                                                                              # 
-#               Command file to fit brokwest data                              #
+#               Command file to fit brokewest data                             #
 #                                                                              #    
 ################################################################################
 # ---- DESCRIPTION: ------
@@ -8,7 +8,7 @@
 #
 # ---- INPUTS: -----------
 # NA 
-#
+# 
 # ---- OUTPUTS: ----------
 # brokewest.csv = a .csv file of the matrix factorization 
 #
@@ -24,16 +24,17 @@
 # TODO: create this as a standalone function 
 
 # ---- set directory for saving  ----
-root <- rprojroot::find_rstudio_root_file()
-dir <- "/data/processed/"
+library("here")
 
 # source scripts
-source(paste0(root, "/scripts/chemtaxbrokewest.R"))
-source(paste0(root, "/scripts/nnmatfactsd.R"))
-source(paste0(root, "/scripts/normprod.R"))
+# source(here("scripts", "chemtaxbrokewest.R")) # load stock data the old way
+source(here("scripts", "load_pigment_data.R")) # load stock data
+source(here("scripts", "nnmatfactsd.R")) # non-neg matrix factorization
+source(here("scripts", "normprod.R")) # normalize outputs
+
 
 # ---- extract data from chemtaxbrokewest ----
-temp           <- chemtaxbrokewest()  # should this be a function?
+# temp           <- chemtaxbrokewest()  # should this be a function?
 # df_matrix      <- temp$df_matrix      # pigment data
 # df_matrix_sd   <- temp$df_matrix_sd   # df_matrix * 0.01 + 0.0003
 # init_pig_ratio <- temp$init_pig_ratio # init_pig_ratio = ratio matrix
@@ -41,27 +42,30 @@ temp           <- chemtaxbrokewest()  # should this be a function?
 # taxa           <- temp$taxa           # name of taxa groups, comes from pigment ratio col 1
 # pigm_sel       <- temp$pigm_sel       # pigment names, comes from pigment ratio colnames, keeps names where index is 1
 
-s     <- temp$df      # pigment data
-ssd   <- temp$df_sd   # df_matrix * 0.01 + 0.0003
-f0    <- temp$pig_r_init # init_pig_ratio = ratio matrix
-fsd   <- temp$pig_r_sd   # init_pig_ratio * 0.1 w/ last col = 0.005
-taxa  <- temp$taxa           # name of taxa groups, comes from pigment ratio col 1
-pigm  <- temp$pigm_sel 
+# s     <- temp$df      # pigment data
+# ssd   <- temp$df_sd   # df_matrix * 0.01 + 0.0003
+# f0    <- temp$pig_r_init # init_pig_ratio = ratio matrix
+# fsd   <- temp$pig_r_sd   # init_pig_ratio * 0.1 w/ last col = 0.005
+# taxa  <- temp$taxa           # name of taxa groups, comes from pigment ratio col 1
+# pigm  <- temp$pigm_sel 
 
-# ---- load using input files as arguements ----
-source("./scripts/load_pigment_data.R")
-root <- rprojroot::find_rstudio_root_file()
-raw  <- "/data/raw/" 
+# ============================================================================ #
+# ---- load stock ----
+# ============================================================================ #  
+# select between brokewest or saz datasets
+data_set <- "broke" # 'broke' or 'saz'
 
-# Brokewest
-.file     = paste0(root, raw, "CHEMTAXBROKEWests.csv")
-.pig_file = paste0(root, "/scripts/brokewest_pigment_ratios.csv")
-idx       = c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1)
-
-# SAZ
-.file      = paste0(root, raw, "SAZS_CHEMTAX090210s.csv")
-.pig_file  = paste0(root, "/scripts/saz_pigment_ratios.csv")
-idx        =  c(1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+if (data_set == "broke") {
+  # Brokewest
+  pig_dat_file <- here("data", "raw", "CHEMTAXBROKEWests.csv")
+  p_ratio_file <- here("scripts", "brokewest_pigment_ratios.csv")
+  idx          <- c(1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1)
+} else if (data_set == "saz") {
+  # SAZ
+  pig_dat_file <- here("data", "raw", "SAZS_CHEMTAX090210s.csv")
+  p_ratio_file <- here("scripts", "saz_pigment_ratios.csv")
+  idx          <- c(1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+}
 
 # .file_sd   = NULL
 # .pig_r_sd  = NULL
@@ -69,14 +73,15 @@ idx        =  c(1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 # verbose    = TRUE
 # type = "sd"
 
-
+# load data set
 temp <- load_data(
-  .file,
-  .pig_file,
+  .file     = pig_dat_file,
+  .pig_file = p_ratio_file,
   idx,
-  type = "sd" # change to either sd or norm
+  type      = "sd" # change to either sd or norm
 )
 
+# ---- parse each matrix in a variable ----
 s     <- temp$df      # pigment data
 ssd   <- temp$df_sd   # df_matrix * 0.01 + 0.0003
 f0    <- temp$pig_r_init # init_pig_ratio = ratio matrix
@@ -84,11 +89,63 @@ fsd   <- temp$pig_r_sd   # init_pig_ratio * 0.1 w/ last col = 0.005
 taxa  <- temp$taxa           # name of taxa groups, comes from pigment ratio col 1
 pigm  <- temp$pigm_sel 
 
+
+# ============================================================================ #
+# ---- randomization test ----
+# ============================================================================ #  
+# df_row    <- dim(s)[1]       # row # .df
+# df_col    <- dim(.df)[2]       # col # of .df
+pig_r_row <- dim(f0)[1]    # row # .pig_r
+pig_r_col <- dim(f0)[2]    # col of .pig_r
+# indx      <- which(.pig_r > 0) # index of non-zero pigments
+# n_pig     <- length(indx)     
+
+
+pracma::rand(df_row, pig_r_row)
+
+rand_fac <-  0.4
+dim(f0)
+rand_f0 <- 1 + rand_fac * (pracma::rand(df_row, pig_r_row) - 0.5)
+rand_f0 <- 1 + rand_fac * (pracma::rand(pig_r_row, pig_r_col) - 0.5)
+(f0 - ( f0 * rand_f0 ) ) / f0 * 100
+f0 * rand_f0
+f0 * (1 + rand_fac * (pracma::rand(pig_r_row, pig_r_col) - 0.5))
+range(rand_f0)
+
+n = 2
+for (i in seq(n)) {
+  if (i == 1) {
+    cat("-----------------\n\n", sprintf("%s of %s Original\n\n", i, n))
+    print(round(f0, 4))
+  } else {
+    cat("-----------------\n\n", sprintf("%s of %s\n\n", i, n))
+  
+    print(round(f0[,1:11] * (1 + rand_fac * (pracma::rand(pig_r_row, pig_r_col - 1) - 0.5)), 4))
+
+  }
+}
+
+rp <-
+  f0 * (1 + rand_fac * (pracma::rand(pig_r_row, pig_r_col) - 0.5))
+rp[,pig_r_col] <-  1
+
+rp
+
 # ---- fit the matrix factors ----
-temp2 <- nnmatfactsd(.df = s,.df_sd = ssd,.pig_r_init = f0,.pig_r_sd = fsd)
-taxa_amt <- temp2$a
+temp2 <- nnmatfactsd(.df = s,
+                     .df_sd = ssd,
+                     .pig_r_init = f0,
+                     .pig_r_sd = fsd,
+                     captures = FALSE)
+temtaxa_amt <- temp2$a
 f     <- temp2$b
 info  <- temp2$info
+
+
+pigm
+colnames(temp2) <- rep(pigm, each = 8)
+
+
 
 # Notes (to help follow what goes into functions): 
 # inputs for nnmatfactsd(x=s,sdx=ssd,b0=f0,sdb=fsd,info=NULL)
@@ -99,7 +156,7 @@ info  <- temp2$info
 
 # ---- calculates pigment ratio matrix ----
 # uses df, df_sd, taxa contribution matrix, pigment ratio matrix, and it sd 
-source(paste0(root, "/scripts/bmatfactsd.R"))
+source(here("scripts", "bmatfactsd.R"))
 pig_from_df_taxa <- bmatfactsd(
   .df       = s,
   .df_sd    = ssd,
@@ -117,7 +174,7 @@ ff    <- temp3$ff
 rms   <- temp3$rms
 
 # ---- write results to file brokewest.csv ----
-if (T) {
+if (FALSE) {
   # write results to file brokewest.csv
   # TODO: check results of functions to be input to df1 and df2 
   df1 <-  ff
@@ -126,9 +183,9 @@ if (T) {
   
   df2 <- cc
   colnames(df2) <- taxa
-  
+
   # Start a sink file with a CSV extension
-  sink(paste0(root, dir, 'saz_test.csv'))
+  sink(here("data", "processed", "saz_test.csv"))
   
   # Write the first dataframe, with a title and final line separator
   cat('chemtaxbrokewest\n\n')
@@ -143,14 +200,23 @@ if (T) {
 
 }
 
-
-do <- "n"
-if (do == "y") {
+# ============================================================================ #
+# ---- run randomizations ----
+# ============================================================================ #  
+ 
+# regplot: change sd percent pigment ratio sd
+# randstart: initial `a` matrix created from uniform distribution from 0 to 1
+#            for each sample and taxa
+# bootln:   
+if (FALSE) {
   # TODO: sources
-  source(paste0(root, "/scripts/regplot.R"))
-  source(paste0(root, "/scripts/randstart.R"))
-  source(paste0(root, "/scripts/bootln.R"))
-  source(paste0(root, "/scripts/bootnp.R"))
+  source(here("scripts", "regplot.R"))
+  source(here("scripts", "randstart.R"))
+  source(here("scripts", "bootln.R"))
+  source(here("scripts", "bootnp.R"))
+  
+  # number of replicates
+  nrep = 3
   
   # plot showing the effect of regularization
   # has warning, but seems work
@@ -162,21 +228,21 @@ if (do == "y") {
   rand_out <- 
     randstart(
       s,ssd,f0,fsd,
-      .nrep = 10, .pigm = pigm, .taxa = taxa, 
+      .nrep = nrep, .pigm = pigm, .taxa = taxa, 
       verbose = TRUE, .info = list(printitr = 5000)
               )
    
   # bootstrap using parametric log normal
   ln_out <- bootln(
     s,ssd,f0,fsd, 
-    .nrep = 10, .pigm = pigm, .taxa = taxa, 
+    .nrep = nrep, .pigm = pigm, .taxa = taxa, 
     verbose = TRUE, .info = list(printitr = 5000)
     )
 
   # bootstrap non parametric on s
   np_out <- bootnp(
     s,ssd,f0,fsd, 
-    .nrep = 10, .pigm = pigm, .taxa = taxa, 
+    .nrep = nrep, .pigm = pigm, .taxa = taxa, 
     verbose = TRUE, .info = list(printitr = 5000)
     )
 }
