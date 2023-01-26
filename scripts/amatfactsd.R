@@ -43,6 +43,11 @@ library("pracma")
     # ---- non-negative least linear square minimization ----
     temp    <- pracma::lsqnonneg(pig_r_j, df_j)
     
+    
+    # RcppML::nnls(pig_r_j, as.matrix(df_j))
+    
+    limSolve::nnls(pig_r_j, df_j)
+    
     # ---- results transposed ----
     taxa_amt_min[j,] <- t(temp$x)
   }
