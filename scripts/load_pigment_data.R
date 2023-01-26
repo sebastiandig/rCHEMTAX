@@ -3,13 +3,11 @@ load_data <- function(.file = NULL, .pig_file = NULL, idx = NULL,
                       type = "sd",
                       verbose = TRUE) {
   
-  
   # TODO: make function to read in data set, and pigment ratio matrix,
   #       select pigments, and if want to use generic SD or have specific info
   #       for both pigment ratio matrix, data set
   
   root <- rprojroot::find_rstudio_root_file()
-  # raw  <- "/data/raw/" 
   
   library("stringr")
   
@@ -108,6 +106,7 @@ load_data <- function(.file = NULL, .pig_file = NULL, idx = NULL,
   # ========================================================================== #  
   
   if (is.null(idx) | length(idx) != length(pigm_temp)) {
+    
     message(paste0("Either an index was not supplied, was 0, or exceeded the number of pigments!\n",
                    "\nHere are a list of pigment names:\n"))
     message(paste(pigm_temp, "\n"))
@@ -137,7 +136,6 @@ load_data <- function(.file = NULL, .pig_file = NULL, idx = NULL,
   pigm_sel             <- pigm_temp[which(idx == 1)]
   
   # ---- find columns that match and rearrange ----
-  
   df_pig_idx <- permcalc(pigm_sel, df_pig)
   
   # filter columns for pigment that match selected pigments
