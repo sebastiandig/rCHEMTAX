@@ -35,7 +35,7 @@ bmatfactsd <- function(.df, .df_sd, .taxa_amt, .pig_r, .pig_r_sd) {
   # .taxa_amt = taxa_amt
   # .pig_r    = f
   # .pig_r_sd = fsd
-  
+
   
   # ---- load library ----
   library("pracma")
@@ -52,7 +52,6 @@ bmatfactsd <- function(.df, .df_sd, .taxa_amt, .pig_r, .pig_r_sd) {
   
   # ---- iterate through each row in pigment ratio then calc b ----
   for (j in seq(.pig_r_col)) {
-  # for (j in 1:2) {
     idx <- indx[,j]
     
     # ---- setup variables for lsqnonneg  ----
@@ -80,7 +79,7 @@ bmatfactsd <- function(.df, .df_sd, .taxa_amt, .pig_r, .pig_r_sd) {
                               taxa_norm,
                               df_pig_norm
                              )
-    
+
     pig_r_new[idx,j] <- t(b_j$x) 
   }
   
