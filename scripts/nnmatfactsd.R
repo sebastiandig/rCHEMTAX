@@ -118,7 +118,7 @@ nnmatfactsd <- function(.df, .df_sd, .pig_r_init, .pig_r_sd,
   
   # ---- add inverse-variance weighting variables ----
   df_sd            <- .df_sd + 1e-100     # matrix of non-zeros
-  pig_r_sd         <- .pig_r_sd  + 1e-100 # matrix of non-zeros
+  pig_r_sd         <- .pig_r_sd + 1e-100 # matrix of non-zeros
   w2x              <- 1 / (df_sd^2)       # inverse-variance weighting (IVW)
   w2b              <- 1 / (pig_r_sd^2)    # IVW
   xw               <- .df * w2x           # IVW x samples
