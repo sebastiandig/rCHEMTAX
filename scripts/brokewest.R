@@ -90,46 +90,7 @@ taxa  <- temp$taxa           # name of taxa groups, comes from pigment ratio col
 pigm  <- temp$pigm_sel 
 
 
-# ============================================================================ #
-# ---- randomization test ----
-# ============================================================================ #  
-# df_row    <- dim(s)[1]       # row # .df
-# df_col    <- dim(.df)[2]       # col # of .df
-pig_r_row <- dim(f0)[1]    # row # .pig_r
-pig_r_col <- dim(f0)[2]    # col of .pig_r
-# indx      <- which(.pig_r > 0) # index of non-zero pigments
-# n_pig     <- length(indx)     
 
-
-pracma::rand(df_row, pig_r_row)
-
-rand_fac <-  0.4
-dim(f0)
-rand_f0 <- 1 + rand_fac * (pracma::rand(df_row, pig_r_row) - 0.5)
-rand_f0 <- 1 + rand_fac * (pracma::rand(pig_r_row, pig_r_col) - 0.5)
-(f0 - ( f0 * rand_f0 ) ) / f0 * 100
-f0 * rand_f0
-f0 * (1 + rand_fac * (pracma::rand(pig_r_row, pig_r_col) - 0.5))
-range(rand_f0)
-
-n = 2
-for (i in seq(n)) {
-  if (i == 1) {
-    cat("-----------------\n\n", sprintf("%s of %s Original\n\n", i, n))
-    print(round(f0, 4))
-  } else {
-    cat("-----------------\n\n", sprintf("%s of %s\n\n", i, n))
-  
-    print(round(f0[,1:11] * (1 + rand_fac * (pracma::rand(pig_r_row, pig_r_col - 1) - 0.5)), 4))
-
-  }
-}
-
-rp <-
-  f0 * (1 + rand_fac * (pracma::rand(pig_r_row, pig_r_col) - 0.5))
-rp[,pig_r_col] <-  1
-
-rp
 
 # ---- fit the matrix factors ----
 temp2 <- nnmatfactsd(.df = s,
@@ -247,7 +208,46 @@ if (FALSE) {
     )
 }
 
-
+# # ============================================================================ #
+# # ---- randomization test ----
+# # ============================================================================ #  
+# # df_row    <- dim(s)[1]       # row # .df
+# # df_col    <- dim(.df)[2]       # col # of .df
+# pig_r_row <- dim(f0)[1]    # row # .pig_r
+# pig_r_col <- dim(f0)[2]    # col of .pig_r
+# # indx      <- which(.pig_r > 0) # index of non-zero pigments
+# # n_pig     <- length(indx)     
+# 
+# 
+# pracma::rand(df_row, pig_r_row)
+# 
+# rand_fac <-  0.4
+# dim(f0)
+# rand_f0 <- 1 + rand_fac * (pracma::rand(df_row, pig_r_row) - 0.5)
+# rand_f0 <- 1 + rand_fac * (pracma::rand(pig_r_row, pig_r_col) - 0.5)
+# (f0 - ( f0 * rand_f0 ) ) / f0 * 100
+# f0 * rand_f0
+# f0 * (1 + rand_fac * (pracma::rand(pig_r_row, pig_r_col) - 0.5))
+# range(rand_f0)
+# 
+# n = 2
+# for (i in seq(n)) {
+#   if (i == 1) {
+#     cat("-----------------\n\n", sprintf("%s of %s Original\n\n", i, n))
+#     print(round(f0, 4))
+#   } else {
+#     cat("-----------------\n\n", sprintf("%s of %s\n\n", i, n))
+#     
+#     print(round(f0[,1:11] * (1 + rand_fac * (pracma::rand(pig_r_row, pig_r_col - 1) - 0.5)), 4))
+#     
+#   }
+# }
+# 
+# rp <-
+#   f0 * (1 + rand_fac * (pracma::rand(pig_r_row, pig_r_col) - 0.5))
+# rp[,pig_r_col] <-  1
+# 
+# rp
 
 # examples of how to create similar brokewest
 # pigm <- c("chlc3", "chlc1", "per", "fuc", "neox", "prx", "violax", "hex", "alx", "lut", "chl_b", "chl_a")
