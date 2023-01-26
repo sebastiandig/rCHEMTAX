@@ -34,8 +34,8 @@ normprod <- function(.df,.taxa_amt,.pig_r, .col = NULL) {
   library("pracma")
   
   # ---- extract dimension information ----
-  df_row <- dim(.df)[1] # row of df
-  df_col <- dim(.df)[2] # col of df
+  df_row    <- dim(.df)[1] # row of df
+  df_col    <- dim(.df)[2] # col of df
   pig_r_row <- dim(.pig_r)[1] # row of pigment ratio
   pig_r_col <- dim(.pig_r)[2] # col of df
   if (df_col != pig_r_col) {
