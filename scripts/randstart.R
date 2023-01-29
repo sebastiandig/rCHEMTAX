@@ -137,7 +137,7 @@ randstart <- function(.df, .df_sd, .pig_r, .pig_r_sd, rand_fac = 0.7,
     taxa_amt_rep[i,] <- t(taxa_amt_temp)
 
     # log each run
-    rep_num          <- paste0("rep_num_", i)
+    rep_num          <- paste0("rep_num_", i - 1)
     logs[[rep_num]]  <- temp
     
     end <- (tictoc::toc(quiet = T))$toc - start
