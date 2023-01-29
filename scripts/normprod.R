@@ -12,15 +12,16 @@ normprod <- function(.df,.taxa_amt,.pig_r, .col = NULL) {
 # error.
 #
 # ---- INPUTS: -----------
-# df = Original product matrix
+# df       = Original product matrix
 # taxa_amt = Left factor of df
-# pig_r = Right factor of df
+# pig_r    = Right factor of df
+# .col     = column name or position number to normalize to
 #
 # ---- OUTPUTS: ----------
-# ss = Matrix .df normalized to last column
-# cc = Left factor after scaling
-# ff = Right factor after scaling
-# rms = Root mean square of ss-cc*ff
+# ss       = Matrix .df normalized to last column
+# cc       = Left factor after scaling
+# ff       = Right factor after scaling
+# rms      = Root mean square of ss-cc*ff
 #
 # ---- NOTES: ------------
 # Original: 2010-03-28  Matlab7  W.Whiten
@@ -34,10 +35,11 @@ normprod <- function(.df,.taxa_amt,.pig_r, .col = NULL) {
   library("pracma")
   
   # ---- extract dimension information ----
-  df_row    <- dim(.df)[1] # row of df
-  df_col    <- dim(.df)[2] # col of df
+  df_row    <- dim(.df)[1]    # row of df
+  df_col    <- dim(.df)[2]    # col of df
   pig_r_row <- dim(.pig_r)[1] # row of pigment ratio
   pig_r_col <- dim(.pig_r)[2] # col of df
+  
   if (df_col != pig_r_col) {
     stop(paste(
       'normprod: matrix size error\nNot the same number of columns\ndf:',
@@ -59,15 +61,17 @@ normprod <- function(.df,.taxa_amt,.pig_r, .col = NULL) {
     pig_r_sel <- .col
   }
   
-  # ---- normalize df to inverse of last col ----
-  df_norm_col    <- as.matrix(1 / (.df[,df_sel] + 1e-100))
+  # ---- normalize df to inverse of selected column ----
+  # default: last column
+  df_norm_col    <- as.matrix(1 / (.df[, df_sel] + 1e-100))
   df_norm        <- .df * pracma::repmat(df_norm_col, 1, df_col)
 
   # ---- normalize pigment ratio to inverse of last col ----
-  pig_r_norm_col <- as.matrix(.pig_r[,pig_r_sel])
+  # default: last column 
+  pig_r_norm_col <- as.matrix(.pig_r[, pig_r_sel])
   pig_r_norm     <- .pig_r * pracma::repmat(1 / (pig_r_norm_col + 1e-100), 1, df_col)
   
-  # ---- normalize a * b to last col in df and pig ratio ----
+  # ---- normalize a * b to selected col in df and pig ratio ---
   taxa_norm      <- .taxa_amt * pracma::repmat(df_norm_col, 1, pig_r_row) 
   cc             <- taxa_norm * pracma::repmat(t(pig_r_norm_col), df_row, 1)
   
@@ -84,4 +88,5 @@ normprod <- function(.df,.taxa_amt,.pig_r, .col = NULL) {
                   )
   
   return(results)
+  # ---- end of function ----
 }
