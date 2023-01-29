@@ -42,6 +42,8 @@ randstart <- function(.df, .df_sd, .pig_r, .pig_r_sd, rand_fac = 0.7,
   source(paste0(root,"/scripts/nnmatfactsd.R"))
   source(paste0(root,"/scripts/initstruct.R"))
  
+  .nrep <- .nrep + 1
+  
   # ---- initialize matrices for random starting points ----
   df_row    <- dim(.df)[1]       # row # .df
   df_col    <- dim(.df)[2]       # col # of .df
@@ -84,9 +86,9 @@ randstart <- function(.df, .df_sd, .pig_r, .pig_r_sd, rand_fac = 0.7,
     
     # for now comment out
     # random initial `a` matrix
-    if (str_detect(rand_type, "(?i)ab|(?i)a")) {
+    if (str_detect(rand_type, "(?i)ab|(?i)a") & i > 1) {
       cli::cli_alert_info("Randomizing the {.strong {cli::col_red('A')}} matrix")
-      info$inita  <-  pracma::rand(df_row, pig_r_row) # maybe put back in
+      info$inita  <-  pracma::rand(df_row, pig_r_row)
     }
     
     
@@ -98,7 +100,7 @@ randstart <- function(.df, .df_sd, .pig_r, .pig_r_sd, rand_fac = 0.7,
     # info$inita  <-  (pracma::rand(df_row, pig_r_row) + 0.5) * 0.4 # original method after first run
     
     # fix to above something like 
-    if (str_detect(rand_type, "(?i)ab|(?i)b")) {
+    if (str_detect(rand_type, "(?i)ab|(?i)b") & i > 1) {
       cli::cli_alert_info("Randomizing the {.strong {cli::col_green('B')}} matrix")
       .pig_r_new <-
         .pig_r * (1 + rand_fac * (pracma::rand(pig_r_row, pig_r_col) - 0.5))
@@ -112,7 +114,11 @@ randstart <- function(.df, .df_sd, .pig_r, .pig_r_sd, rand_fac = 0.7,
     
     
     # ---- run factor analysis ----
-    cat(sprintf('\nRandom Start Number: %02d of %02d\n', i, .nrep))
+    if (i == 1) {
+      cat(sprintf('\nUsing Original Matrices\n'))
+    } else {
+      cat(sprintf('\nRandom Start Number: %02d of %02d\n', i - 1, .nrep - 1))
+      }
 
     temp          <- nnmatfactsd(.df,
                                  .df_sd,
