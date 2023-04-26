@@ -219,7 +219,9 @@ nnmatfactsd <- function(.df, .df_sd, .pig_r_init, .pig_r_sd,
   # ---- main factorization loop  ----
   # ========================================================================== #  
   for (itr in seq(maxitr)) {
-    # update a & b
+    # update c & f 
+    # c = taxa_amt; 
+    # f = pig_r
     taxa_amt <- 
       taxa_amt * (xw %*% t(pig_r)) / 
       ( ( (taxa_amt %*% pig_r) * w2x) %*% t(pig_r) + 1e-100)
